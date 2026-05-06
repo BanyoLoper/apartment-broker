@@ -4,7 +4,15 @@ import type { Broker } from '../../../lib/db';
 
 export const POST: APIRoute = async ({ request, locals, redirect }) => {
   const env = locals.runtime?.env;
-  if (!env?.DB || !env.SESSION_SECRET) return new Response('Servidor no configurado', { status: 500 });
+  if (!env) {
+    return new Response('locals.runtime.env undefined — el adapter de Cloudflare no está inyectando bindings. Verifica que el deploy sea con Astro adapter cloudflare 12.x.', { status: 500 });
+  }
+  const missing: string[] = [];
+  if (!env.DB) missing.push('DB (binding D1)');
+  if (!env.SESSION_SECRET) missing.push('SESSION_SECRET (secret)');
+  if (missing.length) {
+    return new Response(`Faltan en este deploy: ${missing.join(', ')}. Revisa Settings → Variables and Secrets / Bindings, y que estén scoped a Production. Luego haz un deploy nuevo (no retry).`, { status: 500 });
+  }
 
   const fd = await request.formData();
   const email = String(fd.get('email') || '').trim().toLowerCase();
