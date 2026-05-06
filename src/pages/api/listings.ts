@@ -11,6 +11,10 @@ function n(v: FormDataEntryValue | null): number | null {
   const x = Number(v);
   return Number.isFinite(x) ? x : null;
 }
+function b(v: FormDataEntryValue | null): number {
+  if (v === 'on' || v === 'true' || v === '1') return 1;
+  return 0;
+}
 
 export const POST: APIRoute = async ({ request, locals, redirect }) => {
   const env = locals.runtime?.env;
@@ -42,8 +46,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   await env.DB.prepare(`
     INSERT INTO listings
       (slug, name, colonia, street, floor, beds, baths, area_m2, price_mxn,
-       description, lat_real, lng_real, lat_fuzzy, lng_fuzzy, status, model_glb_url, broker_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'borrador', ?, ?)
+       description, lat_real, lng_real, lat_fuzzy, lng_fuzzy, status, model_glb_url,
+       furnished, utilities_included, tagline, broker_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'borrador', ?, ?, ?, ?, ?)
   `).bind(
     slug, name, colonia,
     s(fd.get('street')), n(fd.get('floor')),
@@ -51,6 +56,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     s(fd.get('description')),
     latReal, lngReal, latFuzzy, lngFuzzy,
     s(fd.get('model_glb_url')),
+    b(fd.get('furnished')), s(fd.get('utilities_included')), s(fd.get('tagline')),
     session.brokerId,
   ).run();
 

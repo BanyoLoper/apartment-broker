@@ -1,126 +1,254 @@
 /* =====================================================================
-   ApartmentBroker — Foundations
-   Tokens del Design System (claude.ai/design handoff)
+   EZRA Real Estate — Foundations
+   Editorial / hospitality palette: charcoal + cream + a single warm accent.
+
+   Default theme is DARK (boutique hotel feel). Light mode is opt-in via
+   `<html data-theme="light">`. Tokens are namespaced `--ezra-*`; the legacy
+   `--ab-*` aliases are kept so existing components can be migrated gradually.
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+/* ---------- Default theme = DARK ----------
+   Tonos cálidos derivados del icon EZRA: charcoal con undertone café/oliva
+   en lugar de negro puro. Todos los "ink-*" llevan ese sesgo cálido. */
+:root,
+:root[data-theme='dark'] {
+  --ezra-ink-950:   #0E0C0A;   /* página deep */
+  --ezra-ink-900:   #1A1714;   /* página default — color del icon EZRA */
+  --ezra-ink-800:   #25211D;   /* surface elevada (cards admin dark, modals) */
+  --ezra-ink-700:   #322D27;   /* surface-2, divisores cálidos */
+  --ezra-stone-700: #4A433B;
+  --ezra-stone-500: #6E6660;
+  --ezra-stone-400: #8E867E;
+  --ezra-stone-300: #B5ACA3;
+  --ezra-stone-200: #D4CCC1;
+  --ezra-paper:     #EFEBE6;
+  --ezra-pure:      #FFFFFF;
+
+  --ezra-danger:    #B05A4E;
+  --ezra-success:   #5C7A6E;
+  --ezra-warning:   #A8896B;
+  --ezra-info:      #6E7A8A;
+  --ezra-copper:    #C26A3F;       /* solo para CTAs y deltas positivos */
+
+  --ezra-bg:        var(--ezra-ink-900);
+  --ezra-bg-deep:   var(--ezra-ink-950);
+  --ezra-surface:   var(--ezra-ink-800);
+  --ezra-surface-2: var(--ezra-ink-700);
+  --ezra-fg:        var(--ezra-pure);
+  --ezra-fg-muted:  rgba(255,255,255,0.62);
+  --ezra-fg-soft:   rgba(255,255,255,0.42);
+  --ezra-border:    rgba(255,255,255,0.10);
+  --ezra-border-strong: rgba(255,255,255,0.22);
+  --ezra-input-bg:  rgba(255,255,255,0.04);
+
+  /* Acento. En EZRA el acento ES el blanco; el cobre es solo para chevrons CTA */
+  --ezra-accent:    var(--ezra-copper);
+  --ezra-on-accent: #FFFFFF;
+
+  /* Photo scrim (top y bottom de la listing card) */
+  --ezra-scrim-top:    linear-gradient(to bottom, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.55) 35%, rgba(10,10,10,0) 70%);
+  --ezra-scrim-bottom: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.55) 35%, rgba(10,10,10,0) 70%);
+}
+
+/* ---------- Light theme override ---------- */
+:root[data-theme='light'] {
+  --ezra-bg:        #F1ECE2;       /* cream paper */
+  --ezra-bg-deep:   #E5DFD2;
+  --ezra-surface:   #F8F4EC;
+  --ezra-surface-2: #FFFFFF;
+  --ezra-fg:        var(--ezra-ink-900);
+  --ezra-fg-muted:  rgba(20,20,20,0.62);
+  --ezra-fg-soft:   rgba(20,20,20,0.42);
+  --ezra-border:    rgba(20,20,20,0.10);
+  --ezra-border-strong: rgba(20,20,20,0.18);
+  --ezra-input-bg:  #FFFFFF;
+  --ezra-on-accent: #FFFFFF;
+}
 
 :root {
-  --ab-bone-50:  #FAF7F2;
-  --ab-bone-100: #F4EFE6;
-  --ab-bone-200: #E8E1D3;
-  --ab-bone-300: #C9C0AE;
-  --ab-stone-400: #8B8377;
-  --ab-stone-600: #5C564C;
-  --ab-ink-800: #2A2722;
-  --ab-ink-900: #16140F;
+  /* ---------- Type families ---------- */
+  --ezra-font-display: 'Playfair Display', 'Bodoni 72', 'Didot', Georgia, serif;
+  --ezra-font-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ezra-font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
 
-  --ab-terracotta-500: #C8553D;
-  --ab-terracotta-600: #A8432F;
-  --ab-terracotta-100: #F6DDD4;
-  --ab-rosa-500: #E8A6A0;
-  --ab-rosa-100: #FBEAE7;
-  --ab-jade-600: #2F6B5E;
-  --ab-jade-100: #DAEBE5;
-  --ab-ochre-500: #D9A441;
-  --ab-ochre-100: #F8EBC9;
+  /* ---------- Type scale ---------- */
+  --ezra-text-wordmark:   400 56px/0.95 var(--ezra-font-display);
+  --ezra-text-display-1:  500 80px/1.00 var(--ezra-font-display);
+  --ezra-text-display-2:  500 56px/1.05 var(--ezra-font-display);
+  --ezra-text-h1:         500 40px/1.10 var(--ezra-font-display);
+  --ezra-text-h2:         500 30px/1.18 var(--ezra-font-display);
+  --ezra-text-h3:         600 22px/1.25 var(--ezra-font-body);
+  --ezra-text-h4:         600 18px/1.30 var(--ezra-font-body);
+  --ezra-text-body:       400 16px/1.55 var(--ezra-font-body);
+  --ezra-text-body-sm:    400 14px/1.50 var(--ezra-font-body);
+  --ezra-text-caption:    500 12px/1.40 var(--ezra-font-body);
+  --ezra-text-eyebrow:    500 11px/1.20 var(--ezra-font-body);
+  --ezra-text-mono:       400 13px/1.50 var(--ezra-font-mono);
 
-  --ab-success: #2F6B5E;
-  --ab-warning: #D9A441;
-  --ab-danger:  #B43A2A;
-  --ab-info:    #3B5B8A;
+  --ezra-text-overlay-xl: 800 44px/1.00 var(--ezra-font-body);
+  --ezra-text-overlay-lg: 800 30px/1.05 var(--ezra-font-body);
+  --ezra-text-overlay-md: 700 22px/1.15 var(--ezra-font-body);
 
-  --ab-bg:        var(--ab-bone-50);
-  --ab-surface:   #FFFFFF;
-  --ab-surface-2: var(--ab-bone-100);
-  --ab-fg:        var(--ab-ink-800);
-  --ab-fg-muted:  var(--ab-stone-600);
-  --ab-fg-soft:   var(--ab-stone-400);
-  --ab-border:    var(--ab-bone-200);
-  --ab-border-strong: var(--ab-bone-300);
-  --ab-accent:    var(--ab-terracotta-500);
-  --ab-accent-pressed: var(--ab-terracotta-600);
-  --ab-on-accent: #FFFFFF;
+  --ezra-track-wide: 0.32em;
+  --ezra-track-mid:  0.18em;
 
-  --ab-font-display: 'Fraunces', 'Times New Roman', Georgia, serif;
-  --ab-font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --ab-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* ---------- Spacing ---------- */
+  --ezra-space-1: 4px;  --ezra-space-2: 8px;  --ezra-space-3: 12px;
+  --ezra-space-4: 16px; --ezra-space-5: 24px; --ezra-space-6: 32px;
+  --ezra-space-7: 48px; --ezra-space-8: 64px; --ezra-space-9: 96px;
 
-  --ab-text-display-1: 600 72px/1.02 var(--ab-font-display);
-  --ab-text-display-2: 500 56px/1.05 var(--ab-font-display);
-  --ab-text-h1:        500 40px/1.10 var(--ab-font-display);
-  --ab-text-h2:        500 30px/1.15 var(--ab-font-display);
-  --ab-text-h3:        600 22px/1.25 var(--ab-font-body);
-  --ab-text-h4:        600 18px/1.30 var(--ab-font-body);
-  --ab-text-body:      400 16px/1.55 var(--ab-font-body);
-  --ab-text-body-sm:   400 14px/1.50 var(--ab-font-body);
-  --ab-text-caption:   500 12px/1.40 var(--ab-font-body);
-  --ab-text-eyebrow:   600 11px/1.20 var(--ab-font-body);
-  --ab-text-mono:      400 13px/1.50 var(--ab-font-mono);
+  /* ---------- Radii (squarer) ---------- */
+  --ezra-radius-sm: 2px;
+  --ezra-radius-md: 4px;
+  --ezra-radius-lg: 8px;
+  --ezra-radius-xl: 14px;
+  --ezra-radius-pill: 999px;
 
-  --ab-space-1: 4px;
-  --ab-space-2: 8px;
-  --ab-space-3: 12px;
-  --ab-space-4: 16px;
-  --ab-space-5: 24px;
-  --ab-space-6: 32px;
-  --ab-space-7: 48px;
-  --ab-space-8: 64px;
-  --ab-space-9: 96px;
+  /* ---------- Shadows ---------- */
+  --ezra-shadow-1: 0 1px 2px rgba(0,0,0,0.20), 0 0 0 1px rgba(255,255,255,0.04);
+  --ezra-shadow-2: 0 8px 24px -10px rgba(0,0,0,0.40);
+  --ezra-shadow-3: 0 24px 48px -20px rgba(0,0,0,0.55);
 
-  --ab-radius-sm: 4px;
-  --ab-radius-md: 8px;
-  --ab-radius-lg: 14px;
-  --ab-radius-xl: 22px;
-  --ab-radius-pill: 999px;
+  /* ---------- Motion ---------- */
+  --ezra-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ezra-dur-fast: 140ms; --ezra-dur-base: 220ms; --ezra-dur-slow: 380ms;
 
-  --ab-shadow-1: 0 1px 2px rgba(22, 20, 15, 0.04), 0 0 0 1px rgba(22, 20, 15, 0.04);
-  --ab-shadow-2: 0 6px 16px -8px rgba(22, 20, 15, 0.12), 0 0 0 1px rgba(22, 20, 15, 0.04);
-  --ab-shadow-3: 0 18px 40px -16px rgba(22, 20, 15, 0.20), 0 0 0 1px rgba(22, 20, 15, 0.05);
-  --ab-shadow-inset: inset 0 0 0 1px rgba(22, 20, 15, 0.06);
-
-  --ab-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* ---------- Legacy aliases (--ab-*) -> remapean a EZRA ---------- */
+  --ab-bone-50:        var(--ezra-bg);
+  --ab-bone-100:       var(--ezra-surface);
+  --ab-bone-200:       var(--ezra-surface-2);
+  --ab-bone-300:       var(--ezra-stone-700);
+  --ab-stone-400:      var(--ezra-stone-400);
+  --ab-stone-600:      var(--ezra-fg-muted);
+  --ab-ink-800:        var(--ezra-ink-800);
+  --ab-ink-900:        var(--ezra-fg);
+  --ab-terracotta-500: var(--ezra-copper);
+  --ab-terracotta-600: #A45929;
+  --ab-terracotta-100: rgba(194,106,63,0.18);
+  --ab-rosa-500:       #E8A6A0;
+  --ab-rosa-100:       rgba(232,166,160,0.16);
+  --ab-jade-600:       var(--ezra-success);
+  --ab-jade-100:       rgba(92,122,110,0.18);
+  --ab-ochre-500:      var(--ezra-warning);
+  --ab-ochre-100:      rgba(168,137,107,0.18);
+  --ab-success:        var(--ezra-success);
+  --ab-warning:        var(--ezra-warning);
+  --ab-danger:         var(--ezra-danger);
+  --ab-info:           var(--ezra-info);
+  --ab-bg:             var(--ezra-bg);
+  --ab-surface:        var(--ezra-surface);
+  --ab-surface-2:      var(--ezra-surface-2);
+  --ab-fg:             var(--ezra-fg);
+  --ab-fg-muted:       var(--ezra-fg-muted);
+  --ab-fg-soft:        var(--ezra-fg-soft);
+  --ab-border:         var(--ezra-border);
+  --ab-border-strong:  var(--ezra-border-strong);
+  --ab-accent:         var(--ezra-copper);
+  --ab-accent-pressed: #A45929;
+  --ab-on-accent:      var(--ezra-on-accent);
+  --ab-font-display:   var(--ezra-font-display);
+  --ab-font-body:      var(--ezra-font-body);
+  --ab-font-mono:      var(--ezra-font-mono);
+  --ab-text-display-1: var(--ezra-text-display-1);
+  --ab-text-display-2: var(--ezra-text-display-2);
+  --ab-text-h1:        var(--ezra-text-h1);
+  --ab-text-h2:        var(--ezra-text-h2);
+  --ab-text-h3:        var(--ezra-text-h3);
+  --ab-text-h4:        var(--ezra-text-h4);
+  --ab-text-body:      var(--ezra-text-body);
+  --ab-text-body-sm:   var(--ezra-text-body-sm);
+  --ab-text-caption:   var(--ezra-text-caption);
+  --ab-text-eyebrow:   var(--ezra-text-eyebrow);
+  --ab-text-mono:      var(--ezra-text-mono);
+  --ab-space-1: 4px;  --ab-space-2: 8px;  --ab-space-3: 12px;
+  --ab-space-4: 16px; --ab-space-5: 24px; --ab-space-6: 32px;
+  --ab-space-7: 48px; --ab-space-8: 64px; --ab-space-9: 96px;
+  --ab-radius-sm:   var(--ezra-radius-sm);
+  --ab-radius-md:   var(--ezra-radius-md);
+  --ab-radius-lg:   var(--ezra-radius-lg);
+  --ab-radius-xl:   var(--ezra-radius-xl);
+  --ab-radius-pill: var(--ezra-radius-pill);
+  --ab-shadow-1: var(--ezra-shadow-1);
+  --ab-shadow-2: var(--ezra-shadow-2);
+  --ab-shadow-3: var(--ezra-shadow-3);
+  --ab-shadow-inset: inset 0 0 0 1px rgba(255,255,255,0.06);
+  --ab-ease-standard: var(--ezra-ease-standard);
   --ab-ease-emph:     cubic-bezier(0.16, 1, 0.3, 1);
-  --ab-dur-fast: 140ms;
-  --ab-dur-base: 220ms;
-  --ab-dur-slow: 380ms;
+  --ab-dur-fast: 140ms; --ab-dur-base: 220ms; --ab-dur-slow: 380ms;
 }
 
+/* ---------- Helpers ---------- */
+.ezra-eyebrow,
 .ab-eyebrow {
-  font: var(--ab-text-eyebrow);
-  letter-spacing: 0.14em;
+  font: var(--ezra-text-eyebrow);
+  letter-spacing: var(--ezra-track-mid);
   text-transform: uppercase;
-  color: var(--ab-fg-soft);
+  color: var(--ezra-fg-muted);
+  font-weight: 500;
+}
+.ezra-eyebrow-wide {
+  font: var(--ezra-text-eyebrow);
+  letter-spacing: var(--ezra-track-wide);
+  text-transform: uppercase;
+  color: var(--ezra-fg-muted);
+  font-weight: 500;
 }
 
-.ab-display-1 { font: var(--ab-text-display-1); letter-spacing: -0.02em; color: var(--ab-ink-900); }
-.ab-display-2 { font: var(--ab-text-display-2); letter-spacing: -0.015em; color: var(--ab-ink-900); }
-.ab-h1 { font: var(--ab-text-h1); letter-spacing: -0.01em; color: var(--ab-ink-900); }
-.ab-h2 { font: var(--ab-text-h2); letter-spacing: -0.005em; color: var(--ab-ink-900); }
-.ab-h3 { font: var(--ab-text-h3); color: var(--ab-ink-900); }
-.ab-h4 { font: var(--ab-text-h4); color: var(--ab-ink-900); }
-.ab-body { font: var(--ab-text-body); color: var(--ab-fg); }
-.ab-body-sm { font: var(--ab-text-body-sm); color: var(--ab-fg); }
-.ab-caption { font: var(--ab-text-caption); color: var(--ab-fg-muted); }
-.ab-mono { font: var(--ab-text-mono); color: var(--ab-fg); }
+.ezra-display-1, .ab-display-1 { font: var(--ezra-text-display-1); letter-spacing: -0.015em; color: var(--ezra-fg); font-weight: 800; }
+.ezra-display-2, .ab-display-2 { font: var(--ezra-text-display-2); letter-spacing: -0.01em;  color: var(--ezra-fg); font-weight: 800; }
+.ezra-h1, .ab-h1 { font: var(--ezra-text-h1); color: var(--ezra-fg); font-weight: 800; letter-spacing: -0.005em; }
+.ezra-h2, .ab-h2 { font: var(--ezra-text-h2); color: var(--ezra-fg); font-weight: 700; }
+.ezra-h3, .ab-h3 { font: var(--ezra-text-h3); color: var(--ezra-fg); font-weight: 700; }
+.ezra-h4, .ab-h4 { font: var(--ezra-text-h4); color: var(--ezra-fg); font-weight: 600; }
+.ezra-body, .ab-body { font: var(--ezra-text-body); color: var(--ezra-fg); font-weight: 300; }
+.ezra-body-sm, .ab-body-sm { font: var(--ezra-text-body-sm); color: var(--ezra-fg); font-weight: 300; }
+.ezra-caption, .ab-caption { font: var(--ezra-text-caption); color: var(--ezra-fg-muted); }
+.ezra-mono, .ab-mono { font: var(--ezra-text-mono); color: var(--ezra-fg); }
 
+.ezra-overlay-name  { font-family: var(--ezra-font-body); font-weight: 800; color: #FFF; letter-spacing: -0.005em; line-height: 1.05; }
+.ezra-overlay-meta  { font-family: var(--ezra-font-body); font-weight: 300; color: #FFF; line-height: 1.35; }
+.ezra-overlay-price { font-family: var(--ezra-font-body); font-weight: 800; color: #FFF; letter-spacing: -0.02em; line-height: 1; }
+.ezra-overlay-price-label { font-family: var(--ezra-font-body); font-weight: 300; color: #FFF; }
+
+/* ---------- Base ---------- */
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+html { color-scheme: dark; }
+html[data-theme='light'] { color-scheme: light; }
 body {
-  background: var(--ab-bg);
-  color: var(--ab-fg);
-  font: var(--ab-text-body);
+  background: var(--ezra-bg);
+  color: var(--ezra-fg);
+  font: var(--ezra-text-body);
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background var(--ezra-dur-base) var(--ezra-ease-standard),
+              color var(--ezra-dur-base) var(--ezra-ease-standard);
 }
 a { color: inherit; }
 button { font-family: inherit; }
 input, select, textarea {
   font-family: inherit;
   font-size: 14px;
-  color: var(--ab-ink-900);
+  color: var(--ezra-fg);
+  background: var(--ezra-input-bg);
+  border-color: var(--ezra-border-strong);
 }
 input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
-  outline: 2px solid var(--ab-terracotta-500);
+  outline: 1px solid var(--ezra-fg);
   outline-offset: 2px;
+}
+::selection { background: var(--ezra-fg); color: var(--ezra-bg); }
+
+/* ---------- Mapa: aclarar tiles dark de Carto a un gris medio cálido ---------- */
+.leaflet-tile-pane {
+  filter: brightness(1.55) saturate(0.85);
+}
+:root[data-theme='light'] .leaflet-tile-pane {
+  filter: none;
+}
+.leaflet-container {
+  background: var(--ezra-surface-2) !important;
 }

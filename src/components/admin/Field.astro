@@ -9,10 +9,16 @@ const { label } = Astro.props;
 
 <style is:global>
   .ab-field input, .ab-field select, .ab-field textarea {
-    padding: 10px 12px; border-radius: 8px;
-    border: 1px solid var(--ab-border-strong);
-    background: #fff; font-size: 14px; width: 100%;
+    padding: 10px 12px; border-radius: 4px;
+    border: 1px solid var(--ezra-border-strong);
+    background: var(--ezra-surface); color: var(--ezra-fg);
+    font-size: 14px; width: 100%;
     font-family: inherit;
+    transition: border-color var(--ezra-dur-fast);
+  }
+  .ab-field input:focus, .ab-field select:focus, .ab-field textarea:focus {
+    border-color: var(--ezra-fg);
+    outline: none;
   }
   .ab-field textarea { resize: vertical; min-height: 80px; }
 </style>

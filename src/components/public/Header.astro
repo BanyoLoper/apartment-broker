@@ -10,55 +10,119 @@ const links: { key: NonNullable<Props['active']>; href: string; label: string }[
 ];
 ---
 
-<header class="ab-header">
-  <div class="ab-header-inner">
-    <a class="ab-header-logo" href="/" aria-label="ApartmentBroker — inicio">
-      <img src="/assets/logo-wordmark.svg" alt="ApartmentBroker" height="28" />
+<header class="ezra-header">
+  <div class="ezra-header-inner">
+    <a class="ezra-header-logo" href="/" aria-label="EZRA Real Estate — inicio">
+      <span class="ezra-wordmark">EZRA</span>
+      <span class="ezra-wordmark-sub">Real Estate</span>
     </a>
-    <nav class="ab-header-nav">
+    <nav class="ezra-header-nav">
       {links.map((l) => (
-        <a class={`ab-header-link ${active === l.key ? 'is-active' : ''}`} href={l.href}>{l.label}</a>
+        <a class={`ezra-header-link ${active === l.key ? 'is-active' : ''}`} href={l.href}>{l.label}</a>
       ))}
     </nav>
-    <div class="ab-header-cta">
-      <span class="ab-eyebrow">ES · EN</span>
-      <a class="ab-btn ab-btn--ghost" href="/login">Iniciar sesión</a>
-      <a class="ab-btn ab-btn--primary" href="#contacto">Reservar visita</a>
+    <div class="ezra-header-cta">
+      <button id="ezra-theme-toggle" class="ezra-theme-toggle" type="button" aria-label="Cambiar tema">
+        <svg class="ezra-theme-icon ezra-theme-icon--sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2 M12 20v2 M4.93 4.93l1.41 1.41 M17.66 17.66l1.41 1.41 M2 12h2 M20 12h2 M4.93 19.07l1.41-1.41 M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="ezra-theme-icon ezra-theme-icon--moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a class="ezra-btn ezra-btn--ghost" href="/login">Acceso brokers</a>
+      <a class="ezra-btn ezra-btn--primary" href="#contacto">Reservar visita</a>
     </div>
   </div>
 </header>
 
+<script is:inline>
+  (function () {
+    const KEY = 'ezra-theme';
+    const root = document.documentElement;
+    const stored = localStorage.getItem(KEY);
+    if (stored === 'light' || stored === 'dark') root.dataset.theme = stored;
+    const btn = document.getElementById('ezra-theme-toggle');
+    btn?.addEventListener('click', () => {
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      root.dataset.theme = next;
+      localStorage.setItem(KEY, next);
+    });
+  })();
+</script>
+
 <style>
-  .ab-header {
+  .ezra-header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(250, 247, 242, 0.85);
+    background: color-mix(in oklab, var(--ezra-bg) 88%, transparent);
     backdrop-filter: blur(20px) saturate(1.2);
     -webkit-backdrop-filter: blur(20px) saturate(1.2);
-    border-bottom: 1px solid var(--ab-border);
+    border-bottom: 1px solid var(--ezra-border);
   }
-  .ab-header-inner {
-    max-width: 1280px; margin: 0 auto; padding: 14px 32px;
+  .ezra-header-inner {
+    max-width: 1280px; margin: 0 auto; padding: 16px 32px;
     display: flex; align-items: center; gap: 32px;
   }
-  .ab-header-logo { display: inline-flex; align-items: center; }
-  .ab-header-nav { display: flex; gap: 4px; margin-left: 24px; }
-  .ab-header-link {
-    font-size: 14px; font-weight: 500;
-    color: var(--ab-fg); padding: 8px 12px; border-radius: 8px;
+
+  .ezra-header-logo {
+    display: inline-flex; flex-direction: column; align-items: center;
+    text-decoration: none; color: var(--ezra-fg); gap: 1px;
+    line-height: 1;
+  }
+  .ezra-wordmark {
+    font-family: var(--ezra-font-display);
+    font-weight: 500; font-size: 22px;
+    letter-spacing: 0.32em;
+    padding-left: 0.32em;
+  }
+  .ezra-wordmark-sub {
+    font-size: 8px; font-weight: 500;
+    letter-spacing: 0.42em; text-transform: uppercase;
+    color: var(--ezra-fg-muted);
+  }
+
+  .ezra-header-nav { display: flex; gap: 4px; margin-left: 24px; }
+  .ezra-header-link {
+    font-size: 13px; font-weight: 400;
+    color: var(--ezra-fg-muted); padding: 8px 12px; border-radius: var(--ezra-radius-sm);
     text-decoration: none;
+    transition: color var(--ezra-dur-fast) var(--ezra-ease-standard);
   }
-  .ab-header-link.is-active { color: var(--ab-ink-900); background: var(--ab-bone-100); }
-  .ab-header-cta { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-  .ab-btn {
-    font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px;
-    text-decoration: none; cursor: pointer; border: none;
+  .ezra-header-link:hover { color: var(--ezra-fg); }
+  .ezra-header-link.is-active { color: var(--ezra-fg); }
+
+  .ezra-header-cta { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+  .ezra-theme-toggle {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: transparent; border: 1px solid var(--ezra-border-strong);
+    color: var(--ezra-fg-muted); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: color var(--ezra-dur-fast), border-color var(--ezra-dur-fast);
+  }
+  .ezra-theme-toggle:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ezra-theme-icon { display: none; }
+  :root[data-theme='light'] .ezra-theme-icon--moon,
+  :root:not([data-theme='light']) .ezra-theme-icon--sun {
+    display: inline-block;
+  }
+
+  .ezra-btn {
+    font-size: 12px; font-weight: 500; padding: 10px 16px;
+    border-radius: var(--ezra-radius-md); text-decoration: none;
+    cursor: pointer; border: 1px solid transparent;
     display: inline-flex; align-items: center; gap: 6px;
+    letter-spacing: 0.04em;
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast), border-color var(--ezra-dur-fast);
   }
-  .ab-btn--ghost { background: transparent; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
-  .ab-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-btn--primary:hover { background: var(--ab-terracotta-600); }
+  .ezra-btn--ghost {
+    background: transparent; border-color: var(--ezra-border-strong);
+    color: var(--ezra-fg-muted);
+  }
+  .ezra-btn--ghost:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ezra-btn--primary {
+    background: var(--ezra-fg); color: var(--ezra-bg);
+  }
+  .ezra-btn--primary:hover { background: var(--ezra-fg-muted); }
+
   @media (max-width: 768px) {
-    .ab-header-nav { display: none; }
-    .ab-header-cta .ab-eyebrow { display: none; }
+    .ezra-header-nav { display: none; }
+    .ezra-btn--ghost { display: none; }
   }
 </style>

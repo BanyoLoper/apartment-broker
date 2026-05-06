@@ -29,17 +29,29 @@ const { title, subtitle, primaryAction, secondaryAction } = Astro.props;
 <style>
   .ab-topbar {
     display: flex; align-items: flex-end; justify-content: space-between;
-    padding: 24px 32px; border-bottom: 1px solid var(--ab-border);
-    background: var(--ab-bg);
+    padding: 32px 32px 24px; border-bottom: 1px solid var(--ezra-border);
+    background: var(--ezra-bg);
   }
-  .ab-topbar-title { margin: 6px 0 0; }
+  .ab-topbar-title {
+    margin: 8px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: 36px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.015em;
+  }
   .ab-topbar-actions { display: flex; gap: 8px; }
   .ab-topbar-btn {
-    padding: 10px 16px; border-radius: 8px;
-    text-decoration: none; font-size: 13px; font-weight: 600;
-    display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer;
+    padding: 10px 16px; border-radius: var(--ezra-radius-md);
+    text-decoration: none; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em;
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; cursor: pointer;
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast);
   }
-  .ab-topbar-btn--ghost { background: #fff; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
-  .ab-topbar-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-topbar-btn--primary:hover { background: var(--ab-terracotta-600); }
+  .ab-topbar-btn--ghost {
+    background: transparent;
+    border-color: var(--ezra-border-strong);
+    color: var(--ezra-fg-muted);
+  }
+  .ab-topbar-btn--ghost:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ab-topbar-btn--primary { background: var(--ezra-fg); color: var(--ezra-bg); }
+  .ab-topbar-btn--primary:hover { opacity: 0.85; }
 </style>

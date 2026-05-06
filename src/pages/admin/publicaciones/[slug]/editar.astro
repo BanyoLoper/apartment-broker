@@ -56,11 +56,17 @@ const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
           <Field label="Superficie (m²)"><input name="area_m2" type="number" min="1" required value={listing.area_m2} /></Field>
           <Field label="Renta mensual (MXN)"><input name="price_mxn" type="number" min="1" required value={listing.price_mxn} /></Field>
         </div>
+        <Field label="Tagline editorial (overlay de la tarjeta)">
+          <input name="tagline" value={listing.tagline ?? ''} placeholder="Estilo hotel boutique" maxlength="80" />
+        </Field>
+        <Field label="Servicios incluidos en la renta">
+          <input name="utilities_included" value={listing.utilities_included ?? ''} placeholder="mtto + gas + luz + agua + internet" />
+        </Field>
         <Field label="Descripción">
           <textarea name="description" rows="5">{listing.description ?? ''}</textarea>
         </Field>
         <Field label="Amenidades (una por línea)">
-          <textarea name="amenities" rows="6" placeholder="Lavadora · secadora&#10;Wi-Fi 1 Gbps&#10;Calentador instantáneo">{amenities}</textarea>
+          <textarea name="amenities" rows="6" placeholder="Lavadora · secadora&#10;Wi-Fi 1 Gbps&#10;Gimnasio">{amenities}</textarea>
         </Field>
       </section>
 
@@ -111,8 +117,9 @@ const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
 
         <section class="ab-edit-section">
           <h2 class="ab-h3">Reglas</h2>
+          <Toggle label="Departamento amueblado" name="furnished" defaultChecked={!!listing.furnished} />
           <Toggle label="Acepta mascotas" name="pet_friendly" defaultChecked={!!listing.pet_friendly} />
-          <Toggle label="Tiene estacionamiento" name="parking" defaultChecked={!!listing.parking} />
+          <Toggle label="Cajón de estacionamiento" name="parking" defaultChecked={!!listing.parking} />
         </section>
       </aside>
     </div>
@@ -140,7 +147,7 @@ const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
   }
   .ab-edit-section {
     background: #fff; border: 1px solid var(--ab-border);
-    border-radius: 14px; padding: 24px;
+    border-radius: 8px; padding: 24px;
     display: flex; flex-direction: column; gap: 16px;
   }
   .ab-edit-section h2 { margin: 0; }
@@ -155,14 +162,19 @@ const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
     background: linear-gradient(to top, var(--ab-bg) 70%, transparent);
   }
   .ab-edit-btn {
-    padding: 12px 22px; border-radius: 8px;
-    font-size: 14px; font-weight: 600;
-    border: none; cursor: pointer; text-decoration: none;
+    padding: 12px 22px; border-radius: 4px;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none;
     display: inline-flex; align-items: center;
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast);
   }
-  .ab-edit-btn--ghost { background: #fff; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
-  .ab-edit-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-edit-btn--primary:hover { background: var(--ab-terracotta-600); }
+  .ab-edit-btn--ghost {
+    background: transparent; border-color: var(--ezra-border-strong); color: var(--ezra-fg-muted);
+  }
+  .ab-edit-btn--ghost:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ab-edit-btn--primary { background: var(--ezra-fg); color: var(--ezra-bg); }
+  .ab-edit-btn--primary:hover { opacity: 0.85; }
 
   @media (max-width: 1024px) {
     .ab-edit-grid { grid-template-columns: 1fr; }

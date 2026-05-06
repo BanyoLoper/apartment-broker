@@ -14,17 +14,18 @@ const items = [
 const initials = brokerName.split(' ').map((s) => s[0]).slice(0, 2).join('');
 ---
 
-<nav class="ab-sidebar">
-  <div class="ab-sidebar-brand">
-    <img src="/assets/logo-mark.svg" alt="" width="32" height="32" />
-    <div>
-      <div class="ab-sidebar-brand-title">Admin</div>
-      <div class="ab-eyebrow ab-sidebar-brand-tag">Console</div>
-    </div>
+<nav class="ezra-sidebar">
+  <div class="ezra-sidebar-brand">
+    <a class="ezra-sidebar-mark" href="/" title="Ver sitio público">
+      <span class="ezra-sidebar-name">EZRA</span>
+      <span class="ezra-sidebar-sub">Real Estate</span>
+    </a>
+    <span class="ezra-sidebar-tag">Admin</span>
   </div>
-  <div class="ab-sidebar-items">
+
+  <div class="ezra-sidebar-items">
     {items.map((it) => (
-      <a class={`ab-sidebar-item ${active === it.k ? 'is-active' : ''}`} href={it.href}>
+      <a class={`ezra-sidebar-item ${active === it.k ? 'is-active' : ''}`} href={it.href}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d={it.icon}/>
         </svg>
@@ -32,50 +33,83 @@ const initials = brokerName.split(' ').map((s) => s[0]).slice(0, 2).join('');
       </a>
     ))}
   </div>
-  <form class="ab-sidebar-footer" method="post" action="/api/auth/logout">
-    <div class="ab-sidebar-avatar">{initials}</div>
-    <div class="ab-sidebar-user">
-      <div class="ab-sidebar-user-name">{brokerName}</div>
-      <button type="submit" class="ab-sidebar-logout">Cerrar sesión</button>
+
+  <form class="ezra-sidebar-footer" method="post" action="/api/auth/logout">
+    <div class="ezra-sidebar-avatar">{initials}</div>
+    <div class="ezra-sidebar-user">
+      <div class="ezra-sidebar-user-name">{brokerName}</div>
+      <button type="submit" class="ezra-sidebar-logout">Cerrar sesión</button>
     </div>
   </form>
 </nav>
 
 <style>
-  .ab-sidebar {
+  .ezra-sidebar {
     width: 240px; min-height: 100vh; position: sticky; top: 0;
-    background: var(--ab-ink-900); color: var(--ab-bone-50); padding: 24px;
+    background: #0A0A0A; color: #FFFFFF;
+    padding: 28px 20px;
     display: flex; flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,0.08);
   }
-  .ab-sidebar-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-  .ab-sidebar-brand-title { font: var(--ab-text-h4); color: var(--ab-bone-50); }
-  .ab-sidebar-brand-tag { color: rgba(250,247,242,0.4) !important; }
-  .ab-sidebar-items { display: flex; flex-direction: column; gap: 2px; }
-  .ab-sidebar-item {
+  .ezra-sidebar-brand {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 40px; padding: 0 4px;
+  }
+  .ezra-sidebar-mark {
+    display: flex; flex-direction: column; gap: 1px; line-height: 1;
+    text-decoration: none; color: #FFF;
+  }
+  .ezra-sidebar-name {
+    font-family: var(--ezra-font-display);
+    font-size: 26px; font-weight: 500;
+    letter-spacing: 0.32em; padding-left: 0.32em;
+    color: #FFF;
+  }
+  .ezra-sidebar-sub {
+    font-size: 8px; font-weight: 500;
+    letter-spacing: 0.42em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .ezra-sidebar-tag {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(255,255,255,0.42);
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .ezra-sidebar-items { display: flex; flex-direction: column; gap: 2px; }
+  .ezra-sidebar-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px; border-radius: 8px;
-    color: rgba(250,247,242,0.7); text-decoration: none;
-    font-size: 14px; font-weight: 500;
+    padding: 10px 12px; border-radius: var(--ezra-radius-md);
+    color: rgba(255,255,255,0.62); text-decoration: none;
+    font-size: 13px; font-weight: 400;
+    transition: color var(--ezra-dur-fast), background var(--ezra-dur-fast);
   }
-  .ab-sidebar-item:hover { color: #fff; background: rgba(250,247,242,0.05); }
-  .ab-sidebar-item.is-active {
-    background: rgba(200,85,61,0.2); color: #fff; font-weight: 600;
+  .ezra-sidebar-item:hover { color: #FFF; background: rgba(255,255,255,0.04); }
+  .ezra-sidebar-item.is-active {
+    background: rgba(255,255,255,0.08);
+    color: #FFF; font-weight: 500;
+    border-left: 2px solid var(--ezra-copper);
+    padding-left: 10px;
   }
-  .ab-sidebar-footer {
-    margin-top: auto; padding-top: 24px;
-    border-top: 1px solid rgba(250,247,242,0.1);
+
+  .ezra-sidebar-footer {
+    margin-top: auto; padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
     display: flex; align-items: center; gap: 10px;
   }
-  .ab-sidebar-avatar {
+  .ezra-sidebar-avatar {
     width: 32px; height: 32px; border-radius: 999px;
-    background: var(--ab-ochre-500); color: var(--ab-ink-900);
+    background: var(--ezra-copper); color: #FFF;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 13px;
+    font-weight: 600; font-size: 12px;
   }
-  .ab-sidebar-user-name { font-size: 13px; font-weight: 600; }
-  .ab-sidebar-logout {
-    background: none; border: none; color: rgba(250,247,242,0.5);
-    padding: 0; font-size: 11px; cursor: pointer; text-align: left;
+  .ezra-sidebar-user-name { font-size: 13px; font-weight: 500; color: #FFF; }
+  .ezra-sidebar-logout {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    padding: 0; font-size: 10px; cursor: pointer; text-align: left;
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
-  .ab-sidebar-logout:hover { color: #fff; }
+  .ezra-sidebar-logout:hover { color: #FFF; }
 </style>

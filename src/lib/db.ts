@@ -25,6 +25,9 @@ export interface Listing {
   pet_friendly: number;
   parking: number;
   available_at: string | null;
+  furnished: number;
+  utilities_included: string | null;
+  tagline: string | null;
   broker_id: number;
   created_at: string;
   updated_at: string;

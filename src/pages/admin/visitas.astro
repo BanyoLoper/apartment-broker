@@ -28,8 +28,8 @@ if (env?.DB) {
     LEFT JOIN leads l ON l.id = b.lead_id
     ORDER BY b.scheduled_at DESC
     LIMIT 100
-  `).all<BookingRow>();
-  rows = rs.results || [];
+  `).all();
+  rows = (rs.results as BookingRow[]) || [];
 }
 
 // Dummies — solo se muestran si no hay visitas reales
@@ -128,11 +128,11 @@ function fmt(iso: string): { day: string; time: string } {
   .ab-stub-banner {
     margin: 16px 32px 0; padding: 12px 16px;
     background: var(--ab-ochre-100); border: 1px solid var(--ab-ochre-500);
-    border-radius: 10px; font-size: 13px; color: #6B5119;
+    border-radius: 4px; font-size: 13px; color: #6B5119;
   }
   .ab-visits { padding: 24px 32px 64px; }
   .ab-visits-card {
-    background: #fff; border-radius: 14px;
+    background: #fff; border-radius: 8px;
     border: 1px solid var(--ab-border); overflow: hidden;
   }
   table { width: 100%; border-collapse: collapse; }

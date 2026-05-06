@@ -1,70 +1,208 @@
 ---
+// EZRA listing card — composición auto-generada estilo Hamburgo:
+//   foto full-bleed + overlay editorial superior con name/tagline/precio
+//   + watermark EZRA + tira inferior con specs y servicios.
 import type { Listing } from '../../lib/db';
-import { formatMxn } from '../../lib/db';
-
 interface Props {
   listing: Listing;
+  /** Cuando true, prioriza la imagen como hero (no lazy). */
+  priority?: boolean;
 }
-const { listing } = Astro.props;
-const badges: { label: string; tone: 'accent' | 'ghost' }[] = [];
-if (listing.has_3d) badges.push({ label: '3D', tone: 'accent' });
-if (listing.has_360) badges.push({ label: '360°', tone: 'ghost' });
-if (badges.length === 0) badges.push({ label: 'Disponible', tone: 'ghost' });
-const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
+const { listing, priority = false } = Astro.props;
+
+const cover = listing.cover_image || '/photos/hamburgo-sala.jpg';
+const subtype = listing.furnished ? 'Depto. Amueblado' : 'Departamento';
+const tagline = listing.tagline || (listing.furnished ? 'Listo para mudarte' : 'Renta directa');
+const specs: string[] = [`${listing.area_m2} m²`, `${listing.beds} rec`, `${listing.baths} baño`];
+if (listing.parking) specs.push(`${listing.parking} estac`);
+specs.push('amenidades');
 ---
 
-<a class="ab-card" href={`/departamentos/${listing.slug}`}>
-  <div class="ab-card-img" style={`background-image: url(${cover})`}>
-    <div class="ab-card-badges">
-      {badges.map((b) => (
-        <span class={`ab-badge ab-badge--${b.tone}`}>{b.label}</span>
-      ))}
+<a class="ezra-card" href={`/departamentos/${listing.slug}`} aria-label={`${listing.name} en ${listing.colonia}`}>
+  <article class="ezra-card-frame">
+    <img
+      src={cover}
+      alt={`${listing.name}, ${listing.colonia}`}
+      class="ezra-card-photo"
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+    <div class="ezra-card-scrim-top"></div>
+    <div class="ezra-card-scrim-bottom"></div>
+
+    <header class="ezra-card-overlay">
+      <p class="ezra-card-eyebrow">{listing.name} · Col. {listing.colonia}</p>
+      <h3 class="ezra-card-title">
+        <strong>{subtype}</strong> <span class="ezra-card-tagline">{tagline}</span>
+      </h3>
+      <p class="ezra-card-price">
+        <span class="ezra-card-price-label">Renta</span>
+        <span class="ezra-card-price-amount">${listing.price_mxn.toLocaleString('es-MX')}</span>
+      </p>
+      {listing.utilities_included && (
+        <p class="ezra-card-utilities">{listing.utilities_included}</p>
+      )}
+    </header>
+
+    <div class="ezra-card-watermark" aria-hidden="true">
+      <span class="ezra-card-watermark-name">EZRA</span>
+      <span class="ezra-card-watermark-sub">Real Estate</span>
     </div>
-  </div>
-  <div class="ab-card-body">
-    <div class="ab-card-row">
-      <h3 class="ab-h4 ab-card-name">{listing.name}</h3>
-      {listing.floor != null && <span class="ab-card-floor">piso {listing.floor}</span>}
-    </div>
-    <div class="ab-card-colonia">{listing.colonia}</div>
-    <div class="ab-card-meta">
-      <span class="ab-mono">{formatMxn(listing.price_mxn)} <span class="ab-card-per">/ mes</span></span>
-      <span class="ab-mono ab-card-stats">{listing.beds} rec · {listing.baths} baño · {listing.area_m2} m²</span>
-    </div>
-  </div>
+
+    <footer class="ezra-card-specs">
+      <p class="ezra-card-specs-line">
+        {specs.map((s, i) => (
+          <>
+            {i > 0 && <span class="ezra-card-dot">·</span>}
+            <span>{s}</span>
+          </>
+        ))}
+      </p>
+      <span class="ezra-card-cta" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
+      </span>
+    </footer>
+  </article>
 </a>
 
 <style>
-  .ab-card {
-    display: block; text-decoration: none; color: inherit;
-    background: #fff; border: 1px solid var(--ab-border);
-    border-radius: 14px; overflow: hidden;
-    box-shadow: var(--ab-shadow-1);
-    transition: box-shadow 180ms var(--ab-ease-standard), transform 180ms var(--ab-ease-standard);
+  .ezra-card {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    --card-radius: var(--ezra-radius-lg);
   }
-  .ab-card:hover { box-shadow: var(--ab-shadow-2); transform: translateY(-1px); }
-  .ab-card-img {
-    aspect-ratio: 4 / 3;
-    background-size: cover; background-position: center;
+  .ezra-card-frame {
     position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: var(--ezra-ink-900);
+    box-shadow: var(--ezra-shadow-2);
+    transition: transform var(--ezra-dur-base) var(--ezra-ease-standard),
+                box-shadow var(--ezra-dur-base) var(--ezra-ease-standard);
   }
-  .ab-card-badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
-  .ab-badge {
-    padding: 4px 10px; border-radius: 999px;
-    font-size: 11px; font-weight: 600;
-    backdrop-filter: blur(10px);
+  .ezra-card:hover .ezra-card-frame {
+    transform: translateY(-2px);
+    box-shadow: var(--ezra-shadow-3);
   }
-  .ab-badge--accent { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-badge--ghost  { background: rgba(255,255,255,0.88); color: var(--ab-ink-900); }
-  .ab-card-body { padding: 14px 16px 16px; }
-  .ab-card-row { display: flex; justify-content: space-between; align-items: baseline; }
-  .ab-card-name { margin: 0; }
-  .ab-card-floor { font: var(--ab-text-caption); color: var(--ab-stone-600); }
-  .ab-card-colonia { font: var(--ab-text-caption); color: var(--ab-stone-600); margin-top: 2px; }
-  .ab-card-meta {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-top: 12px; font-family: var(--ab-font-mono); font-size: 14px;
+  .ezra-card-photo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    transition: transform 600ms var(--ezra-ease-standard);
   }
-  .ab-card-per { color: var(--ab-stone-400); font-weight: 400; }
-  .ab-card-stats { color: var(--ab-stone-600); font-size: 12px; }
+  .ezra-card:hover .ezra-card-photo { transform: scale(1.03); }
+
+  .ezra-card-scrim-top {
+    position: absolute; inset: 0 0 auto 0; height: 55%;
+    background: var(--ezra-scrim-top);
+    pointer-events: none;
+  }
+  .ezra-card-scrim-bottom {
+    position: absolute; inset: auto 0 0 0; height: 32%;
+    background: var(--ezra-scrim-bottom);
+    pointer-events: none;
+  }
+
+  .ezra-card-overlay {
+    position: absolute; left: 24px; right: 24px; top: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    color: #FFF;
+  }
+  .ezra-card-eyebrow {
+    margin: 0;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: var(--ezra-track-mid);
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.78);
+  }
+  .ezra-card-title {
+    margin: 0;
+    font-family: var(--ezra-font-body);
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.005em;
+    color: #FFF;
+  }
+  .ezra-card-tagline {
+    display: inline;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+  }
+  .ezra-card-price {
+    margin: 4px 0 0;
+    display: flex; align-items: baseline; gap: 8px;
+    color: #FFF;
+  }
+  .ezra-card-price-label {
+    font-size: 14px; font-weight: 300;
+    color: rgba(255,255,255,0.78);
+    text-transform: lowercase;
+  }
+  .ezra-card-price-amount {
+    font-family: var(--ezra-font-body);
+    font-weight: 800; font-size: 38px;
+    letter-spacing: -0.02em; line-height: 1;
+    color: #FFF;
+  }
+  .ezra-card-utilities {
+    margin: 0;
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.04em;
+  }
+
+  .ezra-card-watermark {
+    position: absolute; left: 50%; bottom: 86px;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    pointer-events: none;
+    opacity: 0.78;
+  }
+  .ezra-card-watermark-name {
+    font-family: var(--ezra-font-display);
+    font-size: 22px; font-weight: 500;
+    letter-spacing: 0.32em;
+    color: #FFF;
+    padding-left: 0.32em;
+  }
+  .ezra-card-watermark-sub {
+    font-size: 8px; font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.78);
+  }
+
+  .ezra-card-specs {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    color: #FFF;
+  }
+  .ezra-card-specs-line {
+    margin: 0;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #FFF;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .ezra-card-dot { color: rgba(255,255,255,0.55); }
+  .ezra-card-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 999px;
+    background: var(--ezra-copper);
+    color: #FFF;
+    flex-shrink: 0;
+    transition: transform var(--ezra-dur-fast) var(--ezra-ease-standard);
+  }
+  .ezra-card:hover .ezra-card-cta { transform: translateX(2px); }
+
+  @media (max-width: 640px) {
+    .ezra-card-title { font-size: 22px; }
+    .ezra-card-price-amount { font-size: 32px; }
+    .ezra-card-overlay { left: 18px; right: 18px; top: 18px; }
+    .ezra-card-specs { padding: 14px 18px; }
+  }
 </style>

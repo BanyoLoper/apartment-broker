@@ -1,0 +1,42 @@
+---
+import { pickIcon, ICONS, type IconKey } from '../../lib/amenity-icons';
+
+interface Props {
+  /** Texto libre — se hace fuzzy match para elegir el icono */
+  text?: string;
+  /** O bien, una key explícita */
+  iconKey?: IconKey;
+  size?: number;
+  stroke?: number;
+  /** Si se pasa, override del color (default: currentColor) */
+  color?: string;
+  ariaLabel?: string;
+}
+const {
+  text, iconKey,
+  size = 18,
+  stroke = 1.5,
+  color = 'currentColor',
+  ariaLabel,
+} = Astro.props;
+
+const def = iconKey ? { def: ICONS[iconKey], key: iconKey } : pickIcon(text || '');
+---
+<svg
+  class="ezra-amenity-icon"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke={color}
+  stroke-width={stroke}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={ariaLabel ? undefined : 'true'}
+  aria-label={ariaLabel}
+  set:html={def.def.svg}
+></svg>
+
+<style>
+  .ezra-amenity-icon { display: inline-block; flex-shrink: 0; }
+</style>

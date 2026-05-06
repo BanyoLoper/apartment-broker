@@ -9,41 +9,37 @@ let counts: Row[] = [];
 if (env?.DB) {
   const rs = await env.DB.prepare(`
     SELECT colonia, COUNT(*) as n, MIN(price_mxn) as min_price, MAX(price_mxn) as max_price
-    FROM listings
-    WHERE status = 'publicada'
-    GROUP BY colonia
-    ORDER BY n DESC
-  `).all<Row>();
-  counts = rs.results || [];
+    FROM listings WHERE status = 'publicada'
+    GROUP BY colonia ORDER BY n DESC
+  `).all();
+  counts = (rs.results as Row[]) || [];
 }
 
-// Descripciones editoriales cortas por colonia (overrideable cuando salga
-// contenido real). Voz: chilanga, sin hipérbole.
 const descriptions: Record<string, { tag: string; body: string; image: string }> = {
   'Roma Norte': {
-    tag: 'Cafés, art déco, plazas',
-    body: 'La Roma Norte es la colonia con más densidad de cafés de especialidad y librerías independientes en CDMX. Edificios art déco restaurados, calles arboladas y la mayoría de las amenidades caminables.',
-    image: '/assets/placeholder-apt-1.svg',
+    tag: 'Cafés, art déco, librerías',
+    body: 'La Roma Norte es la colonia con más densidad de cafés de especialidad y librerías independientes en CDMX. Edificios art déco restaurados, calles arboladas, todo caminable.',
+    image: '/photos/hamburgo-sala.jpg',
   },
   Condesa: {
     tag: 'Parques, terrazas, vida noche',
-    body: 'Parque México en el centro, calles ovaladas que invitan a caminar, terrazas en azoteas y una vida nocturna que no se apaga. Bici-amigable y bien comunicada por Metrobús.',
-    image: '/assets/placeholder-apt-2.svg',
+    body: 'Parque México en el centro, calles ovaladas que invitan a caminar, terrazas en azoteas y una vida nocturna que no se apaga. Bici-amigable y bien comunicada.',
+    image: '/photos/hamburgo-sala-2.jpg',
   },
   'Juárez': {
     tag: 'Reforma, sushi, cocteles',
-    body: 'Entre Reforma y la Cuauhtémoc. Edificios remodelados con plantas altas y vista a la avenida. Comida coreana y japonesa de barrio, escena de cocteles seria, oficinas a 10 minutos.',
-    image: '/assets/placeholder-apt-4.svg',
+    body: 'Entre Reforma y Cuauhtémoc. Edificios remodelados con plantas altas. Comida coreana y japonesa de barrio, escena de cocteles seria, oficinas a 10 minutos.',
+    image: '/photos/hamburgo-comedor.jpg',
   },
   Polanco: {
     tag: 'Tranquilo, parques, embajadas',
-    body: 'Calles arboladas con nombres de poetas, restaurantes establecidos, museos, y proximidad a Parque Lincoln y Chapultepec. Perfecto si buscas residencial bien conectado.',
-    image: '/assets/placeholder-apt-5.svg',
+    body: 'Calles arboladas con nombres de poetas, restaurantes establecidos, museos, y proximidad a Parque Lincoln y Chapultepec.',
+    image: '/photos/hamburgo-sala.jpg',
   },
   Cuauhtémoc: {
     tag: 'Bohemio, mercados, central',
-    body: 'A un paso de Reforma y del centro histórico. Departamentos de altura clásica, mercados sobre ruedas, y una mezcla de oficina-residencia que se siente real.',
-    image: '/assets/placeholder-apt-3.svg',
+    body: 'A un paso de Reforma y del centro histórico. Departamentos de altura clásica, mercados sobre ruedas, y mezcla real de oficina-residencia.',
+    image: '/photos/hamburgo-sala-2.jpg',
   },
 };
 
@@ -55,51 +51,55 @@ const cards = known.map((name) => ({
   min: counts.find((c) => c.colonia === name)?.min_price ?? null,
 }));
 
-const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 ---
 
-<PublicLayout active="colonias" title="Colonias · ApartmentBroker">
-  <main class="ab-colonias">
-    <header class="ab-colonias-head">
-      <span class="ab-eyebrow">Dónde estamos</span>
-      <h1 class="ab-display-2 ab-colonias-title">5 colonias del centro de CDMX</h1>
-      <p class="ab-colonias-lede">
+<PublicLayout active="colonias" title="Colonias · EZRA Real Estate">
+  <main class="ezra-colonias">
+    <header class="ezra-colonias-head">
+      <span class="ezra-eyebrow-wide">Dónde estamos</span>
+      <h1 class="ezra-colonias-title">5 colonias del centro de CDMX</h1>
+      <p class="ezra-colonias-lede">
         Operamos solo donde podemos garantizar tiempos de mantenimiento, seguridad y conectividad. Cada inmueble lo administramos directo — no subcontratamos.
       </p>
     </header>
 
-    <div class="ab-colonias-grid">
+    <div class="ezra-colonias-grid">
       {cards.map((c) => (
-        <a class="ab-col-card" href={`/departamentos?colonia=${encodeURIComponent(c.name)}`}>
-          <div class="ab-col-card-img" style={`background-image: url(${c.image})`}>
-            <div class="ab-col-card-scrim"></div>
+        <a class="ezra-col-card" href={`/departamentos?colonia=${encodeURIComponent(c.name)}`}>
+          <div class="ezra-col-card-frame">
+            <img src={c.image} alt={c.name} class="ezra-col-card-img" loading="lazy" />
+            <div class="ezra-col-card-scrim"></div>
+            <div class="ezra-col-card-overlay">
+              <span class="ezra-eyebrow-wide ezra-col-card-tag">{c.tag}</span>
+              <h3 class="ezra-col-card-name">{c.name}</h3>
+            </div>
             {c.count > 0 && (
-              <div class="ab-col-card-count">{c.count} {c.count === 1 ? 'depa' : 'depas'}</div>
+              <div class="ezra-col-card-count">{c.count} {c.count === 1 ? 'depa' : 'depas'}</div>
             )}
           </div>
-          <div class="ab-col-card-body">
-            <span class="ab-eyebrow">{c.tag}</span>
-            <h3 class="ab-col-card-name">{c.name}</h3>
-            <p class="ab-col-card-body-text">{c.body}</p>
+          <div class="ezra-col-card-body">
+            <p>{c.body}</p>
             {c.min != null && (
-              <div class="ab-col-card-from">
-                desde <span class="ab-mono-tag">MXN ${c.min.toLocaleString('es-MX')}</span> / mes
+              <div class="ezra-col-card-from">
+                <span class="ezra-col-card-from-label">desde</span>
+                <span class="ezra-col-card-from-amount">MXN ${c.min.toLocaleString('es-MX')}</span>
+                <span class="ezra-col-card-from-per">/ mes</span>
               </div>
             )}
-            <span class="ab-col-card-cta">
-              Ver disponibles →
+            <span class="ezra-col-card-cta">
+              Ver disponibles
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
             </span>
           </div>
         </a>
       ))}
     </div>
 
-    <section class="ab-colonias-cta">
-      <span class="ab-eyebrow">¿Buscas otra zona?</span>
-      <h2 class="ab-h2 ab-colonias-cta-title">Nos avisas y vemos qué se puede.</h2>
-      <p>
-        Solo expandimos a colonias donde podemos operar bien. Si vives ahí o quieres que abramos, dinos qué buscas.
-      </p>
+    <section class="ezra-colonias-cta">
+      <span class="ezra-eyebrow-wide">¿Buscas otra zona?</span>
+      <h2 class="ezra-colonias-cta-title">Nos avisas y vemos qué se puede.</h2>
+      <p>Solo expandimos a colonias donde podemos operar bien. Si vives ahí o quieres que abramos, dinos qué buscas.</p>
     </section>
 
     <LeadForm whatsappNumber={whatsapp} />
@@ -107,52 +107,105 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
 </PublicLayout>
 
 <style>
-  .ab-colonias { max-width: 1280px; margin: 0 auto; padding: 64px 32px 0; }
-  .ab-colonias-head { max-width: 720px; margin-bottom: 64px; }
-  .ab-colonias-title { margin: 12px 0 16px; }
-  .ab-colonias-lede { font-size: 18px; color: var(--ab-stone-600); line-height: 1.55; }
+  .ezra-colonias { max-width: 1280px; margin: 0 auto; padding: 64px 32px 0; }
+  .ezra-colonias-head { max-width: 720px; margin-bottom: 64px; }
+  .ezra-colonias-title {
+    margin: 16px 0;
+    font-family: var(--ezra-font-display);
+    font-size: 56px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em;
+  }
+  .ezra-colonias-lede {
+    font-size: 18px; color: var(--ezra-fg-muted);
+    line-height: 1.55; font-weight: 300;
+  }
 
-  .ab-colonias-grid {
+  .ezra-colonias-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 24px;
   }
-  .ab-col-card {
-    background: #fff; border: 1px solid var(--ab-border);
-    border-radius: 22px; overflow: hidden; text-decoration: none; color: inherit;
-    box-shadow: var(--ab-shadow-1);
-    transition: box-shadow 220ms var(--ab-ease-standard), transform 220ms var(--ab-ease-standard);
+  .ezra-col-card {
+    background: var(--ezra-surface);
+    border: 1px solid var(--ezra-border);
+    border-radius: var(--ezra-radius-lg);
+    overflow: hidden;
+    text-decoration: none; color: inherit;
     display: flex; flex-direction: column;
+    transition: transform var(--ezra-dur-base) var(--ezra-ease-standard),
+                box-shadow var(--ezra-dur-base) var(--ezra-ease-standard);
   }
-  .ab-col-card:hover { box-shadow: var(--ab-shadow-2); transform: translateY(-2px); }
-  .ab-col-card-img {
-    position: relative; aspect-ratio: 16/10;
-    background-size: cover; background-position: center;
+  .ezra-col-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ezra-shadow-2);
   }
-  .ab-col-card-scrim {
+  .ezra-col-card-frame {
+    position: relative; aspect-ratio: 16/10; overflow: hidden;
+  }
+  .ezra-col-card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ezra-col-card-scrim {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(22,20,15,0.32), transparent 50%);
+    background: linear-gradient(to top, rgba(10,10,10,0.62), transparent 55%);
   }
-  .ab-col-card-count {
-    position: absolute; bottom: 14px; left: 16px;
-    padding: 4px 10px; border-radius: 999px;
+  .ezra-col-card-overlay {
+    position: absolute; left: 20px; bottom: 16px; right: 20px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .ezra-col-card-tag { color: rgba(255,255,255,0.78); }
+  .ezra-col-card-name {
+    margin: 0;
+    font-family: var(--ezra-font-display);
+    font-size: 32px; font-weight: 600;
+    color: #FFF; letter-spacing: -0.01em; line-height: 1;
+  }
+  .ezra-col-card-count {
+    position: absolute; top: 16px; right: 16px;
+    padding: 4px 10px; border-radius: var(--ezra-radius-pill);
     background: rgba(255,255,255,0.92);
     backdrop-filter: blur(10px);
-    font-size: 12px; font-weight: 600; color: var(--ab-ink-900);
+    font-size: 11px; font-weight: 600; color: #141414;
   }
-  .ab-col-card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
-  .ab-col-card-name { font: var(--ab-text-h2); margin: 4px 0 6px; color: var(--ab-ink-900); letter-spacing: -0.005em; }
-  .ab-col-card-body-text { color: var(--ab-stone-600); margin: 0; line-height: 1.5; flex: 1; }
-  .ab-col-card-from { margin-top: 8px; font-size: 14px; color: var(--ab-stone-600); }
-  .ab-mono-tag { font-family: var(--ab-font-mono); color: var(--ab-ink-900); font-weight: 500; }
-  .ab-col-card-cta {
-    margin-top: 16px; color: var(--ab-terracotta-500);
-    font-weight: 600; font-size: 14px;
+  .ezra-col-card-body {
+    padding: 24px; flex: 1;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ezra-col-card-body p {
+    margin: 0;
+    color: var(--ezra-fg-muted); font-size: 14px;
+    line-height: 1.55; font-weight: 300; flex: 1;
+  }
+  .ezra-col-card-from {
+    display: flex; align-items: baseline; gap: 6px;
+    font-size: 13px;
+  }
+  .ezra-col-card-from-label { color: var(--ezra-fg-muted); }
+  .ezra-col-card-from-amount {
+    font-family: var(--ezra-font-body); font-weight: 700;
+    color: var(--ezra-fg); font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .ezra-col-card-from-per { color: var(--ezra-fg-muted); }
+  .ezra-col-card-cta {
+    margin-top: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--ezra-copper); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.04em;
   }
 
-  .ab-colonias-cta {
+  .ezra-colonias-cta {
     margin-top: 96px; max-width: 720px;
   }
-  .ab-colonias-cta-title { margin: 8px 0 12px; }
-  .ab-colonias-cta p { color: var(--ab-stone-600); font-size: 17px; line-height: 1.55; }
+  .ezra-colonias-cta-title {
+    margin: 12px 0;
+    font-family: var(--ezra-font-display);
+    font-size: 36px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.01em;
+  }
+  .ezra-colonias-cta p {
+    color: var(--ezra-fg-muted); font-size: 16px; line-height: 1.55;
+    font-weight: 300; margin: 0;
+  }
+  @media (max-width: 640px) {
+    .ezra-colonias-title { font-size: 36px; }
+  }
 </style>

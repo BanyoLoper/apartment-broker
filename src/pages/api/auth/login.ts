@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
 
   const broker = await env.DB.prepare(
     'SELECT * FROM brokers WHERE email = ? AND active = 1',
-  ).bind(email).first<Broker>();
+  ).bind(email).first() as Broker | null;
 
   let ok = false;
   if (broker) {

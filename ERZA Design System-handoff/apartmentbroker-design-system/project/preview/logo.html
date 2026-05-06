@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ezra-bg); font-family: var(--ezra-font-body); padding: 16px; }
+  .row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; height: 130px; }
+  .cell { border-radius: 8px; display:flex; align-items:center; justify-content:center; padding: 14px; position: relative; overflow: hidden; }
+  .cell.cream { background: var(--ezra-cream-100); border: 1px solid var(--ezra-border); }
+  .cell.dark { background: var(--ezra-ink-900); }
+  .cell img { max-height: 100%; max-width: 100%; }
+  .lbl { position:absolute; bottom:6px; left:10px; font: var(--ezra-text-eyebrow); letter-spacing: var(--ezra-track-mid); text-transform:uppercase; color: var(--ezra-stone-500); }
+  .cell.dark .lbl { color: rgba(241,236,226,0.5); }
+</style></head><body>
+<div class="row">
+  <div class="cell dark"><img src="../assets/logo-mark.svg" alt=""><span class="lbl">Mark · charcoal</span></div>
+  <div class="cell cream"><img src="../assets/logo-wordmark.svg" alt=""><span class="lbl">Wordmark · light</span></div>
+  <div class="cell dark"><img src="../assets/logo-wordmark-light.svg" alt=""><span class="lbl">Wordmark · dark</span></div>
+</div>
+</body></html>

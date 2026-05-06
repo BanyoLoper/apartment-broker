@@ -24,14 +24,18 @@ const { metrics } = Astro.props;
     gap: 16px; padding: 24px 32px 0;
   }
   .ab-metric {
-    background: #fff; border: 1px solid var(--ab-border);
-    border-radius: 14px; padding: 20px;
+    background: var(--ezra-surface);
+    border: 1px solid var(--ezra-border);
+    border-radius: var(--ezra-radius-lg);
+    padding: 24px;
   }
   .ab-metric-v {
-    font-family: var(--ab-font-display); font-size: 28px; font-weight: 500;
-    color: var(--ab-ink-900); margin-top: 6px; letter-spacing: -0.01em; white-space: nowrap;
+    font-family: var(--ezra-font-display);
+    font-size: 32px; font-weight: 600;
+    color: var(--ezra-fg); margin-top: 6px;
+    letter-spacing: -0.015em; white-space: nowrap;
   }
-  .ab-metric-d { font: var(--ab-text-caption); margin-top: 4px; }
-  .ab-metric-d--jade { color: var(--ab-jade-600); }
-  .ab-metric-d--neutral { color: var(--ab-stone-600); }
+  .ab-metric-d { font-size: 12px; margin-top: 4px; font-weight: 300; }
+  .ab-metric-d--jade { color: var(--ezra-success); }
+  .ab-metric-d--neutral { color: var(--ezra-fg-muted); }
 </style>

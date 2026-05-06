@@ -89,7 +89,8 @@ const { rows } = Astro.props;
   }
 
   // Cambio de estado vía select
-  document.querySelectorAll<HTMLSelectElement>('.ab-status-select').forEach((sel) => {
+  document.querySelectorAll('.ab-status-select').forEach((el) => {
+    const sel = el as unknown as HTMLSelectElement;
     const original = sel.value;
     sel.addEventListener('change', async () => {
       const id = sel.dataset.listingId;
@@ -118,7 +119,8 @@ const { rows } = Astro.props;
   });
 
   // Retirar (soft delete)
-  document.querySelectorAll<HTMLButtonElement>('[data-archive-id]').forEach((btn) => {
+  document.querySelectorAll('[data-archive-id]').forEach((el) => {
+    const btn = el as unknown as HTMLButtonElement;
     btn.addEventListener('click', async () => {
       const id = btn.dataset.archiveId;
       const name = btn.dataset.archiveName;
@@ -141,7 +143,7 @@ const { rows } = Astro.props;
 <style>
   .ab-table-wrap { padding: 24px 32px 64px; position: relative; }
   .ab-table-card {
-    background: #fff; border-radius: 14px;
+    background: #fff; border-radius: 8px;
     border: 1px solid var(--ab-border); overflow: visible;
   }
   table { width: 100%; border-collapse: collapse; }
@@ -207,7 +209,7 @@ const { rows } = Astro.props;
 
   .ab-toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    padding: 12px 18px; border-radius: 10px;
+    padding: 12px 18px; border-radius: 4px;
     background: var(--ab-jade-600); color: #fff;
     font-size: 14px; font-weight: 600;
     box-shadow: var(--ab-shadow-3); z-index: 200;

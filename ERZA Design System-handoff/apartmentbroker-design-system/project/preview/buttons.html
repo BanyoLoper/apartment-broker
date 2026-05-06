@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ezra-ink-900); padding: 24px; font-family: var(--ezra-font-body); }
+  .row { display:flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .row + .row { margin-top: 12px; }
+  button { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; padding: 13px 24px; border-radius: 2px; cursor: pointer; transition: all 180ms; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .primary { background: #FFFFFF; color: #141414; }
+  .primary:hover { background: rgba(255,255,255,0.88); }
+  .secondary { background: transparent; color: #FFFFFF; border-color: rgba(255,255,255,0.4); }
+  .secondary:hover { border-color: #FFF; }
+  .ghost { background: transparent; color: rgba(255,255,255,0.7); }
+  .icon { display:inline-flex; align-items:center; justify-content:center; width: 38px; height: 38px; border-radius: 999px; background: transparent; color: #FFF; border: 1px solid rgba(255,255,255,0.3); cursor:pointer; }
+  .icon:hover { border-color: #FFF; background: rgba(255,255,255,0.06); }
+</style></head><body>
+<div class="row">
+  <button class="primary">Reservar visita</button>
+  <button class="secondary">Ver en 3D</button>
+  <button class="ghost">Cancelar</button>
+  <button class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9 18 6-6-6-6"/></svg></button>
+</div>
+</body></html>

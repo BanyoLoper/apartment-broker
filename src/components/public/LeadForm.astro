@@ -1,56 +1,145 @@
 ---
+import { COMMON_AMENITIES, ICONS } from '../../lib/amenity-icons';
+
 interface Props {
   whatsappNumber: string;
 }
 const { whatsappNumber } = Astro.props;
-const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, me interesa rentar un departamento.')}`;
+const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, me interesa rentar un departamento amueblado.')}`;
+const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
+const beds = ['1', '2', '3+'];
+const budgets = [
+  { value: '25000', label: 'Hasta $25,000' },
+  { value: '35000', label: 'Hasta $35,000' },
+  { value: '50000', label: 'Hasta $50,000' },
+  { value: '999999', label: 'Sin límite' },
+];
 ---
 
-<section id="contacto" class="ab-lead">
-  <div class="ab-lead-inner">
-    <div>
-      <span class="ab-eyebrow">Contacto</span>
-      <h2 class="ab-h2 ab-lead-title">¿No encuentras lo que buscas?</h2>
-      <p class="ab-lead-lede">
-        Cuéntanos qué necesitas. Te avisamos cuando salga algo en tus colonias y presupuesto.
+<section id="contacto" class="ezra-lead">
+  <div class="ezra-lead-inner">
+    <div class="ezra-lead-intro">
+      <span class="ezra-eyebrow-wide">Contacto directo</span>
+      <h2 class="ezra-lead-title">¿No encuentras lo que buscas?</h2>
+      <p class="ezra-lead-lede">
+        Cuéntanos qué necesitas. Te avisamos cuando salga algo en tus colonias y presupuesto. Solo curamos depas amueblados — no portales abiertos.
       </p>
-      <a href={waLink} class="ab-lead-wa" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.7 11.7 0 0 0 12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6A12 12 0 0 0 12 24c6.6 0 12-5.4 12-12 0-3.2-1.2-6.2-3.5-8.5zM12 22c-1.9 0-3.7-.5-5.3-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A10 10 0 1 1 22 12c0 5.5-4.5 10-10 10zm5.5-7.5c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.3-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.4-.2.3-1 1-1 2.3 0 1.4 1 2.7 1.2 2.9.1.2 2 3.1 4.9 4.4 1.7.7 2.4.8 3.3.7.5-.1 1.7-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.5-.3z"/></svg>
+      <a href={waLink} class="ezra-lead-wa" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.7 11.7 0 0 0 12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6A12 12 0 0 0 12 24c6.6 0 12-5.4 12-12 0-3.2-1.2-6.2-3.5-8.5zM12 22c-1.9 0-3.7-.5-5.3-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A10 10 0 1 1 22 12c0 5.5-4.5 10-10 10z"/></svg>
         WhatsApp directo
       </a>
     </div>
-    <form class="ab-lead-form" id="ab-lead-form">
-      <label>
-        <span class="ab-eyebrow">Nombre</span>
-        <input type="text" name="name" required minlength="2" placeholder="Tu nombre" />
-      </label>
-      <label>
-        <span class="ab-eyebrow">Correo</span>
-        <input type="email" name="email" required placeholder="tu@correo.com" />
-      </label>
-      <label>
-        <span class="ab-eyebrow">WhatsApp</span>
-        <input type="tel" name="phone" required pattern="[0-9 +\\-]{10,15}" placeholder="55 1234 5678" />
-      </label>
-      <label>
-        <span class="ab-eyebrow">¿Qué buscas?</span>
-        <textarea name="message" rows="3" placeholder="Roma o Condesa, 2 recámaras, hasta $30,000..." minlength="6"></textarea>
-      </label>
-      <button type="submit" class="ab-lead-cta">Enviar mensaje</button>
-      <div class="ab-lead-status" hidden></div>
+
+    <form class="ezra-lead-form" id="ezra-lead-form">
+      <div class="ezra-lead-row">
+        <span class="ezra-eyebrow-wide">Colonias de interés</span>
+        <div class="ezra-chip-group" data-group="colonias">
+          {colonias.map((c) => (
+            <button type="button" class="ezra-chip" data-value={c}>{c}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ezra-lead-row">
+        <span class="ezra-eyebrow-wide">Recámaras</span>
+        <div class="ezra-chip-group" data-group="beds">
+          {beds.map((b) => (
+            <button type="button" class="ezra-chip ezra-chip--mono" data-value={b}>{b}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ezra-lead-row">
+        <span class="ezra-eyebrow-wide">Renta máxima</span>
+        <div class="ezra-chip-group" data-group="budget">
+          {budgets.map((b) => (
+            <button type="button" class="ezra-chip ezra-chip--mono" data-value={b.value}>{b.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ezra-lead-row">
+        <span class="ezra-eyebrow-wide">Imprescindibles</span>
+        <div class="ezra-chip-group ezra-chip-group--icons" data-group="amenities">
+          {COMMON_AMENITIES.map((a) => (
+            <button type="button" class="ezra-chip ezra-chip--icon" data-value={a.label}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[a.key].svg}></svg>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ezra-lead-grid">
+        <label>
+          <span class="ezra-eyebrow-wide">Nombre</span>
+          <input type="text" name="name" required minlength="2" placeholder="Tu nombre" />
+        </label>
+        <label>
+          <span class="ezra-eyebrow-wide">Correo</span>
+          <input type="email" name="email" required placeholder="tu@correo.com" />
+        </label>
+        <label>
+          <span class="ezra-eyebrow-wide">WhatsApp</span>
+          <input type="tel" name="phone" required pattern="[0-9 +\\-]{10,15}" placeholder="55 1234 5678" />
+        </label>
+        <label>
+          <span class="ezra-eyebrow-wide">Algo más (opcional)</span>
+          <input type="text" name="extra" placeholder="Llegada en julio, mascota grande..." />
+        </label>
+      </div>
+
+      <button type="submit" class="ezra-lead-cta">Enviar mensaje</button>
+      <div class="ezra-lead-status" hidden></div>
     </form>
   </div>
 </section>
 
 <script>
-  const form = document.getElementById('ab-lead-form') as HTMLFormElement | null;
+  const form = document.getElementById('ezra-lead-form') as HTMLFormElement | null;
   if (form) {
-    const status = form.querySelector<HTMLElement>('.ab-lead-status');
+    const status = form.querySelector<HTMLElement>('.ezra-lead-status');
+
+    // Toggle de chips multi-select
+    form.querySelectorAll<HTMLButtonElement>('.ezra-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('is-on');
+      });
+    });
+
+    function collect(group: string): string[] {
+      return Array.from(
+        form!.querySelectorAll<HTMLButtonElement>(`[data-group="${group}"] .is-on`),
+      ).map((b) => b.dataset.value || '');
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
-      const payload = Object.fromEntries(fd.entries());
-      const btn = form.querySelector<HTMLButtonElement>('.ab-lead-cta');
+      const colonias = collect('colonias');
+      const beds = collect('beds');
+      const budget = collect('budget');
+      const amenities = collect('amenities');
+      const extra = String(fd.get('extra') || '').trim();
+
+      // Componemos el mensaje a partir de las selecciones
+      const parts: string[] = [];
+      if (colonias.length) parts.push(`Colonias: ${colonias.join(', ')}`);
+      if (beds.length) parts.push(`Recámaras: ${beds.join(' / ')}`);
+      if (budget.length) parts.push(`Renta máx: $${Number(budget[0]).toLocaleString('es-MX')}`);
+      if (amenities.length) parts.push(`Imprescindibles: ${amenities.join(', ')}`);
+      if (extra) parts.push(extra);
+      const message = parts.join(' · ') || 'Solo escribió desde el formulario.';
+
+      const payload = {
+        name: fd.get('name'),
+        email: fd.get('email'),
+        phone: fd.get('phone'),
+        message,
+      };
+
+      const btn = form.querySelector<HTMLButtonElement>('.ezra-lead-cta');
       if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
       try {
         const res = await fetch('/api/leads', {
@@ -62,14 +151,17 @@ const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola,
         if (status) {
           status.hidden = false;
           status.textContent = '¡Listo! Te contactaremos pronto.';
+          status.classList.remove('is-err');
           status.classList.add('is-ok');
         }
+        form.querySelectorAll<HTMLButtonElement>('.ezra-chip.is-on').forEach((c) => c.classList.remove('is-on'));
         form.reset();
         if (btn) { btn.textContent = 'Enviar mensaje'; btn.disabled = false; }
       } catch {
         if (status) {
           status.hidden = false;
           status.textContent = 'No pudimos enviar. Intenta por WhatsApp.';
+          status.classList.remove('is-ok');
           status.classList.add('is-err');
         }
         if (btn) { btn.textContent = 'Reintentar'; btn.disabled = false; }
@@ -79,42 +171,107 @@ const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola,
 </script>
 
 <style>
-  .ab-lead { margin-top: 96px; padding: 0 32px; }
-  .ab-lead-inner {
+  .ezra-lead { margin-top: 96px; padding: 0 32px; }
+  .ezra-lead-inner {
     max-width: 1280px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px;
-    background: #fff; border-radius: 22px; padding: 48px;
-    border: 1px solid var(--ab-border);
-    box-shadow: var(--ab-shadow-1);
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 64px;
+    background: var(--ezra-surface);
+    border: 1px solid var(--ezra-border);
+    border-radius: var(--ezra-radius-xl);
+    padding: 56px;
   }
-  .ab-lead-title { margin: 8px 0 12px; }
-  .ab-lead-lede { font-size: 17px; color: var(--ab-stone-600); max-width: 440px; }
-  .ab-lead-wa {
+  .ezra-lead-intro {
+    position: sticky; top: 96px; align-self: start;
+  }
+  .ezra-lead-title {
+    margin: 12px 0 16px;
+    font-family: var(--ezra-font-display);
+    font-size: 36px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.01em;
+  }
+  .ezra-lead-lede {
+    font-size: 16px; line-height: 1.6;
+    color: var(--ezra-fg-muted); max-width: 380px;
+    font-weight: 300;
+  }
+  .ezra-lead-wa {
     display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 24px; padding: 12px 18px; border-radius: 10px;
-    background: #25D366; color: #fff; text-decoration: none;
+    margin-top: 28px; padding: 12px 18px;
+    border-radius: var(--ezra-radius-md);
+    background: #25D366; color: #fff;
+    text-decoration: none;
     font-size: 14px; font-weight: 600;
   }
-  .ab-lead-form { display: flex; flex-direction: column; gap: 14px; }
-  .ab-lead-form label { display: flex; flex-direction: column; gap: 6px; }
-  .ab-lead-form input, .ab-lead-form textarea {
-    padding: 12px 14px; border-radius: 10px;
-    border: 1px solid var(--ab-border-strong);
-    background: var(--ab-bone-50);
-    font-size: 15px;
+
+  .ezra-lead-form { display: flex; flex-direction: column; gap: 24px; }
+  .ezra-lead-row { display: flex; flex-direction: column; gap: 10px; }
+  .ezra-chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ezra-chip-group--icons { gap: 6px 8px; }
+
+  .ezra-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--ezra-radius-pill);
+    background: transparent;
+    border: 1px solid var(--ezra-border-strong);
+    color: var(--ezra-fg-muted);
+    font-size: 13px; font-weight: 400; letter-spacing: 0.02em;
+    cursor: pointer; font-family: inherit;
+    transition: background var(--ezra-dur-fast),
+                color var(--ezra-dur-fast),
+                border-color var(--ezra-dur-fast);
   }
-  .ab-lead-form textarea { resize: vertical; min-height: 90px; font-family: inherit; }
-  .ab-lead-cta {
+  .ezra-chip:hover {
+    color: var(--ezra-fg);
+    border-color: var(--ezra-fg);
+  }
+  .ezra-chip.is-on {
+    background: var(--ezra-fg);
+    color: var(--ezra-bg);
+    border-color: var(--ezra-fg);
+    font-weight: 500;
+  }
+  .ezra-chip--mono { font-family: var(--ezra-font-mono); font-size: 12px; }
+  .ezra-chip--icon svg { flex-shrink: 0; }
+
+  .ezra-lead-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-top: 8px;
+    padding-top: 24px;
+    border-top: 1px solid var(--ezra-border);
+  }
+  .ezra-lead-grid label { display: flex; flex-direction: column; gap: 6px; }
+  .ezra-lead-grid input {
+    padding: 12px 14px; border-radius: var(--ezra-radius-md);
+    border: 1px solid var(--ezra-border-strong);
+    background: var(--ezra-input-bg);
+    color: var(--ezra-fg);
+    font-size: 14px;
+  }
+  .ezra-lead-grid input:focus {
+    outline: none;
+    border-color: var(--ezra-fg);
+  }
+
+  .ezra-lead-cta {
     margin-top: 4px; padding: 14px;
-    background: var(--ab-ink-900); color: #fff;
-    border: none; border-radius: 10px; cursor: pointer;
-    font-size: 15px; font-weight: 600;
+    background: var(--ezra-fg); color: var(--ezra-bg);
+    border: none; border-radius: var(--ezra-radius-md); cursor: pointer;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    transition: opacity var(--ezra-dur-fast);
   }
-  .ab-lead-cta:disabled { opacity: 0.6; cursor: not-allowed; }
-  .ab-lead-status { padding: 10px 12px; border-radius: 8px; font-size: 14px; }
-  .ab-lead-status.is-ok  { background: var(--ab-jade-100); color: var(--ab-jade-600); }
-  .ab-lead-status.is-err { background: var(--ab-rosa-100); color: var(--ab-danger); }
-  @media (max-width: 768px) {
-    .ab-lead-inner { grid-template-columns: 1fr; padding: 32px 24px; gap: 32px; }
+  .ezra-lead-cta:hover:not(:disabled) { opacity: 0.85; }
+  .ezra-lead-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ezra-lead-status { padding: 10px 12px; border-radius: var(--ezra-radius-md); font-size: 13px; }
+  .ezra-lead-status.is-ok { background: rgba(92,122,110,0.18); color: var(--ezra-success); }
+  .ezra-lead-status.is-err { background: rgba(176,90,78,0.18); color: var(--ezra-danger); }
+
+  @media (max-width: 1024px) {
+    .ezra-lead-inner { grid-template-columns: 1fr; padding: 40px 28px; gap: 32px; }
+    .ezra-lead-intro { position: static; }
+  }
+  @media (max-width: 640px) {
+    .ezra-lead-grid { grid-template-columns: 1fr; }
   }
 </style>

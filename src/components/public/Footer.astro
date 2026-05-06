@@ -1,60 +1,89 @@
 ---
 const cols = [
-  { heading: 'Producto', links: ['Departamentos', 'Colonias', 'Tour 3D'] },
-  { heading: 'Empresa', links: ['Sobre nosotros', 'Prensa', 'Contacto'] },
-  { heading: 'Legal', links: ['Términos', 'Privacidad', 'Cookies'] },
+  { heading: 'Producto', links: [{ l: 'Departamentos', h: '/departamentos' }, { l: 'Colonias', h: '/colonias' }, { l: 'Cómo funciona', h: '/como-funciona' }] },
+  { heading: 'Empresa', links: [{ l: 'Sobre nosotros', h: '#' }, { l: 'Contacto', h: '#contacto' }] },
+  { heading: 'Legal', links: [{ l: 'Términos', h: '#' }, { l: 'Privacidad', h: '#' }, { l: 'Cookies', h: '#' }] },
 ];
 const year = new Date().getFullYear();
 ---
 
-<footer class="ab-footer">
-  <div class="ab-footer-inner">
-    <div>
-      <img src="/assets/logo-mark.svg" alt="" width="48" height="48" />
-      <p class="ab-footer-tagline">
-        Departamentos curados en Roma, Condesa, Juárez y Polanco. Somos el dueño y el broker — sin intermediarios.
+<footer class="ezra-footer">
+  <div class="ezra-footer-inner">
+    <div class="ezra-footer-brand">
+      <div class="ezra-footer-mark">
+        <span class="ezra-footer-name">EZRA</span>
+        <span class="ezra-footer-sub">Real Estate</span>
+      </div>
+      <p class="ezra-footer-tagline">
+        Departamentos amueblados curados en Roma, Condesa, Juárez y Polanco. Renta directa con el dueño — sin intermediarios.
       </p>
     </div>
     {cols.map((c) => (
-      <div class="ab-footer-col">
-        <span class="ab-footer-heading">{c.heading}</span>
-        {c.links.map((l) => <a href="#">{l}</a>)}
+      <div class="ezra-footer-col">
+        <span class="ezra-footer-heading">{c.heading}</span>
+        {c.links.map((l) => <a href={l.h}>{l.l}</a>)}
       </div>
     ))}
   </div>
-  <div class="ab-footer-bar">
-    <span>© {year} ApartmentBroker · Ciudad de México</span>
-    <span class="ab-mono-tag">RFC ABK260101 · CDMX</span>
+  <div class="ezra-footer-bar">
+    <span>© {year} EZRA Real Estate · Ciudad de México</span>
+    <span class="ezra-footer-mono">Capitalia · Juárez</span>
   </div>
 </footer>
 
 <style>
-  .ab-footer {
-    background: var(--ab-ink-900);
-    color: var(--ab-bone-50);
+  .ezra-footer {
+    background: var(--ezra-bg-deep);
+    color: var(--ezra-fg);
     margin-top: 96px;
-    padding: 64px 32px 32px;
-    background-image: url(/assets/pattern-talavera.svg);
-    background-size: 200px;
-    background-blend-mode: soft-light;
+    padding: 72px 32px 32px;
+    border-top: 1px solid var(--ezra-border);
   }
-  .ab-footer-inner {
+  .ezra-footer-inner {
     max-width: 1280px; margin: 0 auto;
     display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
   }
-  .ab-footer-tagline { max-width: 320px; margin-top: 16px; color: rgba(250,247,242,0.7); }
-  .ab-footer-col { display: flex; flex-direction: column; gap: 10px; }
-  .ab-footer-heading { font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250,247,242,0.5); }
-  .ab-footer-col a { font-size: 14px; color: var(--ab-bone-50); text-decoration: none; }
-  .ab-footer-bar {
-    max-width: 1280px; margin: 48px auto 0; padding-top: 24px;
-    border-top: 1px solid rgba(250,247,242,0.12);
-    display: flex; justify-content: space-between;
-    font: var(--ab-text-caption); color: rgba(250,247,242,0.5);
+  .ezra-footer-brand { max-width: 360px; }
+  .ezra-footer-mark { display: flex; flex-direction: column; gap: 2px; line-height: 1; }
+  .ezra-footer-name {
+    font-family: var(--ezra-font-display);
+    font-size: 36px; font-weight: 500;
+    letter-spacing: 0.32em; color: var(--ezra-fg);
+    padding-left: 0.32em;
   }
-  .ab-mono-tag { font-family: var(--ab-font-mono); }
+  .ezra-footer-sub {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.42em; text-transform: uppercase;
+    color: var(--ezra-fg-muted);
+  }
+  .ezra-footer-tagline {
+    margin-top: 24px; max-width: 320px;
+    color: var(--ezra-fg-muted); line-height: 1.55;
+  }
+  .ezra-footer-col { display: flex; flex-direction: column; gap: 12px; }
+  .ezra-footer-heading {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: var(--ezra-track-wide);
+    text-transform: uppercase;
+    color: var(--ezra-fg-soft);
+  }
+  .ezra-footer-col a {
+    font-size: 14px; color: var(--ezra-fg-muted);
+    text-decoration: none;
+    transition: color var(--ezra-dur-fast) var(--ezra-ease-standard);
+  }
+  .ezra-footer-col a:hover { color: var(--ezra-fg); }
+  .ezra-footer-bar {
+    max-width: 1280px; margin: 64px auto 0; padding-top: 24px;
+    border-top: 1px solid var(--ezra-border);
+    display: flex; justify-content: space-between;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ezra-fg-soft);
+  }
+  .ezra-footer-mono { font-family: var(--ezra-font-mono); letter-spacing: 0.12em; }
   @media (max-width: 768px) {
-    .ab-footer-inner { grid-template-columns: 1fr 1fr; }
-    .ab-footer-bar { flex-direction: column; gap: 8px; }
+    .ezra-footer-inner { grid-template-columns: 1fr 1fr; }
+    .ezra-footer-bar { flex-direction: column; gap: 8px; align-items: flex-start; }
   }
 </style>

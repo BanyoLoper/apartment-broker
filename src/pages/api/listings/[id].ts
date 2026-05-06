@@ -12,7 +12,6 @@ function n(v: FormDataEntryValue | null | undefined): number | null {
   return Number.isFinite(x) ? x : null;
 }
 function b(v: FormDataEntryValue | null | undefined): number {
-  // checkbox: 'on' | null. select 'true'|'false'. all → 0/1
   if (v === 'on' || v === 'true' || v === '1') return 1;
   return 0;
 }
@@ -40,8 +39,6 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
       "UPDATE listings SET status = ?, updated_at = datetime('now') WHERE id = ?",
     ).bind(status, id).run();
 
-    // Si la petición vino con header `accept: application/json`, devolvemos JSON
-    // (caso del select en la tabla con fetch). Si no, redirigimos.
     if (request.headers.get('accept')?.includes('application/json')) {
       return new Response(JSON.stringify({ ok: true, status }), {
         headers: { 'content-type': 'application/json' },
@@ -51,7 +48,6 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
   }
 
   if (action === 'delete') {
-    // soft delete = retirar
     await env.DB.prepare(
       "UPDATE listings SET status = 'retirada', updated_at = datetime('now') WHERE id = ?",
     ).bind(id).run();
@@ -63,7 +59,7 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     return redirect('/admin/publicaciones');
   }
 
-  // action === 'update' — actualización completa desde el form de edición
+  // action === 'update'
   const slug = s(fd.get('slug'));
   const name = s(fd.get('name'));
   const colonia = s(fd.get('colonia'));
@@ -80,7 +76,6 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     return new Response('estado inválido', { status: 400 });
   }
 
-  // Recalcular punto difuso si cambian las coordenadas reales
   const latReal = n(fd.get('lat_real'));
   const lngReal = n(fd.get('lng_real'));
   let latFuzzy: number | null = null;
@@ -90,7 +85,6 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     latFuzzy = fuzzy.lat; lngFuzzy = fuzzy.lng;
   }
 
-  // Amenidades llegan como string separado por nuevas líneas o JSON
   const amenitiesRaw = s(fd.get('amenities'));
   let amenitiesJson: string | null = null;
   if (amenitiesRaw) {
@@ -107,6 +101,7 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
       cover_image = ?,
       has_3d = ?, has_360 = ?, model_glb_url = ?,
       amenities = ?, pet_friendly = ?, parking = ?, available_at = ?,
+      furnished = ?, utilities_included = ?, tagline = ?,
       updated_at = datetime('now')
     WHERE id = ?
   `).bind(
@@ -119,6 +114,7 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     s(fd.get('cover_image')),
     b(fd.get('has_3d')), b(fd.get('has_360')), s(fd.get('model_glb_url')),
     amenitiesJson, b(fd.get('pet_friendly')), b(fd.get('parking')), s(fd.get('available_at')),
+    b(fd.get('furnished')), s(fd.get('utilities_included')), s(fd.get('tagline')),
     id,
   ).run();
 

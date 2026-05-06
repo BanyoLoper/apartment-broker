@@ -42,8 +42,23 @@ const session = Astro.locals.session;
           <Field label="Latitud"><input name="lat_real" type="number" step="any" placeholder="19.4148" /></Field>
           <Field label="Longitud"><input name="lng_real" type="number" step="any" placeholder="-99.1675" /></Field>
           <div class="ab-form-full">
+            <Field label="Tagline (overlay editorial de la tarjeta)">
+              <input name="tagline" placeholder="Estilo hotel boutique" maxlength="80" />
+            </Field>
+          </div>
+          <div class="ab-form-full">
+            <Field label="Servicios incluidos en la renta">
+              <input name="utilities_included" placeholder="mtto + gas + luz + agua + internet" />
+            </Field>
+          </div>
+          <div class="ab-form-full" style="display: flex; gap: 16px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+              <input type="checkbox" name="furnished" checked /> Departamento amueblado
+            </label>
+          </div>
+          <div class="ab-form-full">
             <Field label="Descripción">
-              <textarea name="description" rows="4" placeholder="Departamento de 78 m²..."></textarea>
+              <textarea name="description" rows="4" placeholder="Suite boutique en torre Capitalia..."></textarea>
             </Field>
           </div>
         </div>
@@ -133,7 +148,7 @@ const session = Astro.locals.session;
   .ab-wizard-steps {
     display: flex; align-items: center; gap: 12px;
     padding: 16px 20px; margin-bottom: 24px;
-    background: #fff; border: 1px solid var(--ab-border); border-radius: 14px;
+    background: #fff; border: 1px solid var(--ab-border); border-radius: 8px;
   }
   .ab-step { display: flex; align-items: center; gap: 8px; color: var(--ab-stone-400); font-size: 13px; font-weight: 600; }
   .ab-step-num {
@@ -148,33 +163,36 @@ const session = Astro.locals.session;
 
   .ab-form-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-    background: #fff; padding: 28px; border-radius: 14px;
+    background: #fff; padding: 28px; border-radius: 8px;
     border: 1px solid var(--ab-border);
   }
   .ab-form-full { grid-column: 1 / -1; }
   .ab-uploads {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-    background: #fff; padding: 20px; border-radius: 14px;
+    background: #fff; padding: 20px; border-radius: 8px;
     border: 1px solid var(--ab-border);
   }
   .ab-upload-slot {
     aspect-ratio: 4/3; border: 1.5px dashed var(--ab-border-strong);
-    border-radius: 10px; padding: 12px;
+    border-radius: 4px; padding: 12px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
     color: var(--ab-stone-600); cursor: pointer;
     background: var(--ab-bone-50);
   }
   .ab-upload-num { font: var(--ab-text-eyebrow); }
   .ab-upload-btn {
-    padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
-    border: 1px solid var(--ab-border-strong); background: #fff; cursor: pointer;
+    padding: 8px 14px; border-radius: 4px; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--ezra-border-strong); background: var(--ezra-surface);
+    color: var(--ezra-fg); cursor: pointer;
   }
+  .ab-upload-btn:hover { border-color: var(--ezra-fg); }
   .ab-upload-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
   }
   .ab-upload-card {
     padding: 16px; border: 1px solid var(--ab-border-strong);
-    border-radius: 12px; display: flex; gap: 14px; align-items: flex-start;
+    border-radius: 8px; display: flex; gap: 14px; align-items: flex-start;
     background: #fff;
   }
   .ab-upload-card input {
@@ -186,7 +204,7 @@ const session = Astro.locals.session;
     border-radius: 8px; color: var(--ab-stone-600); font-size: 13px;
   }
   .ab-publish-card {
-    padding: 18px; background: var(--ab-jade-100); border-radius: 12px;
+    padding: 18px; background: var(--ab-jade-100); border-radius: 8px;
     display: flex; gap: 12px; align-items: flex-start;
   }
   .ab-publish-title { font-weight: 600; color: var(--ab-jade-600); }
@@ -199,10 +217,17 @@ const session = Astro.locals.session;
     display: flex; justify-content: space-between;
   }
   .ab-wizard-btn {
-    padding: 12px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    border: none; cursor: pointer;
+    padding: 12px 22px; border-radius: 4px; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast);
   }
-  .ab-wizard-btn--ghost { background: #fff; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
-  .ab-wizard-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-wizard-btn--primary:hover { background: var(--ab-terracotta-600); }
+  .ab-wizard-btn--ghost {
+    background: transparent;
+    border-color: var(--ezra-border-strong);
+    color: var(--ezra-fg-muted);
+  }
+  .ab-wizard-btn--ghost:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ab-wizard-btn--primary { background: var(--ezra-fg); color: var(--ezra-bg); }
+  .ab-wizard-btn--primary:hover { opacity: 0.85; }
 </style>

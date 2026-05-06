@@ -1,6 +1,6 @@
 ---
-// Mapa con Leaflet + OpenStreetMap (sin API key).
-// Muestra el punto difuso del inmueble + amenidades cercanas vía Overpass API.
+import { NEARBY_CATEGORIES } from '../../lib/nearby-icons';
+
 interface Props {
   fuzzyLat: number;
   fuzzyLng: number;
@@ -8,36 +8,51 @@ interface Props {
   listingName: string;
 }
 const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
+
+// Estado inicial: transit, parks, cafes encendidos
+const initialOn = new Set(['transit', 'parks', 'cafes']);
+
+// Pasamos el catálogo al cliente como JSON (svg incluido)
+const catalogJson = JSON.stringify(NEARBY_CATEGORIES);
 ---
 
-<section class="ab-nearby">
-  <div class="ab-nearby-head">
+<section class="ezra-nearby">
+  <div class="ezra-nearby-head">
     <div>
-      <span class="ab-eyebrow">Comodidades cercanas</span>
-      <h2 class="ab-h2 ab-nearby-title">El barrio, a pie</h2>
+      <span class="ezra-eyebrow-wide">Comodidades cercanas</span>
+      <h2 class="ezra-nearby-title">El barrio, a pie</h2>
     </div>
-    <div class="ab-nearby-cats" role="group" aria-label="Categorías">
-      <button data-cat="transit" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#3B5B8A"></span>Transporte</button>
-      <button data-cat="parks" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#2F6B5E"></span>Parques</button>
-      <button data-cat="stores" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#D9A441"></span>Súper · OXXO</button>
-      <button data-cat="cafes" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#C8553D"></span>Cafés</button>
-      <button data-cat="gyms" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#E8A6A0"></span>Gimnasios</button>
-      <button data-cat="schools" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#5C564C"></span>Escuelas</button>
+    <div class="ezra-nearby-cats" role="group" aria-label="Categorías">
+      {NEARBY_CATEGORIES.map((c) => (
+        <button
+          data-cat={c.key}
+          class={`ezra-cat ${initialOn.has(c.key) ? 'is-on' : ''}`}
+          type="button"
+          style={`--cat-color: ${c.color}`}
+          aria-pressed={initialOn.has(c.key)}
+        >
+          <svg class="ezra-cat-icon" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" set:html={c.svg}></svg>
+          {c.label}
+        </button>
+      ))}
     </div>
   </div>
 
   <div
-    id="ab-nearby-map"
-    class="ab-nearby-map"
+    id="ezra-nearby-map"
+    class="ezra-nearby-map"
     data-lat={fuzzyLat}
     data-lng={fuzzyLng}
     data-radius={fuzzyRadiusM}
     data-name={listingName}
+    data-catalog={catalogJson}
   ></div>
 
-  <p class="ab-nearby-note">
-    El círculo punteado es la zona aproximada del inmueble (radio ~{fuzzyRadiusM}m). La ubicación exacta se comparte tras agendar una visita.
-    Datos de POIs: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contribuyentes</a>.
+  <p class="ezra-nearby-note">
+    Círculo punteado: zona aproximada (radio ~{fuzzyRadiusM}m). La ubicación exacta se comparte tras agendar visita.
+    Datos de POIs: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.
   </p>
 </section>
 
@@ -50,41 +65,52 @@ const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
   (function () {
     function init() {
       if (typeof L === 'undefined') { setTimeout(init, 100); return; }
-      const el = document.getElementById('ab-nearby-map');
+      const el = document.getElementById('ezra-nearby-map');
       if (!el) return;
       const lat = Number(el.dataset.lat);
       const lng = Number(el.dataset.lng);
       const radius = Number(el.dataset.radius || 150);
       const name = el.dataset.name || 'Inmueble';
+      const catalog = JSON.parse(el.dataset.catalog || '[]');
+      const catMap = Object.fromEntries(catalog.map((c) => [c.key, c]));
 
       const map = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 16);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-        maxZoom: 19,
-      }).addTo(map);
+
+      const lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap, © CARTO', maxZoom: 19, subdomains: 'abcd',
+      });
+      const darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap, © CARTO', maxZoom: 19, subdomains: 'abcd',
+      });
+      function pickTiles() {
+        return document.documentElement.dataset.theme === 'light' ? lightTiles : darkTiles;
+      }
+      let activeTiles = pickTiles().addTo(map);
+      new MutationObserver(() => {
+        const next = pickTiles();
+        if (next !== activeTiles) {
+          map.removeLayer(activeTiles);
+          activeTiles = next.addTo(map);
+        }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
       L.circle([lat, lng], {
         radius,
-        color: '#C8553D',
+        color: '#C26A3F',
         weight: 1.5,
         dashArray: '6 6',
-        fillColor: '#C8553D',
-        fillOpacity: 0.06,
+        fillColor: '#C26A3F',
+        fillOpacity: 0.10,
       }).addTo(map);
 
-      // Pin difuso del inmueble (centro del círculo)
       const listingIcon = L.divIcon({
-        className: 'ab-listing-pin',
-        html: `<div class="ab-listing-pin-inner">${name}</div>`,
+        className: 'ezra-listing-pin',
+        html: `<div class="ezra-listing-pin-inner">${name}</div>`,
         iconSize: [120, 32],
         iconAnchor: [60, 32],
       });
       L.marker([lat, lng], { icon: listingIcon, interactive: false }).addTo(map);
 
-      const colors = {
-        transit: '#3B5B8A', parks: '#2F6B5E', stores: '#D9A441',
-        cafes: '#C8553D', gyms: '#E8A6A0', schools: '#5C564C',
-      };
       const layers = {};
       const cache = {};
 
@@ -93,7 +119,6 @@ const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
         const res = await fetch(`/api/overpass?lat=${lat}&lng=${lng}&radius=1000&category=${cat}`);
         if (!res.ok) return [];
         const data = await res.json();
-        // El endpoint devuelve un array si tuvo éxito, o {error, results: []} en fallo
         const list = Array.isArray(data) ? data : (data.results || []);
         cache[cat] = list;
         return list;
@@ -103,13 +128,17 @@ const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
         if (on) {
           if (layers[cat]) { layers[cat].addTo(map); return; }
           const pois = await loadCategory(cat);
+          const def = catMap[cat];
           const group = L.layerGroup();
           pois.forEach((p) => {
             const icon = L.divIcon({
-              className: 'ab-poi-pin',
-              html: `<div class="ab-poi-dot" style="background:${colors[cat]}"></div>`,
-              iconSize: [14, 14],
-              iconAnchor: [7, 7],
+              className: 'ezra-poi-pin',
+              html: `<div class="ezra-poi-bubble" style="background:${def.color}">
+                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff"
+                            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${def.svg}</svg>
+                     </div>`,
+              iconSize: [24, 24],
+              iconAnchor: [12, 12],
             });
             const m = L.marker([p.lat, p.lng], { icon });
             m.bindPopup(`<strong>${p.name}</strong>${p.detail ? `<br><small>${p.detail}</small>` : ''}`);
@@ -127,6 +156,7 @@ const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
         if (btn.classList.contains('is-on')) setCategory(cat, true);
         btn.addEventListener('click', () => {
           btn.classList.toggle('is-on');
+          btn.setAttribute('aria-pressed', btn.classList.contains('is-on'));
           setCategory(cat, btn.classList.contains('is-on'));
         });
       });
@@ -136,37 +166,53 @@ const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
 </script>
 
 <style is:global>
-  .ab-listing-pin .ab-listing-pin-inner {
+  .ezra-listing-pin .ezra-listing-pin-inner {
     padding: 8px 14px; border-radius: 999px;
-    background: var(--ab-terracotta-500); color: #fff;
-    font-family: var(--ab-font-mono); font-size: 13px; font-weight: 600;
-    box-shadow: var(--ab-shadow-3); white-space: nowrap;
-    text-align: center;
+    background: #FFF; color: #141414;
+    font-family: var(--ezra-font-body); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: 0 8px 24px -10px rgba(0,0,0,0.45);
+    white-space: nowrap; text-align: center;
   }
-  .ab-poi-pin .ab-poi-dot {
-    width: 14px; height: 14px; border-radius: 999px;
-    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  .ezra-poi-pin .ezra-poi-bubble {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 999px;
+    border: 2px solid #FFF;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
   }
 </style>
 
 <style>
-  .ab-nearby { margin-top: 64px; }
-  .ab-nearby-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-  .ab-nearby-title { margin: 8px 0 0; }
-  .ab-nearby-cats { display: flex; gap: 8px; flex-wrap: wrap; }
-  .ab-cat {
+  .ezra-nearby { margin-top: 64px; }
+  .ezra-nearby-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .ezra-nearby-title {
+    margin: 8px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: 32px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.01em;
+  }
+  .ezra-nearby-cats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ezra-cat {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: 999px;
-    background: #fff; border: 1px solid var(--ab-border-strong);
-    color: var(--ab-ink-900); cursor: pointer;
-    font-size: 13px; font-weight: 600;
+    padding: 8px 14px; border-radius: var(--ezra-radius-pill);
+    background: transparent; border: 1px solid var(--ezra-border-strong);
+    color: var(--ezra-fg-muted); cursor: pointer;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+    transition: all var(--ezra-dur-fast) var(--ezra-ease-standard);
   }
-  .ab-cat.is-on { background: var(--ab-ink-900); color: var(--ab-bone-50); border-color: var(--ab-ink-900); }
-  .ab-cat-dot { width: 8px; height: 8px; border-radius: 999px; }
-  .ab-nearby-map {
-    margin-top: 24px; height: 480px; border-radius: 22px; overflow: hidden;
-    box-shadow: var(--ab-shadow-2); background: var(--ab-bone-100);
+  .ezra-cat:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
+  .ezra-cat.is-on {
+    background: var(--cat-color, var(--ezra-fg));
+    color: #FFF;
+    border-color: var(--cat-color, var(--ezra-fg));
   }
-  .ab-nearby-note { font: var(--ab-text-caption); color: var(--ab-stone-600); margin-top: 12px; }
-  .ab-nearby-note a { color: var(--ab-stone-600); }
+  .ezra-cat-icon { flex-shrink: 0; }
+  .ezra-nearby-map {
+    margin-top: 24px; height: 480px;
+    border-radius: var(--ezra-radius-xl); overflow: hidden;
+    border: 1px solid var(--ezra-border);
+  }
+  .ezra-nearby-note { font-size: 12px; color: var(--ezra-fg-soft); margin-top: 12px; }
+  .ezra-nearby-note a { color: var(--ezra-fg-muted); }
 </style>

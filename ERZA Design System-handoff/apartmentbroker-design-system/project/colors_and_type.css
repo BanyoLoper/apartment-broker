@@ -1,0 +1,144 @@
+/* =====================================================================
+   EZRA Real Estate — Foundations
+   Editorial / hospitality palette: charcoal + cream + a single warm accent.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+:root {
+  /* ---------- Color: Architectural neutrals pulled from EZRA reference ----------
+     The brand is monochrome — white type on photography. Wood/stone tones live
+     in the IMAGES, not in the UI. The UI itself is pure greyscale. */
+  --ezra-ink-950:  #0A0A0A;   /* page bg dark */
+  --ezra-ink-900:  #141414;   /* primary dark surface — EZRA mark bg */
+  --ezra-ink-800:  #1F1F1F;   /* elevated dark cards */
+  --ezra-ink-700:  #2A2A2A;   /* dividers on dark */
+  --ezra-stone-700: #3D3D3D;  /* the "shadow" tone behind hero photos */
+  --ezra-stone-500: #6E6E6E;  /* mid neutral */
+  --ezra-stone-400: #8E8987;  /* warm stone (from oak tones in image) */
+  --ezra-stone-300: #B5B0AC;  /* the "wall light" warm grey */
+  --ezra-stone-200: #D4CFC9;  /* concrete light */
+  --ezra-paper:    #EFEBE6;   /* WARM off-white (only for light mode pages, sparingly) */
+  --ezra-pure:     #FFFFFF;   /* THE accent — bold white type */
+
+  /* No chromatic accent. White is the accent.
+     If a moment NEEDS contrast color (rare — destructive states only),
+     it is muted. */
+  --ezra-danger:   #B05A4E;   /* warm desaturated terracotta — destructive only */
+  --ezra-success:  #5C7A6E;   /* eucalyptus — confirmations only */
+  --ezra-warning:  #A8896B;   /* oak — warnings only */
+  --ezra-info:     #6E7A8A;   /* slate — info only */
+
+  /* Legacy aliases (kept so existing components don't break — they all
+     resolve to neutrals now, which is the point) */
+  --ezra-cream-50:  var(--ezra-paper);
+  --ezra-cream-100: var(--ezra-paper);
+  --ezra-cream-200: var(--ezra-stone-200);
+  --ezra-accent-500: var(--ezra-pure);   /* "accent" is white */
+  --ezra-accent-600: var(--ezra-stone-200);
+  --ezra-accent-100: rgba(255,255,255,0.12);
+
+  /* ---------- Shorthand ---------- */
+  --ezra-bg:        var(--ezra-ink-900);     /* default page is DARK */
+  --ezra-bg-dark:   var(--ezra-ink-950);
+  --ezra-surface:   var(--ezra-ink-800);
+  --ezra-fg:        var(--ezra-pure);
+  --ezra-fg-muted:  rgba(255,255,255,0.62);
+  --ezra-fg-on-dark: var(--ezra-pure);
+  --ezra-border:    rgba(255,255,255,0.10);
+  --ezra-border-strong: rgba(255,255,255,0.22);
+  --ezra-border-on-dark: rgba(255,255,255,0.12);
+
+  /* ---------- Type: families ---------- */
+  --ezra-font-display: 'Playfair Display', 'Bodoni 72', 'Didot', Georgia, serif;
+  --ezra-font-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ezra-font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  /* ---------- Type: scale ---------- */
+  /* The EZRA wordmark style: didone, wide tracking, elegant. */
+  --ezra-text-wordmark: 400 56px/0.95 var(--ezra-font-display);
+  --ezra-text-display-1: 500 80px/1.00 var(--ezra-font-display);
+  --ezra-text-display-2: 500 56px/1.05 var(--ezra-font-display);
+  --ezra-text-h1:        500 40px/1.10 var(--ezra-font-display);
+  --ezra-text-h2:        500 30px/1.18 var(--ezra-font-display);
+  /* Editorial overlay style (Hamburgo card): heavy grotesque, tight, on photos */
+  --ezra-text-overlay-xl: 800 44px/1.0  var(--ezra-font-body);
+  --ezra-text-overlay-lg: 800 30px/1.05 var(--ezra-font-body);
+  --ezra-text-overlay-md: 700 22px/1.15 var(--ezra-font-body);
+  /* UI */
+  --ezra-text-h3:       600 22px/1.25 var(--ezra-font-body);
+  --ezra-text-h4:       600 18px/1.30 var(--ezra-font-body);
+  --ezra-text-body:     400 16px/1.55 var(--ezra-font-body);
+  --ezra-text-body-sm:  400 14px/1.50 var(--ezra-font-body);
+  --ezra-text-caption:  500 12px/1.40 var(--ezra-font-body);
+  --ezra-text-eyebrow:  500 11px/1.20 var(--ezra-font-body);
+  --ezra-text-mono:     400 13px/1.50 var(--ezra-font-mono);
+
+  /* ---------- Spacing (4px base) ---------- */
+  --ezra-space-1: 4px; --ezra-space-2: 8px; --ezra-space-3: 12px;
+  --ezra-space-4: 16px; --ezra-space-5: 24px; --ezra-space-6: 32px;
+  --ezra-space-7: 48px; --ezra-space-8: 64px; --ezra-space-9: 96px;
+
+  /* ---------- Radii — EZRA leans squarer than typical real estate ---------- */
+  --ezra-radius-sm: 2px;
+  --ezra-radius-md: 4px;
+  --ezra-radius-lg: 8px;
+  --ezra-radius-xl: 14px;
+  --ezra-radius-pill: 999px;
+
+  /* ---------- Shadows (cool / minimal) ---------- */
+  --ezra-shadow-1: 0 1px 2px rgba(14,14,14,0.05), 0 0 0 1px rgba(14,14,14,0.04);
+  --ezra-shadow-2: 0 8px 24px -10px rgba(14,14,14,0.16);
+  --ezra-shadow-3: 0 24px 48px -20px rgba(14,14,14,0.30);
+
+  /* ---------- Motion ---------- */
+  --ezra-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ezra-dur-fast: 140ms; --ezra-dur-base: 220ms; --ezra-dur-slow: 380ms;
+
+  /* ---------- Eyebrow letter-spacing — wide, EZRA-style ---------- */
+  --ezra-track-wide: 0.32em;
+  --ezra-track-mid:  0.18em;
+}
+
+/* ---------- Helpers ---------- */
+.ezra-eyebrow {
+  font: var(--ezra-text-eyebrow);
+  letter-spacing: var(--ezra-track-mid);
+  text-transform: uppercase;
+  color: var(--ezra-fg-muted);
+  font-weight: 300;
+}
+.ezra-eyebrow-wide {
+  font: var(--ezra-text-eyebrow);
+  letter-spacing: var(--ezra-track-wide);
+  text-transform: uppercase;
+  color: var(--ezra-fg-muted);
+  font-weight: 300;
+}
+
+/* Display & UI headings — bold white. The accent IS the weight contrast. */
+.ezra-display-1 { font: var(--ezra-text-display-1); letter-spacing: -0.015em; color: var(--ezra-pure); font-weight: 800; }
+.ezra-display-2 { font: var(--ezra-text-display-2); letter-spacing: -0.01em;  color: var(--ezra-pure); font-weight: 800; }
+.ezra-h1 { font: var(--ezra-text-h1); color: var(--ezra-pure); font-weight: 800; letter-spacing: -0.005em; }
+.ezra-h2 { font: var(--ezra-text-h2); color: var(--ezra-pure); font-weight: 700; }
+.ezra-h3 { font: var(--ezra-text-h3); color: var(--ezra-pure); font-weight: 700; }
+.ezra-h4 { font: var(--ezra-text-h4); color: var(--ezra-pure); font-weight: 600; }
+/* Body — THIN white. The other half of the editorial system. */
+.ezra-body { font: var(--ezra-text-body); color: var(--ezra-pure); font-weight: 300; }
+.ezra-body-thin { font: var(--ezra-text-body); color: rgba(255,255,255,0.78); font-weight: 200; }
+.ezra-mono { font: var(--ezra-text-mono); color: var(--ezra-pure); }
+
+.ezra-base {
+  background: var(--ezra-bg);
+  color: var(--ezra-fg);
+  font: var(--ezra-text-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The signature listing-card overlay treatment — bold white name, thin white meta. */
+.ezra-overlay-name { font-family: var(--ezra-font-body); font-weight: 800; color: var(--ezra-pure); letter-spacing: -0.005em; line-height: 1.05; }
+.ezra-overlay-meta { font-family: var(--ezra-font-body); font-weight: 300; color: var(--ezra-pure); line-height: 1.35; }
+.ezra-overlay-price { font-family: var(--ezra-font-body); font-weight: 800; color: var(--ezra-pure); letter-spacing: -0.02em; line-height: 1; }
+.ezra-overlay-price-label { font-family: var(--ezra-font-body); font-weight: 300; color: var(--ezra-pure); }

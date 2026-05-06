@@ -21,27 +21,28 @@ if (env?.DB) {
   }
   if (maxPrice > 0) { conds.push('price_mxn <= ?'); binds.push(maxPrice); }
   const sql = `SELECT * FROM listings WHERE ${conds.join(' AND ')} ORDER BY price_mxn ASC`;
-  const rs = await env.DB.prepare(sql).bind(...binds).all<Listing>();
-  results = rs.results || [];
+  const rs = await env.DB.prepare(sql).bind(...binds).all();
+  results = (rs.results as Listing[]) || [];
 }
 ---
 
-<PublicLayout active="listings" title="Departamentos · ApartmentBroker">
-  <main class="ab-listings">
-    <div class="ab-listings-head">
+<PublicLayout active="listings" title="Departamentos · EZRA Real Estate">
+  <main class="ezra-listings">
+    <header class="ezra-listings-head">
       <div>
-        <span class="ab-eyebrow">{results.length} departamentos</span>
-        <h1 class="ab-h1">{colonia || 'CDMX completa'}</h1>
+        <span class="ezra-eyebrow-wide">{results.length} {results.length === 1 ? 'departamento' : 'departamentos'}</span>
+        <h1 class="ezra-listings-title">{colonia || 'CDMX completa'}</h1>
       </div>
-    </div>
-    <div class="ab-listings-grid">
-      <div class="ab-listings-list">
+    </header>
+
+    <div class="ezra-listings-grid">
+      <div class="ezra-listings-list">
         {results.map((l) => <ListingCard listing={l} />)}
         {results.length === 0 && (
-          <div class="ab-empty">No hay depas con esos filtros. Cambia algún criterio.</div>
+          <div class="ezra-empty">No hay depas con esos filtros. Cambia algún criterio.</div>
         )}
       </div>
-      <div class="ab-listings-map-wrap">
+      <div class="ezra-listings-map-wrap">
         <ListingsMap listings={results} />
       </div>
     </div>
@@ -49,31 +50,39 @@ if (env?.DB) {
 </PublicLayout>
 
 <style>
-  .ab-listings { max-width: 1280px; margin: 0 auto; padding: 32px 32px 64px; }
-  .ab-listings-head { margin-bottom: 24px; }
-  .ab-listings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+  .ezra-listings { max-width: 1280px; margin: 0 auto; padding: 64px 32px; }
+  .ezra-listings-head { margin-bottom: 32px; }
+  .ezra-listings-title {
+    margin: 8px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: 56px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.02em;
+  }
+  .ezra-listings-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
     align-items: start;
   }
-  .ab-listings-list {
+  .ezra-listings-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
   }
-  .ab-listings-map-wrap {
+  .ezra-listings-map-wrap {
     position: sticky; top: 96px;
     height: calc(100vh - 120px);
   }
-  .ab-empty {
-    grid-column: 1 / -1; padding: 40px; text-align: center;
-    color: var(--ab-stone-600);
-    background: #fff; border: 1px dashed var(--ab-border-strong);
-    border-radius: 14px;
+  .ezra-empty {
+    grid-column: 1 / -1; padding: 48px; text-align: center;
+    color: var(--ezra-fg-muted);
+    border: 1px dashed var(--ezra-border-strong);
+    border-radius: var(--ezra-radius-lg);
   }
   @media (max-width: 1024px) {
-    .ab-listings-grid { grid-template-columns: 1fr; }
-    .ab-listings-map-wrap { position: static; height: 480px; order: -1; }
+    .ezra-listings-grid { grid-template-columns: 1fr; }
+    .ezra-listings-map-wrap { position: static; height: 480px; order: -1; }
+  }
+  @media (max-width: 640px) {
+    .ezra-listings-title { font-size: 36px; }
   }
 </style>

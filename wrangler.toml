@@ -17,7 +17,7 @@ bucket_name = "apartmentbroker-media"
 # ----- Variables de entorno (no secretos). Secretos: wrangler secret put -----
 [vars]
 SITE_URL = "https://apartmentbroker.pages.dev"
-WHATSAPP_NUMBER = "525555555555"
+WHATSAPP_NUMBER = "525527846773"
 LEAD_NOTIFY_EMAIL = "broker@example.com"
 PUBLIC_MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 PUBLIC_FUZZY_RADIUS_M = "150"

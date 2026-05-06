@@ -9,8 +9,8 @@ interface Props {
   active?: 'home' | 'listings' | 'colonias' | 'how';
 }
 const {
-  title = 'ApartmentBroker — Renta directa en CDMX',
-  description = 'Departamentos curados en Roma, Condesa, Juárez y Polanco. Renta directa con el dueño, sin comisiones.',
+  title = 'EZRA Real Estate — Departamentos amueblados en CDMX',
+  description = 'EZRA opera y renta departamentos amueblados estilo hotel boutique en Roma, Condesa, Juárez y Polanco. Renta directa con el dueño.',
   active = 'home',
 } = Astro.props;
 ---
@@ -22,7 +22,18 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg" />
+  <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#F1ECE2" media="(prefers-color-scheme: light)" />
+  <link rel="icon" type="image/jpeg" href="/assets/ezra-icon.jpg" />
+  <script is:inline>
+    // Aplica el tema antes del primer paint para evitar flash
+    (function () {
+      try {
+        const t = localStorage.getItem('ezra-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) { /* SSR / no localStorage */ }
+    })();
+  </script>
 </head>
 <body>
   <Header active={active} />

@@ -14,82 +14,133 @@ const errorMsg = error === 'credenciales' ? 'Correo o contraseña incorrectos.'
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Iniciar sesión · ApartmentBroker</title>
+  <title>Acceso brokers · EZRA Real Estate</title>
+  <link rel="icon" type="image/jpeg" href="/assets/ezra-icon.jpg" />
 </head>
-<body class="ab-login-body">
-  <main class="ab-login">
-    <a href="/" class="ab-login-back">← Volver al sitio</a>
-    <div class="ab-login-card">
-      <img src="/assets/logo-mark.svg" alt="" width="48" height="48" />
-      <span class="ab-eyebrow">Console</span>
-      <h1 class="ab-h1">Inicia sesión</h1>
-      <p class="ab-login-sub">Acceso para brokers de ApartmentBroker.</p>
+<body class="ezra-login-body">
+  <main class="ezra-login">
+    <a href="/" class="ezra-login-back">← Volver al sitio</a>
+    <div class="ezra-login-card">
+      <a href="/" class="ezra-login-mark">
+        <span class="ezra-login-name">EZRA</span>
+        <span class="ezra-login-sub">Real Estate</span>
+      </a>
+      <span class="ezra-eyebrow-wide">Admin Console</span>
+      <h1 class="ezra-login-title">Acceso brokers</h1>
+      <p class="ezra-login-lede">Solo personal autorizado de EZRA.</p>
 
-      {errorMsg && <div class="ab-login-err">{errorMsg}</div>}
+      {errorMsg && <div class="ezra-login-err">{errorMsg}</div>}
 
-      <form method="post" action="/api/auth/login" class="ab-login-form">
+      <form method="post" action="/api/auth/login" class="ezra-login-form">
         <input type="hidden" name="redirect" value={redirect} />
         <label>
-          <span class="ab-eyebrow">Correo</span>
+          <span class="ezra-eyebrow-wide">Correo</span>
           <input type="email" name="email" required autofocus value="broker@example.com" />
         </label>
         <label>
-          <span class="ab-eyebrow">Contraseña</span>
+          <span class="ezra-eyebrow-wide">Contraseña</span>
           <input type="password" name="password" required />
         </label>
         <button type="submit">Entrar</button>
       </form>
 
-      <p class="ab-login-help">
-        ¿Demo? Usa <code>broker@example.com</code> y la contraseña que configuraste en <code>.dev.vars</code> (<code>ADMIN_PASSWORD</code>).
+      <p class="ezra-login-help">
+        Demo: <code>broker@example.com</code> + <code>ADMIN_PASSWORD</code> de <code>.dev.vars</code>.
       </p>
     </div>
   </main>
 
   <style>
-    .ab-login-body { min-height: 100vh; background: var(--ab-bg); margin: 0; }
-    .ab-login {
+    .ezra-login-body {
+      min-height: 100vh; background: #0A0A0A; margin: 0;
+      color: #FFF;
+    }
+    .ezra-login {
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center; padding: 24px;
-      background-image: url(/assets/pattern-talavera.svg);
-      background-size: 320px;
     }
-    .ab-login-back {
-      align-self: flex-start; padding: 8px 12px; color: var(--ab-stone-600);
-      text-decoration: none; font-size: 14px; margin-bottom: 16px;
+    .ezra-login-back {
+      align-self: flex-start; padding: 8px 12px;
+      color: rgba(255,255,255,0.62);
+      text-decoration: none; font-size: 12px; margin-bottom: 16px;
+      letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
     }
-    .ab-login-card {
+    .ezra-login-back:hover { color: #FFF; }
+    .ezra-login-card {
       width: 100%; max-width: 420px;
-      background: #fff; border-radius: 22px; padding: 40px;
-      box-shadow: var(--ab-shadow-3);
+      background: #141414;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--ezra-radius-xl);
+      padding: 48px 40px;
       display: flex; flex-direction: column; gap: 6px;
+      align-items: flex-start;
     }
-    .ab-login-card img { margin-bottom: 16px; }
-    .ab-login-sub { color: var(--ab-stone-600); margin: 4px 0 24px; }
-    .ab-login-form { display: flex; flex-direction: column; gap: 16px; }
-    .ab-login-form label { display: flex; flex-direction: column; gap: 6px; }
-    .ab-login-form input {
-      padding: 12px 14px; border: 1px solid var(--ab-border-strong);
-      border-radius: 10px; background: var(--ab-bone-50); font-size: 15px;
+    .ezra-login-mark {
+      display: flex; flex-direction: column; gap: 1px;
+      line-height: 1; text-decoration: none;
+      margin-bottom: 24px;
     }
-    .ab-login-form button {
-      margin-top: 8px; padding: 14px;
-      background: var(--ab-terracotta-500); color: #fff;
-      border: none; border-radius: 10px; cursor: pointer;
-      font-size: 15px; font-weight: 600;
+    .ezra-login-name {
+      font-family: var(--ezra-font-display);
+      font-size: 32px; font-weight: 500;
+      letter-spacing: 0.32em; color: #FFF;
+      padding-left: 0.32em;
     }
-    .ab-login-form button:hover { background: var(--ab-terracotta-600); }
-    .ab-login-err {
-      padding: 10px 12px; border-radius: 8px;
-      background: var(--ab-rosa-100); color: var(--ab-danger);
-      font-size: 14px; margin: 8px 0;
+    .ezra-login-sub {
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.42em; text-transform: uppercase;
+      color: rgba(255,255,255,0.62);
     }
-    .ab-login-help {
-      margin-top: 16px; font-size: 13px; color: var(--ab-stone-600); line-height: 1.5;
+    .ezra-login-title {
+      font-family: var(--ezra-font-display);
+      font-size: 36px; font-weight: 600;
+      color: #FFF;
+      margin: 4px 0 0; letter-spacing: -0.01em;
     }
-    .ab-login-help code {
-      font-family: var(--ab-font-mono); font-size: 12px;
-      background: var(--ab-bone-100); padding: 2px 5px; border-radius: 4px;
+    .ezra-login-lede {
+      color: rgba(255,255,255,0.62); margin: 4px 0 24px;
+      font-size: 14px; font-weight: 300;
+    }
+    .ezra-login-form { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+    .ezra-login-form label { display: flex; flex-direction: column; gap: 6px; }
+    .ezra-login-form input {
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--ezra-radius-md);
+      background: rgba(255,255,255,0.04);
+      color: #FFF;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .ezra-login-form input:focus {
+      outline: none;
+      border-color: #FFF;
+    }
+    .ezra-login-form button {
+      margin-top: 12px; padding: 14px;
+      background: #FFF; color: #141414;
+      border: none; border-radius: var(--ezra-radius-md); cursor: pointer;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .ezra-login-form button:hover { opacity: 0.85; }
+    .ezra-login-err {
+      padding: 10px 12px; border-radius: var(--ezra-radius-md);
+      background: rgba(176,90,78,0.18); border: 1px solid var(--ezra-danger);
+      color: var(--ezra-danger);
+      font-size: 13px; margin: 8px 0;
+      width: 100%;
+    }
+    .ezra-login-help {
+      margin-top: 16px; font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.5;
+    }
+    .ezra-login-help code {
+      font-family: var(--ezra-font-mono); font-size: 11px;
+      background: rgba(255,255,255,0.06); padding: 2px 5px;
+      border-radius: var(--ezra-radius-sm);
+      color: #FFF;
     }
   </style>
 </body>

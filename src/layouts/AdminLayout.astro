@@ -11,17 +11,17 @@ const { title, active, brokerName } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es-MX">
+<html lang="es-MX" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title} · ApartmentBroker Admin</title>
-  <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg" />
+  <title>{title} · EZRA Admin</title>
+  <link rel="icon" type="image/jpeg" href="/assets/ezra-icon.jpg" />
 </head>
 <body>
-  <div class="ab-admin-shell">
+  <div class="ezra-admin-shell">
     <Sidebar active={active} brokerName={brokerName} />
-    <main class="ab-admin-main">
+    <main class="ezra-admin-main">
       <slot />
     </main>
   </div>
@@ -29,12 +29,12 @@ const { title, active, brokerName } = Astro.props;
 </html>
 
 <style>
-  .ab-admin-shell {
+  .ezra-admin-shell {
     display: flex;
     min-height: 100vh;
-    background: var(--ab-bg);
+    background: var(--ezra-bg);
   }
-  .ab-admin-main {
+  .ezra-admin-main {
     flex: 1;
     min-width: 0;
   }

@@ -3,7 +3,7 @@ import PublicLayout from '../layouts/PublicLayout.astro';
 import LeadForm from '../components/public/LeadForm.astro';
 
 const env = Astro.locals.runtime?.env;
-const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 
 const steps = [
   {
@@ -15,106 +15,86 @@ const steps = [
   {
     n: '02',
     title: 'Reservas la visita',
-    body: 'Eliges horario en la ficha del depa, o nos escribes directo por WhatsApp. Te confirmamos en menos de 30 minutos. La visita la hace alguien de nuestro equipo, no un agente externo.',
+    body: 'Eliges horario en la ficha del depa, o nos escribes directo por WhatsApp. Te confirmamos en menos de 30 minutos. La visita la hace alguien del equipo EZRA, no un agente externo.',
     eyebrow: 'Confirmación rápida',
   },
   {
     n: '03',
     title: 'Firmas con nosotros',
-    body: 'Somos el dueño del edificio. No hay comisión a inquilino, no hay intermediario. Contrato claro, depósito de un mes, mantenimiento incluido. Te entregamos llaves en 48 horas.',
+    body: 'Somos los dueños del edificio. Sin comisión a inquilino, sin intermediario. Contrato claro, depósito de un mes, mantenimiento y servicios incluidos. Llaves en 48 horas.',
     eyebrow: 'Renta directa',
   },
 ];
 
 const faqs = [
-  {
-    q: '¿Cobran comisión al inquilino?',
-    a: 'No. Como somos los dueños del edificio, no hay broker intermedio. Lo que pagas es la renta y un mes de depósito.',
-  },
-  {
-    q: '¿Aceptan mascotas?',
-    a: 'Depende del inmueble — viene marcado en cada ficha. La mayoría sí. Pedimos un comprobante de vacunas y firmamos un anexo de cuidado.',
-  },
-  {
-    q: '¿Cuánto dura el contrato?',
-    a: 'Mínimo 12 meses. Renovable en automático si ambas partes están conformes. No cobramos penalización por renovar.',
-  },
-  {
-    q: '¿Quién hace los arreglos?',
-    a: 'Nosotros. El mantenimiento del depa está incluido en la renta. Reportas por WhatsApp y un técnico de nuestro equipo va dentro de 24–48 horas.',
-  },
-  {
-    q: '¿Necesito aval?',
-    a: 'Depende del depa. En la mayoría aceptamos depósito doble en lugar de aval. En unidades de renta más alta sí pedimos aval o póliza jurídica — te avisamos al solicitar.',
-  },
-  {
-    q: '¿Pueden mostrarme el depa fuera de horario?',
-    a: 'Sí, dentro de lo razonable. Escríbenos por WhatsApp y vemos. Domingos por la tarde y entre semana después de las 7pm es lo más solicitado.',
-  },
+  { q: '¿Cobran comisión al inquilino?', a: 'No. Como somos los dueños del edificio, no hay broker intermedio. Lo que pagas es la renta y un mes de depósito.' },
+  { q: '¿Los servicios están incluidos?', a: 'Sí — la mayoría de nuestros depas amueblados incluyen mantenimiento, gas, luz, agua e internet. Cada ficha lo especifica abajo del precio.' },
+  { q: '¿Aceptan mascotas?', a: 'Depende del inmueble — viene marcado en cada ficha. La mayoría sí. Pedimos comprobante de vacunas y firmamos un anexo de cuidado.' },
+  { q: '¿Cuánto dura el contrato?', a: 'Mínimo 12 meses. Renovable en automático si ambas partes están conformes. No cobramos penalización por renovar.' },
+  { q: '¿Quién hace los arreglos?', a: 'Nosotros. El mantenimiento del depa está incluido en la renta. Reportas por WhatsApp y un técnico de EZRA va dentro de 24–48 horas.' },
+  { q: '¿Necesito aval?', a: 'En la mayoría aceptamos depósito doble en lugar de aval. En unidades de renta más alta sí pedimos aval o póliza jurídica — te avisamos al solicitar.' },
 ];
 ---
 
-<PublicLayout active="how" title="Cómo funciona · ApartmentBroker">
+<PublicLayout active="how" title="Cómo funciona · EZRA Real Estate">
   <main>
-    <section class="ab-how-hero">
-      <div class="ab-how-hero-inner">
-        <span class="ab-eyebrow">Cómo funciona</span>
-        <h1 class="ab-display-1 ab-how-title">
-          Renta directa con el dueño.<br/>
-          <span class="ab-how-title-accent">Sin intermediarios.</span>
+    <section class="ezra-how-hero">
+      <div class="ezra-how-hero-inner">
+        <span class="ezra-eyebrow-wide">Cómo funciona</span>
+        <h1 class="ezra-how-title">
+          <span class="ezra-how-title-thin">Renta directa con</span><br/>
+          <span class="ezra-how-title-bold">el dueño. Sin intermediarios.</span>
         </h1>
-        <p class="ab-how-lede">
-          Operamos nuestro propio portafolio. Lo que ves es lo que pagas — sin comisiones, sin agentes externos, sin sorpresas. Tres pasos del clic al contrato.
+        <p class="ezra-how-lede">
+          Operamos nuestro propio portafolio de departamentos amueblados estilo hotel boutique. Lo que ves es lo que pagas — sin comisiones, sin agentes externos, sin sorpresas.
         </p>
       </div>
     </section>
 
-    <section class="ab-how-steps">
-      <div class="ab-how-steps-inner">
+    <section class="ezra-how-steps">
+      <div class="ezra-how-steps-inner">
         {steps.map((s) => (
-          <div class="ab-how-step">
-            <div class="ab-how-step-num">{s.n}</div>
-            <div class="ab-how-step-body">
-              <span class="ab-eyebrow">{s.eyebrow}</span>
-              <h2 class="ab-h2 ab-how-step-title">{s.title}</h2>
+          <article class="ezra-how-step">
+            <div class="ezra-how-step-num">{s.n}</div>
+            <div class="ezra-how-step-body">
+              <span class="ezra-eyebrow-wide">{s.eyebrow}</span>
+              <h2 class="ezra-how-step-title">{s.title}</h2>
               <p>{s.body}</p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>
 
-    <section class="ab-how-diff">
-      <div class="ab-how-diff-inner">
+    <section class="ezra-how-diff">
+      <div class="ezra-how-diff-inner">
         <div>
-          <span class="ab-eyebrow">Qué hace diferente</span>
-          <h2 class="ab-h2 ab-how-diff-title">Operamos cada edificio que rentamos.</h2>
+          <span class="ezra-eyebrow-wide">Qué hace diferente</span>
+          <h2 class="ezra-how-diff-title">Operamos cada edificio que rentamos.</h2>
           <p>
-            En portales tradicionales, cada depa lo lista un broker distinto, con fotos distintas y respuestas distintas. Aquí cada inmueble pasa por el mismo equipo, las mismas fotos, los mismos estándares.
+            En portales tradicionales, cada depa lo lista un broker distinto, con fotos distintas y respuestas distintas. Aquí cada inmueble pasa por el mismo equipo, las mismas fotos, los mismos estándares boutique.
           </p>
-          <ul class="ab-how-diff-list">
-            <li><strong>Tour 3D real</strong> — escaneado a milímetro, no maqueta.</li>
-            <li><strong>Panorámica 360°</strong> por habitación — ves la luz a distintas horas.</li>
-            <li><strong>Mapa de lo cercano</strong> — Metro, OXXO, parque, café. A pie.</li>
-            <li><strong>Mantenimiento incluido</strong> — un solo número de WhatsApp.</li>
+          <ul class="ezra-how-diff-list">
+            <li><strong>Amueblado completo</strong> — vajilla, blancos, escritorio, mobiliario.</li>
+            <li><strong>Servicios incluidos</strong> — mantenimiento, gas, luz, agua e internet.</li>
+            <li><strong>Tour 3D real</strong> — escaneado, no maqueta.</li>
+            <li><strong>Panorámica 360°</strong> por habitación.</li>
+            <li><strong>Soporte un solo número</strong> — un WhatsApp para todo.</li>
           </ul>
-        </div>
-        <div class="ab-how-diff-img">
-          <img src="/assets/pattern-talavera.svg" alt="" />
         </div>
       </div>
     </section>
 
-    <section class="ab-how-faq">
-      <div class="ab-how-faq-inner">
-        <span class="ab-eyebrow">Preguntas frecuentes</span>
-        <h2 class="ab-h2 ab-how-faq-title">Lo que más nos preguntan</h2>
-        <div class="ab-faq-list">
+    <section class="ezra-how-faq">
+      <div class="ezra-how-faq-inner">
+        <span class="ezra-eyebrow-wide">Preguntas frecuentes</span>
+        <h2 class="ezra-how-faq-title">Lo que más nos preguntan</h2>
+        <div class="ezra-faq-list">
           {faqs.map((f) => (
-            <details class="ab-faq-item">
+            <details class="ezra-faq-item">
               <summary>
                 <span>{f.q}</span>
-                <span class="ab-faq-toggle" aria-hidden="true">+</span>
+                <span class="ezra-faq-toggle" aria-hidden="true">+</span>
               </summary>
               <p>{f.a}</p>
             </details>
@@ -128,116 +108,129 @@ const faqs = [
 </PublicLayout>
 
 <style>
-  .ab-how-hero {
-    padding: 96px 32px 32px;
-    background-image: url(/assets/pattern-talavera.svg);
-    background-size: 320px;
-    background-blend-mode: multiply;
-    background-color: var(--ab-bone-50);
+  .ezra-how-hero {
+    padding: 96px 32px 64px;
+    border-bottom: 1px solid var(--ezra-border);
   }
-  .ab-how-hero-inner { max-width: 880px; margin: 0 auto; }
-  .ab-how-title { margin: 16px 0 24px; max-width: 760px; }
-  .ab-how-title-accent { color: var(--ab-terracotta-500); }
-  .ab-how-lede {
-    font-size: 19px; color: var(--ab-stone-600);
-    max-width: 640px; line-height: 1.55;
+  .ezra-how-hero-inner { max-width: 880px; margin: 0 auto; }
+  .ezra-how-title {
+    margin: 24px 0; max-width: 760px;
+    font-family: var(--ezra-font-display);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 600; line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ezra-fg);
+  }
+  .ezra-how-title-thin { font-weight: 300; font-style: italic; color: var(--ezra-fg-muted); }
+  .ezra-how-title-bold { color: var(--ezra-fg); }
+  .ezra-how-lede {
+    font-size: 18px; color: var(--ezra-fg-muted);
+    max-width: 640px; line-height: 1.55; font-weight: 300;
   }
 
-  .ab-how-steps { padding: 64px 32px; }
-  .ab-how-steps-inner {
+  .ezra-how-steps { padding: 96px 32px; }
+  .ezra-how-steps-inner {
     max-width: 1080px; margin: 0 auto;
     display: flex; flex-direction: column; gap: 64px;
   }
-  .ab-how-step {
+  .ezra-how-step {
     display: grid; grid-template-columns: 200px 1fr; gap: 64px;
     align-items: start;
-    padding-top: 32px;
-    border-top: 1px solid var(--ab-border);
+    padding-top: 48px;
+    border-top: 1px solid var(--ezra-border);
   }
-  .ab-how-step:first-child { border-top: none; padding-top: 0; }
-  .ab-how-step-num {
-    font-family: var(--ab-font-display);
+  .ezra-how-step:first-child { border-top: none; padding-top: 0; }
+  .ezra-how-step-num {
+    font-family: var(--ezra-font-display);
     font-size: 96px; font-weight: 500;
-    color: var(--ab-terracotta-500);
+    color: var(--ezra-copper);
     letter-spacing: -0.04em; line-height: 1;
   }
-  .ab-how-step-title { margin: 8px 0 12px; }
-  .ab-how-step-body p {
-    color: var(--ab-stone-600); font-size: 17px; line-height: 1.55; max-width: 560px;
+  .ezra-how-step-title {
+    margin: 12px 0;
+    font-family: var(--ezra-font-display);
+    font-size: 36px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.01em;
+  }
+  .ezra-how-step-body p {
+    color: var(--ezra-fg-muted); font-size: 17px;
+    line-height: 1.65; font-weight: 300;
+    max-width: 580px; margin: 0;
   }
 
-  .ab-how-diff {
-    background: var(--ab-ink-900); color: var(--ab-bone-50);
+  .ezra-how-diff {
+    background: var(--ezra-bg-deep);
+    color: var(--ezra-fg);
     padding: 96px 32px;
-    background-image: url(/assets/pattern-talavera.svg);
-    background-size: 280px;
-    background-blend-mode: soft-light;
+    border-top: 1px solid var(--ezra-border);
+    border-bottom: 1px solid var(--ezra-border);
   }
-  .ab-how-diff-inner {
-    max-width: 1280px; margin: 0 auto;
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: center;
+  .ezra-how-diff-inner { max-width: 880px; margin: 0 auto; }
+  .ezra-how-diff-title {
+    margin: 12px 0 20px;
+    font-family: var(--ezra-font-display);
+    font-size: 44px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.015em;
   }
-  .ab-how-diff-inner .ab-eyebrow { color: rgba(250,247,242,0.6) !important; }
-  .ab-how-diff-title {
-    color: var(--ab-bone-50) !important;
-    margin: 8px 0 16px;
+  .ezra-how-diff-inner > div > p {
+    color: var(--ezra-fg-muted); font-size: 17px;
+    line-height: 1.65; font-weight: 300;
+    max-width: 640px; margin: 0;
   }
-  .ab-how-diff-inner > div > p {
-    color: rgba(250,247,242,0.78); font-size: 17px; line-height: 1.55;
-    max-width: 520px;
-  }
-  .ab-how-diff-list {
-    margin-top: 24px; padding: 0; list-style: none;
+  .ezra-how-diff-list {
+    margin-top: 32px; padding: 0; list-style: none;
     display: flex; flex-direction: column; gap: 12px;
   }
-  .ab-how-diff-list li {
-    color: rgba(250,247,242,0.85);
-    padding-left: 20px; position: relative;
-    line-height: 1.55;
+  .ezra-how-diff-list li {
+    color: var(--ezra-fg-muted);
+    padding-left: 24px; position: relative;
+    line-height: 1.6; font-weight: 300;
   }
-  .ab-how-diff-list li::before {
-    content: '·'; position: absolute; left: 0;
-    color: var(--ab-terracotta-500); font-size: 24px; line-height: 1;
+  .ezra-how-diff-list li::before {
+    content: ''; position: absolute; left: 0; top: 11px;
+    width: 12px; height: 1px;
+    background: var(--ezra-copper);
   }
-  .ab-how-diff-list strong { color: var(--ab-bone-50); }
-  .ab-how-diff-img {
-    aspect-ratio: 4/5; border-radius: 22px; overflow: hidden;
-    background: var(--ab-terracotta-500);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .ab-how-diff-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; mix-blend-mode: overlay; }
+  .ezra-how-diff-list strong { color: var(--ezra-fg); font-weight: 600; }
 
-  .ab-how-faq { padding: 96px 32px 64px; }
-  .ab-how-faq-inner { max-width: 880px; margin: 0 auto; }
-  .ab-how-faq-title { margin: 8px 0 32px; }
-  .ab-faq-list { display: flex; flex-direction: column; }
-  .ab-faq-item {
-    border-top: 1px solid var(--ab-border);
+  .ezra-how-faq { padding: 96px 32px; }
+  .ezra-how-faq-inner { max-width: 880px; margin: 0 auto; }
+  .ezra-how-faq-title {
+    margin: 12px 0 32px;
+    font-family: var(--ezra-font-display);
+    font-size: 44px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.015em;
+  }
+  .ezra-faq-list { display: flex; flex-direction: column; }
+  .ezra-faq-item {
+    border-top: 1px solid var(--ezra-border);
     padding: 24px 0;
   }
-  .ab-faq-item:last-child { border-bottom: 1px solid var(--ab-border); }
-  .ab-faq-item summary {
+  .ezra-faq-item:last-child { border-bottom: 1px solid var(--ezra-border); }
+  .ezra-faq-item summary {
     cursor: pointer; list-style: none;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 18px; font-weight: 500; color: var(--ab-ink-900);
+    font-size: 18px; font-weight: 500; color: var(--ezra-fg);
     padding: 4px 0;
   }
-  .ab-faq-item summary::-webkit-details-marker { display: none; }
-  .ab-faq-toggle {
-    font-family: var(--ab-font-mono); font-size: 22px;
-    color: var(--ab-terracotta-500);
-    transition: transform 220ms var(--ab-ease-standard);
+  .ezra-faq-item summary::-webkit-details-marker { display: none; }
+  .ezra-faq-toggle {
+    font-family: var(--ezra-font-mono); font-size: 22px;
+    color: var(--ezra-copper);
+    transition: transform var(--ezra-dur-base) var(--ezra-ease-standard);
   }
-  .ab-faq-item[open] .ab-faq-toggle { transform: rotate(45deg); }
-  .ab-faq-item p {
-    margin-top: 12px; color: var(--ab-stone-600);
-    font-size: 16px; line-height: 1.6; max-width: 720px;
+  .ezra-faq-item[open] .ezra-faq-toggle { transform: rotate(45deg); }
+  .ezra-faq-item p {
+    margin-top: 12px; color: var(--ezra-fg-muted);
+    font-size: 16px; line-height: 1.65; max-width: 720px;
+    font-weight: 300;
   }
-
   @media (max-width: 768px) {
-    .ab-how-step { grid-template-columns: 1fr; gap: 16px; }
-    .ab-how-step-num { font-size: 64px; }
-    .ab-how-diff-inner { grid-template-columns: 1fr; }
-    .ab-how-diff-img { display: none; }
+    .ezra-how-step { grid-template-columns: 1fr; gap: 16px; }
+    .ezra-how-step-num { font-size: 64px; }
+    .ezra-how-step-title { font-size: 28px; }
   }
 </style>

@@ -13,8 +13,8 @@ if (env?.DB) {
     LEFT JOIN listings li ON li.id = l.listing_id
     ORDER BY l.created_at DESC
     LIMIT 100
-  `).all<Lead & { listing_name?: string }>();
-  leads = rs.results || [];
+  `).all();
+  leads = (rs.results as (Lead & { listing_name?: string })[]) || [];
 }
 
 const statusClass: Record<Lead['status'], string> = {
@@ -65,7 +65,7 @@ const statusLabel: Record<Lead['status'], string> = {
 <style>
   .ab-leads { padding: 24px 32px 64px; }
   .ab-leads-card {
-    background: #fff; border-radius: 14px;
+    background: #fff; border-radius: 8px;
     border: 1px solid var(--ab-border); overflow: hidden;
   }
   table { width: 100%; border-collapse: collapse; }

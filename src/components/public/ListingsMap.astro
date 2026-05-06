@@ -1,5 +1,4 @@
 ---
-// Mapa split-view del listado público. Pins difusos con precio.
 import type { Listing } from '../../lib/db';
 interface Props { listings: Listing[]; }
 const { listings } = Astro.props;
@@ -8,7 +7,7 @@ const points = listings
   .map((l) => ({ id: l.id, slug: l.slug, name: l.name, lat: l.lat_fuzzy!, lng: l.lng_fuzzy!, price: l.price_mxn }));
 ---
 
-<div id="ab-listings-map" class="ab-listings-map" data-points={JSON.stringify(points)}></div>
+<div id="ezra-listings-map" class="ezra-listings-map" data-points={JSON.stringify(points)}></div>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -19,11 +18,11 @@ const points = listings
   (function () {
     function init() {
       if (typeof L === 'undefined') { setTimeout(init, 100); return; }
-      const el = document.getElementById('ab-listings-map');
+      const el = document.getElementById('ezra-listings-map');
       if (!el) return;
       const points = JSON.parse(el.dataset.points || '[]');
       if (points.length === 0) {
-        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ab-stone-600);">Sin departamentos publicados todavía.</div>';
+        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ezra-fg-muted);">Sin departamentos publicados.</div>';
         return;
       }
       const center = [
@@ -31,14 +30,20 @@ const points = listings
         points.reduce((a, p) => a + p.lng, 0) / points.length,
       ];
       const map = L.map(el, { scrollWheelZoom: false }).setView(center, 14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap', maxZoom: 19,
-      }).addTo(map);
+      const lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19 });
+      const darkTiles  = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',  { attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19 });
+      function pick() { return document.documentElement.dataset.theme === 'light' ? lightTiles : darkTiles; }
+      let active = pick().addTo(map);
+      new MutationObserver(() => {
+        const next = pick();
+        if (next !== active) { map.removeLayer(active); active = next.addTo(map); }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
       points.forEach((p) => {
         const priceK = (p.price / 1000).toFixed(1) + 'k';
         const icon = L.divIcon({
-          className: 'ab-price-pin',
-          html: `<a href="/departamentos/${p.slug}" class="ab-price-pin-inner">$${priceK}</a>`,
+          className: 'ezra-price-pin',
+          html: `<a href="/departamentos/${p.slug}" class="ezra-price-pin-inner">$${priceK}</a>`,
           iconSize: [62, 26],
           iconAnchor: [31, 26],
         });
@@ -50,20 +55,24 @@ const points = listings
 </script>
 
 <style is:global>
-  .ab-price-pin .ab-price-pin-inner {
-    display: inline-block; padding: 5px 10px; border-radius: 999px;
-    background: #fff; color: var(--ab-ink-900);
-    font-family: var(--ab-font-mono); font-size: 12px; font-weight: 600;
-    box-shadow: var(--ab-shadow-2); text-decoration: none;
+  .ezra-price-pin .ezra-price-pin-inner {
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    background: #FFF; color: #141414;
+    font-family: var(--ezra-font-body); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: 0 8px 24px -10px rgba(0,0,0,0.45);
+    text-decoration: none;
+    transition: background 140ms, color 140ms;
   }
-  .ab-price-pin .ab-price-pin-inner:hover { background: var(--ab-terracotta-500); color: #fff; }
+  .ezra-price-pin .ezra-price-pin-inner:hover {
+    background: var(--ezra-copper); color: #FFF;
+  }
 </style>
 
 <style>
-  .ab-listings-map {
+  .ezra-listings-map {
     width: 100%; height: 100%; min-height: 480px;
-    border-radius: 14px; overflow: hidden;
-    background: var(--ab-bone-100);
-    box-shadow: inset 0 0 0 1px var(--ab-border);
+    border-radius: var(--ezra-radius-lg); overflow: hidden;
+    border: 1px solid var(--ezra-border);
   }
 </style>

@@ -6,94 +6,105 @@ interface Props {
 }
 const { images, has3d, has360 } = Astro.props;
 const imgs = [...images];
-while (imgs.length < 5) imgs.push(images[0] || '/assets/placeholder-apt-1.svg');
+while (imgs.length < 5) imgs.push(images[0] || '/photos/hamburgo-sala.jpg');
 ---
 
-<section class="ab-journey">
-  <div class="ab-journey-hero" style={`background-image: url(${imgs[0]})`}>
-    <div class="ab-journey-scrim"></div>
-    <div class="ab-journey-actions">
+<section class="ezra-journey">
+  <div class="ezra-journey-hero">
+    <img src={imgs[0]} alt="" class="ezra-journey-img" loading="eager" />
+    <div class="ezra-journey-scrim"></div>
+    <div class="ezra-journey-actions">
       {has3d && (
-        <button type="button" class="ab-journey-chip ab-journey-chip--accent" data-open-3d>
+        <button type="button" class="ezra-journey-chip ezra-journey-chip--accent" data-open-3d>
           <img src="/assets/icon-3d-room.svg" alt="" width="16" height="16" style="filter: brightness(0) invert(1);" />
           Recorrer en 3D
         </button>
       )}
       {has360 && (
-        <button type="button" class="ab-journey-chip ab-journey-chip--ghost" data-open-360>
+        <button type="button" class="ezra-journey-chip ezra-journey-chip--ghost" data-open-360>
           <img src="/assets/icon-360.svg" alt="" width="16" height="16" />
           Vista 360°
         </button>
       )}
     </div>
-    <div class="ab-journey-tag">01 / Sala</div>
+    <div class="ezra-journey-tag">01 — Sala</div>
   </div>
 
-  <div class="ab-journey-pair ab-journey-pair--a">
-    <div class="ab-journey-frame" style={`background-image: url(${imgs[1]})`}>
-      <div class="ab-journey-scrim"></div>
-      <div class="ab-journey-tag">02 / Cocina</div>
+  <div class="ezra-journey-pair ezra-journey-pair--a">
+    <div class="ezra-journey-frame">
+      <img src={imgs[1]} alt="" loading="lazy" />
+      <div class="ezra-journey-tag">02 — Cocina</div>
     </div>
-    <div class="ab-journey-frame" style={`background-image: url(${imgs[2]})`}>
-      <div class="ab-journey-scrim"></div>
-      <div class="ab-journey-tag">03 / Recámara</div>
+    <div class="ezra-journey-frame">
+      <img src={imgs[2]} alt="" loading="lazy" />
+      <div class="ezra-journey-tag">03 — Recámara</div>
     </div>
   </div>
 
-  <div class="ab-journey-pair ab-journey-pair--b">
-    <div class="ab-journey-frame" style={`background-image: url(${imgs[3]})`}>
-      <div class="ab-journey-scrim"></div>
-      <div class="ab-journey-tag">04 / Roof</div>
+  <div class="ezra-journey-pair ezra-journey-pair--b">
+    <div class="ezra-journey-frame">
+      <img src={imgs[3]} alt="" loading="lazy" />
+      <div class="ezra-journey-tag">04 — Roof</div>
     </div>
-    <div class="ab-journey-frame" style={`background-image: url(${imgs[4]})`}>
-      <div class="ab-journey-scrim"></div>
-      <div class="ab-journey-tag">05 / Fachada</div>
+    <div class="ezra-journey-frame">
+      <img src={imgs[4]} alt="" loading="lazy" />
+      <div class="ezra-journey-tag">05 — Fachada</div>
     </div>
   </div>
 </section>
 
 <style>
-  .ab-journey { margin-top: 32px; display: flex; flex-direction: column; gap: 18px; }
-  .ab-journey-hero {
-    position: relative; border-radius: 22px; overflow: hidden;
+  .ezra-journey { margin-top: 32px; display: flex; flex-direction: column; gap: 18px; }
+  .ezra-journey-hero {
+    position: relative; border-radius: var(--ezra-radius-xl); overflow: hidden;
     aspect-ratio: 21/9;
-    background-size: cover; background-position: center;
-    box-shadow: var(--ab-shadow-inset);
   }
-  .ab-journey-scrim {
+  .ezra-journey-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .ezra-journey-scrim {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(22,20,15,0.35), transparent 40%);
+    background: linear-gradient(to top, rgba(10,10,10,0.55), transparent 50%);
     pointer-events: none;
   }
-  .ab-journey-actions {
+  .ezra-journey-actions {
     position: absolute; left: 24px; bottom: 20px;
     display: flex; gap: 8px;
   }
-  .ab-journey-chip {
+  .ezra-journey-chip {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 16px; border-radius: 999px; border: none; cursor: pointer;
-    font-size: 13px; font-weight: 600;
+    padding: 10px 16px; border-radius: var(--ezra-radius-pill);
+    border: 1px solid transparent; cursor: pointer;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
     backdrop-filter: blur(20px) saturate(1.2);
-    box-shadow: var(--ab-shadow-2);
   }
-  .ab-journey-chip--accent { background: var(--ab-terracotta-500); color: #fff; }
-  .ab-journey-chip--ghost { background: rgba(255,255,255,0.92); color: var(--ab-ink-900); }
-  .ab-journey-tag {
+  .ezra-journey-chip--accent { background: var(--ezra-copper); color: #FFF; }
+  .ezra-journey-chip--ghost {
+    background: rgba(255,255,255,0.12); color: #FFF;
+    border-color: rgba(255,255,255,0.25);
+  }
+  .ezra-journey-tag {
     position: absolute; right: 24px; bottom: 20px;
-    font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
-    color: rgba(250,247,242,0.85);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: var(--ezra-track-wide); text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
   }
-  .ab-journey-pair { display: grid; gap: 18px; }
-  .ab-journey-pair--a { grid-template-columns: 1.6fr 1fr; }
-  .ab-journey-pair--b { grid-template-columns: 1fr 1.4fr; }
-  .ab-journey-frame {
-    position: relative; border-radius: 14px; overflow: hidden;
+  .ezra-journey-pair { display: grid; gap: 18px; }
+  .ezra-journey-pair--a { grid-template-columns: 1.6fr 1fr; }
+  .ezra-journey-pair--b { grid-template-columns: 1fr 1.4fr; }
+  .ezra-journey-frame {
+    position: relative; border-radius: var(--ezra-radius-lg); overflow: hidden;
     aspect-ratio: 4/3;
-    background-size: cover; background-position: center;
-    box-shadow: var(--ab-shadow-inset);
   }
-  .ab-journey-frame .ab-journey-tag { left: 16px; right: auto; bottom: 14px; }
+  .ezra-journey-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ezra-journey-frame::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.4), transparent 55%);
+    pointer-events: none;
+  }
+  .ezra-journey-frame .ezra-journey-tag { left: 16px; right: auto; bottom: 14px; z-index: 1; }
   @media (max-width: 768px) {
-    .ab-journey-pair--a, .ab-journey-pair--b { grid-template-columns: 1fr; }
+    .ezra-journey-pair--a, .ezra-journey-pair--b { grid-template-columns: 1fr; }
   }
 </style>

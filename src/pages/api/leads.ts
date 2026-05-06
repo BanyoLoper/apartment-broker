@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const result = await env.DB.prepare(
     'INSERT INTO leads (listing_id, name, email, phone, message, channel) VALUES (?, ?, ?, ?, ?, ?) RETURNING id',
-  ).bind(listingId, name, email, phone, message, 'web').first<{ id: number }>();
+  ).bind(listingId, name, email, phone, message, 'web').first() as { id: number } | null;
 
   if (body.scheduled_at && listingId && result?.id) {
     await env.DB.prepare(

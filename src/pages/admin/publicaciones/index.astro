@@ -11,8 +11,8 @@ const session = Astro.locals.session;
 let rows: Listing[] = [];
 let counts = { activas: 0, borradores: 0, reservadas: 0, retiradas: 0 };
 if (env?.DB) {
-  const rs = await env.DB.prepare('SELECT * FROM listings ORDER BY updated_at DESC').all<Listing>();
-  rows = rs.results || [];
+  const rs = await env.DB.prepare('SELECT * FROM listings ORDER BY updated_at DESC').all();
+  rows = (rs.results as Listing[]) || [];
   counts = {
     activas: rows.filter((l) => l.status === 'publicada').length,
     borradores: rows.filter((l) => l.status === 'borrador').length,
@@ -21,7 +21,14 @@ if (env?.DB) {
   };
 }
 
-const leadCount = await env?.DB?.prepare("SELECT COUNT(*) as n FROM leads WHERE status = 'nuevo'").first<{ n: number }>().catch(() => null);
+let leadCount: { n: number } | null = null;
+if (env?.DB) {
+  try {
+    leadCount = await env.DB.prepare("SELECT COUNT(*) as n FROM leads WHERE status = 'nuevo'").first() as { n: number } | null;
+  } catch {
+    leadCount = null;
+  }
+}
 
 const metrics = [
   { k: 'Activas', v: String(counts.activas), delta: `${counts.borradores} borradores`, tone: 'jade' as const },

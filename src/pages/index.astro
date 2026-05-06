@@ -11,33 +11,43 @@ let totalActive = 0;
 if (env?.DB) {
   const active = await env.DB.prepare(
     "SELECT * FROM listings WHERE status = 'publicada' ORDER BY created_at DESC LIMIT 6",
-  ).all<Listing>();
-  featured = active.results || [];
-  const count = await env.DB.prepare("SELECT COUNT(*) as n FROM listings WHERE status = 'publicada'").first<{ n: number }>();
+  ).all();
+  featured = (active.results as Listing[]) || [];
+  const count = await env.DB.prepare("SELECT COUNT(*) as n FROM listings WHERE status = 'publicada'").first() as { n: number } | null;
   totalActive = count?.n ?? 0;
 }
-const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 ---
 
 <PublicLayout active="home">
   <Hero activeListings={totalActive || 6} colonias={4} />
 
-  <section class="ab-section">
-    <div class="ab-section-inner">
-      <div class="ab-section-head">
-        <span class="ab-eyebrow">Disponibles ahora</span>
-        <h2 class="ab-h2">Departamentos curados</h2>
-      </div>
-      <div class="ab-grid">
-        {featured.map((l) => <ListingCard listing={l} />)}
+  <section class="ezra-section">
+    <div class="ezra-section-inner">
+      <header class="ezra-section-head">
+        <div>
+          <span class="ezra-eyebrow-wide">Disponibles ahora</span>
+          <h2 class="ezra-section-title">Departamentos amueblados</h2>
+        </div>
+        <p class="ezra-section-sub">
+          Cada inmueble es operado por EZRA. Mantenimiento, servicios e inventario boutique incluidos.
+        </p>
+      </header>
+
+      <div class="ezra-grid">
+        {featured.map((l, i) => <ListingCard listing={l} priority={i < 3} />)}
         {featured.length === 0 && (
-          <div class="ab-empty">
+          <div class="ezra-empty">
             Aún no hay depas publicados. Corre <code>npm run db:migrate:local && npm run db:seed:local</code>.
           </div>
         )}
       </div>
-      <div class="ab-section-cta">
-        <a class="ab-link" href="/departamentos">Ver todos los departamentos →</a>
+
+      <div class="ezra-section-cta">
+        <a class="ezra-link" href="/departamentos">
+          Ver todo el portafolio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -46,30 +56,59 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
 </PublicLayout>
 
 <style>
-  .ab-section { padding: 64px 32px 0; }
-  .ab-section-inner { max-width: 1280px; margin: 0 auto; }
-  .ab-section-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 32px; }
-  .ab-grid {
+  .ezra-section { padding: 96px 32px 0; }
+  .ezra-section-inner { max-width: 1280px; margin: 0 auto; }
+  .ezra-section-head {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 32px;
+    margin-bottom: 48px;
+  }
+  .ezra-section-title {
+    margin: 12px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: 44px; font-weight: 600;
+    color: var(--ezra-fg);
+    letter-spacing: -0.02em;
+  }
+  .ezra-section-sub {
+    max-width: 360px;
+    color: var(--ezra-fg-muted);
+    font-size: 15px; line-height: 1.55; font-weight: 300;
+    margin: 0;
+  }
+  .ezra-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
   }
-  .ab-empty {
+  .ezra-empty {
     grid-column: 1 / -1;
-    padding: 40px; text-align: center;
-    color: var(--ab-stone-600);
-    background: #fff; border: 1px dashed var(--ab-border-strong);
-    border-radius: 14px;
+    padding: 48px; text-align: center;
+    color: var(--ezra-fg-muted);
+    border: 1px dashed var(--ezra-border-strong);
+    border-radius: var(--ezra-radius-lg);
   }
-  .ab-empty code {
+  .ezra-empty code {
     display: inline-block; margin-top: 4px; padding: 2px 6px;
-    background: var(--ab-bone-100); border-radius: 4px;
-    font-family: var(--ab-font-mono); font-size: 12px;
+    background: var(--ezra-surface); border-radius: var(--ezra-radius-sm);
+    font-family: var(--ezra-font-mono); font-size: 12px;
   }
-  .ab-section-cta { margin-top: 32px; text-align: center; }
-  .ab-link {
-    color: var(--ab-terracotta-500); font-weight: 600;
+  .ezra-section-cta { margin-top: 48px; text-align: center; }
+  .ezra-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--ezra-fg); font-weight: 500; font-size: 14px;
+    letter-spacing: 0.04em;
     text-decoration: none;
+    padding: 12px 18px;
+    border: 1px solid var(--ezra-border-strong);
+    border-radius: var(--ezra-radius-md);
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast);
   }
-  .ab-link:hover { color: var(--ab-terracotta-600); }
+  .ezra-link:hover {
+    background: var(--ezra-fg);
+    color: var(--ezra-bg);
+  }
+  @media (max-width: 768px) {
+    .ezra-section-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .ezra-section-title { font-size: 32px; }
+  }
 </style>
