@@ -1,0 +1,28 @@
+{
+  "name": "apartmentbroker",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler pages dev ./dist",
+    "astro": "astro",
+    "deploy": "astro build && wrangler pages deploy ./dist --project-name=apartmentbroker",
+    "db:migrate:local": "wrangler d1 execute apartmentbroker --local --file=./migrations/0001_initial.sql",
+    "db:seed:local": "wrangler d1 execute apartmentbroker --local --file=./migrations/0002_seed.sql",
+    "db:migrate:remote": "wrangler d1 execute apartmentbroker --remote --file=./migrations/0001_initial.sql",
+    "db:seed:remote": "wrangler d1 execute apartmentbroker --remote --file=./migrations/0002_seed.sql"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.2.0",
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.1.0",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "wrangler": "^3.99.0"
+  }
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Logo</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); font-family: var(--ab-font-body); }
+  .wrap { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 20px; height: 110px; box-sizing: border-box; }
+  .cell { background: var(--ab-surface); border: 1px solid var(--ab-border); border-radius: var(--ab-radius-lg); display:flex; align-items:center; justify-content:center; padding: 14px; position: relative; }
+  .cell.dark { background: var(--ab-ink-900); }
+  .cell.terra { background: var(--ab-terracotta-500); }
+  .cell img { max-height: 100%; max-width: 100%; }
+  .lbl { position:absolute; bottom:6px; left:10px; font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; color: var(--ab-fg-soft); }
+  .cell.dark .lbl, .cell.terra .lbl { color: rgba(250,247,242,0.55); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cell"><img src="../assets/logo-mark.svg" alt=""><span class="lbl">Mark</span></div>
+  <div class="cell"><img src="../assets/logo-wordmark.svg" alt=""><span class="lbl">Wordmark</span></div>
+  <div class="cell"><img src="../assets/logo-stack.svg" alt=""><span class="lbl">Stacked</span></div>
+</div>
+</body></html>

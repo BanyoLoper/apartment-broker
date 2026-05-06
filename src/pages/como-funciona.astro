@@ -1,0 +1,243 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import LeadForm from '../components/public/LeadForm.astro';
+
+const env = Astro.locals.runtime?.env;
+const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+
+const steps = [
+  {
+    n: '01',
+    title: 'Recorres en línea',
+    body: 'Cada depa tiene tour 3D, panorámica 360° por habitación, y un mapa con lo que hay caminando. Ves la luz, el espacio y el barrio antes de salir de tu casa.',
+    eyebrow: 'Sin filtros, sin sorpresas',
+  },
+  {
+    n: '02',
+    title: 'Reservas la visita',
+    body: 'Eliges horario en la ficha del depa, o nos escribes directo por WhatsApp. Te confirmamos en menos de 30 minutos. La visita la hace alguien de nuestro equipo, no un agente externo.',
+    eyebrow: 'Confirmación rápida',
+  },
+  {
+    n: '03',
+    title: 'Firmas con nosotros',
+    body: 'Somos el dueño del edificio. No hay comisión a inquilino, no hay intermediario. Contrato claro, depósito de un mes, mantenimiento incluido. Te entregamos llaves en 48 horas.',
+    eyebrow: 'Renta directa',
+  },
+];
+
+const faqs = [
+  {
+    q: '¿Cobran comisión al inquilino?',
+    a: 'No. Como somos los dueños del edificio, no hay broker intermedio. Lo que pagas es la renta y un mes de depósito.',
+  },
+  {
+    q: '¿Aceptan mascotas?',
+    a: 'Depende del inmueble — viene marcado en cada ficha. La mayoría sí. Pedimos un comprobante de vacunas y firmamos un anexo de cuidado.',
+  },
+  {
+    q: '¿Cuánto dura el contrato?',
+    a: 'Mínimo 12 meses. Renovable en automático si ambas partes están conformes. No cobramos penalización por renovar.',
+  },
+  {
+    q: '¿Quién hace los arreglos?',
+    a: 'Nosotros. El mantenimiento del depa está incluido en la renta. Reportas por WhatsApp y un técnico de nuestro equipo va dentro de 24–48 horas.',
+  },
+  {
+    q: '¿Necesito aval?',
+    a: 'Depende del depa. En la mayoría aceptamos depósito doble en lugar de aval. En unidades de renta más alta sí pedimos aval o póliza jurídica — te avisamos al solicitar.',
+  },
+  {
+    q: '¿Pueden mostrarme el depa fuera de horario?',
+    a: 'Sí, dentro de lo razonable. Escríbenos por WhatsApp y vemos. Domingos por la tarde y entre semana después de las 7pm es lo más solicitado.',
+  },
+];
+---
+
+<PublicLayout active="how" title="Cómo funciona · ApartmentBroker">
+  <main>
+    <section class="ab-how-hero">
+      <div class="ab-how-hero-inner">
+        <span class="ab-eyebrow">Cómo funciona</span>
+        <h1 class="ab-display-1 ab-how-title">
+          Renta directa con el dueño.<br/>
+          <span class="ab-how-title-accent">Sin intermediarios.</span>
+        </h1>
+        <p class="ab-how-lede">
+          Operamos nuestro propio portafolio. Lo que ves es lo que pagas — sin comisiones, sin agentes externos, sin sorpresas. Tres pasos del clic al contrato.
+        </p>
+      </div>
+    </section>
+
+    <section class="ab-how-steps">
+      <div class="ab-how-steps-inner">
+        {steps.map((s) => (
+          <div class="ab-how-step">
+            <div class="ab-how-step-num">{s.n}</div>
+            <div class="ab-how-step-body">
+              <span class="ab-eyebrow">{s.eyebrow}</span>
+              <h2 class="ab-h2 ab-how-step-title">{s.title}</h2>
+              <p>{s.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ab-how-diff">
+      <div class="ab-how-diff-inner">
+        <div>
+          <span class="ab-eyebrow">Qué hace diferente</span>
+          <h2 class="ab-h2 ab-how-diff-title">Operamos cada edificio que rentamos.</h2>
+          <p>
+            En portales tradicionales, cada depa lo lista un broker distinto, con fotos distintas y respuestas distintas. Aquí cada inmueble pasa por el mismo equipo, las mismas fotos, los mismos estándares.
+          </p>
+          <ul class="ab-how-diff-list">
+            <li><strong>Tour 3D real</strong> — escaneado a milímetro, no maqueta.</li>
+            <li><strong>Panorámica 360°</strong> por habitación — ves la luz a distintas horas.</li>
+            <li><strong>Mapa de lo cercano</strong> — Metro, OXXO, parque, café. A pie.</li>
+            <li><strong>Mantenimiento incluido</strong> — un solo número de WhatsApp.</li>
+          </ul>
+        </div>
+        <div class="ab-how-diff-img">
+          <img src="/assets/pattern-talavera.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <section class="ab-how-faq">
+      <div class="ab-how-faq-inner">
+        <span class="ab-eyebrow">Preguntas frecuentes</span>
+        <h2 class="ab-h2 ab-how-faq-title">Lo que más nos preguntan</h2>
+        <div class="ab-faq-list">
+          {faqs.map((f) => (
+            <details class="ab-faq-item">
+              <summary>
+                <span>{f.q}</span>
+                <span class="ab-faq-toggle" aria-hidden="true">+</span>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <LeadForm whatsappNumber={whatsapp} />
+  </main>
+</PublicLayout>
+
+<style>
+  .ab-how-hero {
+    padding: 96px 32px 32px;
+    background-image: url(/assets/pattern-talavera.svg);
+    background-size: 320px;
+    background-blend-mode: multiply;
+    background-color: var(--ab-bone-50);
+  }
+  .ab-how-hero-inner { max-width: 880px; margin: 0 auto; }
+  .ab-how-title { margin: 16px 0 24px; max-width: 760px; }
+  .ab-how-title-accent { color: var(--ab-terracotta-500); }
+  .ab-how-lede {
+    font-size: 19px; color: var(--ab-stone-600);
+    max-width: 640px; line-height: 1.55;
+  }
+
+  .ab-how-steps { padding: 64px 32px; }
+  .ab-how-steps-inner {
+    max-width: 1080px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 64px;
+  }
+  .ab-how-step {
+    display: grid; grid-template-columns: 200px 1fr; gap: 64px;
+    align-items: start;
+    padding-top: 32px;
+    border-top: 1px solid var(--ab-border);
+  }
+  .ab-how-step:first-child { border-top: none; padding-top: 0; }
+  .ab-how-step-num {
+    font-family: var(--ab-font-display);
+    font-size: 96px; font-weight: 500;
+    color: var(--ab-terracotta-500);
+    letter-spacing: -0.04em; line-height: 1;
+  }
+  .ab-how-step-title { margin: 8px 0 12px; }
+  .ab-how-step-body p {
+    color: var(--ab-stone-600); font-size: 17px; line-height: 1.55; max-width: 560px;
+  }
+
+  .ab-how-diff {
+    background: var(--ab-ink-900); color: var(--ab-bone-50);
+    padding: 96px 32px;
+    background-image: url(/assets/pattern-talavera.svg);
+    background-size: 280px;
+    background-blend-mode: soft-light;
+  }
+  .ab-how-diff-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: center;
+  }
+  .ab-how-diff-inner .ab-eyebrow { color: rgba(250,247,242,0.6) !important; }
+  .ab-how-diff-title {
+    color: var(--ab-bone-50) !important;
+    margin: 8px 0 16px;
+  }
+  .ab-how-diff-inner > div > p {
+    color: rgba(250,247,242,0.78); font-size: 17px; line-height: 1.55;
+    max-width: 520px;
+  }
+  .ab-how-diff-list {
+    margin-top: 24px; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ab-how-diff-list li {
+    color: rgba(250,247,242,0.85);
+    padding-left: 20px; position: relative;
+    line-height: 1.55;
+  }
+  .ab-how-diff-list li::before {
+    content: '·'; position: absolute; left: 0;
+    color: var(--ab-terracotta-500); font-size: 24px; line-height: 1;
+  }
+  .ab-how-diff-list strong { color: var(--ab-bone-50); }
+  .ab-how-diff-img {
+    aspect-ratio: 4/5; border-radius: 22px; overflow: hidden;
+    background: var(--ab-terracotta-500);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ab-how-diff-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; mix-blend-mode: overlay; }
+
+  .ab-how-faq { padding: 96px 32px 64px; }
+  .ab-how-faq-inner { max-width: 880px; margin: 0 auto; }
+  .ab-how-faq-title { margin: 8px 0 32px; }
+  .ab-faq-list { display: flex; flex-direction: column; }
+  .ab-faq-item {
+    border-top: 1px solid var(--ab-border);
+    padding: 24px 0;
+  }
+  .ab-faq-item:last-child { border-bottom: 1px solid var(--ab-border); }
+  .ab-faq-item summary {
+    cursor: pointer; list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 18px; font-weight: 500; color: var(--ab-ink-900);
+    padding: 4px 0;
+  }
+  .ab-faq-item summary::-webkit-details-marker { display: none; }
+  .ab-faq-toggle {
+    font-family: var(--ab-font-mono); font-size: 22px;
+    color: var(--ab-terracotta-500);
+    transition: transform 220ms var(--ab-ease-standard);
+  }
+  .ab-faq-item[open] .ab-faq-toggle { transform: rotate(45deg); }
+  .ab-faq-item p {
+    margin-top: 12px; color: var(--ab-stone-600);
+    font-size: 16px; line-height: 1.6; max-width: 720px;
+  }
+
+  @media (max-width: 768px) {
+    .ab-how-step { grid-template-columns: 1fr; gap: 16px; }
+    .ab-how-step-num { font-size: 64px; }
+    .ab-how-diff-inner { grid-template-columns: 1fr; }
+    .ab-how-diff-img { display: none; }
+  }
+</style>

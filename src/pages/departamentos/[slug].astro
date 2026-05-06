@@ -1,0 +1,141 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import ImageJourney from '../../components/public/ImageJourney.astro';
+import BookingPanel from '../../components/public/BookingPanel.astro';
+import NearbyMap from '../../components/public/NearbyMap.astro';
+import Viewer360 from '../../components/public/Viewer360.astro';
+import Showroom3D from '../../components/public/Showroom3D.astro';
+import Feat from '../../components/public/Feat.astro';
+import type { Listing } from '../../lib/db';
+import { parseAmenities } from '../../lib/db';
+import { googleMapsLink } from '../../lib/geo';
+
+const { slug } = Astro.params;
+const env = Astro.locals.runtime?.env;
+let listing: Listing | null = null;
+if (env?.DB && slug) {
+  listing = await env.DB.prepare('SELECT * FROM listings WHERE slug = ? AND status != ?')
+    .bind(slug, 'borrador').first<Listing>();
+}
+if (!listing) return Astro.redirect('/departamentos');
+
+const amenities = parseAmenities(listing.amenities);
+const images = [
+  listing.cover_image || '/assets/placeholder-apt-1.svg',
+  '/assets/placeholder-apt-3.svg',
+  '/assets/placeholder-apt-4.svg',
+  '/assets/placeholder-apt-2.svg',
+  '/assets/placeholder-apt-5.svg',
+];
+const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+const fuzzyLat = listing.lat_fuzzy ?? 19.4326;
+const fuzzyLng = listing.lng_fuzzy ?? -99.1332;
+const radius = Number(env?.PUBLIC_FUZZY_RADIUS_M || 150);
+---
+
+<PublicLayout title={`${listing.name} · ${listing.colonia}`} active="listings">
+  <main class="ab-detail">
+    <a class="ab-back" href="/departamentos">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Volver a resultados
+    </a>
+
+    <header class="ab-detail-head">
+      <div>
+        <span class="ab-eyebrow">{listing.colonia}{listing.floor != null && ` · piso ${listing.floor}`}</span>
+        <h1 class="ab-display-2 ab-detail-title">{listing.name}</h1>
+        <div class="ab-detail-meta">
+          {listing.beds} rec · {listing.baths} baño · {listing.area_m2} m²{listing.available_at && ` · disponible ${listing.available_at}`}
+        </div>
+      </div>
+      <div class="ab-detail-actions">
+        <a class="ab-detail-icbtn" href={googleMapsLink(fuzzyLat, fuzzyLng, listing.colonia)} target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          Ver en Google Maps
+        </a>
+      </div>
+    </header>
+
+    <ImageJourney images={images} has3d={!!listing.has_3d} has360={!!listing.has_360} />
+
+    <div class="ab-detail-grid">
+      <section>
+        <span class="ab-eyebrow">Sobre el departamento</span>
+        <h2 class="ab-h2 ab-detail-h2">Una planta luminosa en {listing.colonia}</h2>
+        <p class="ab-detail-desc">{listing.description}</p>
+
+        <div class="ab-feats">
+          <Feat label="Recámaras" v={String(listing.beds)} />
+          <Feat label="Baños" v={String(listing.baths)} />
+          <Feat label="Superficie" v={`${listing.area_m2} m²`} />
+          <Feat label="Piso" v={listing.floor != null ? String(listing.floor) : '—'} />
+          <Feat label="Mascotas" v={listing.pet_friendly ? 'Sí' : 'No'} />
+          <Feat label="Estacionamiento" v={listing.parking ? 'Sí' : 'No'} />
+          <Feat label="Disponible" v={listing.available_at || '—'} />
+          <Feat label="Renta" v={`$${listing.price_mxn.toLocaleString('es-MX')}`} />
+        </div>
+
+        {amenities.length > 0 && (
+          <div class="ab-amenities">
+            <span class="ab-eyebrow">Comodidades del depa</span>
+            <div class="ab-amenities-grid">
+              {amenities.map((f) => (
+                <div class="ab-amenity">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ab-jade-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 L9 17 L4 12"/></svg>
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+      <BookingPanel listing={listing} whatsappNumber={whatsapp} />
+    </div>
+
+    <NearbyMap fuzzyLat={fuzzyLat} fuzzyLng={fuzzyLng} fuzzyRadiusM={radius} listingName={listing.name} />
+  </main>
+
+  {listing.has_360 && <Viewer360 title={`${listing.name} · ${listing.colonia}`} />}
+  {listing.has_3d && <Showroom3D title={`${listing.name} · ${listing.colonia}`} modelUrl={listing.model_glb_url || undefined} />}
+</PublicLayout>
+
+<style>
+  .ab-detail { max-width: 1280px; margin: 0 auto; padding: 32px 32px 64px; }
+  .ab-back {
+    background: transparent; border: none; cursor: pointer; padding: 4px 0;
+    font-size: 14px; color: var(--ab-stone-600); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ab-detail-head {
+    margin-top: 16px; display: flex; justify-content: space-between;
+    align-items: flex-end; gap: 32px;
+  }
+  .ab-detail-title { margin: 8px 0 4px; }
+  .ab-detail-meta { color: var(--ab-stone-600); font-family: var(--ab-font-mono); font-size: 14px; }
+  .ab-detail-actions { display: flex; gap: 8px; }
+  .ab-detail-icbtn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 8px; background: #fff;
+    border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900);
+    font-size: 13px; font-weight: 600; text-decoration: none;
+  }
+  .ab-detail-grid {
+    display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; margin-top: 64px;
+  }
+  .ab-detail-h2 { margin-top: 8px; }
+  .ab-detail-desc { font-size: 17px; color: var(--ab-stone-600); margin-top: 16px; max-width: 560px; line-height: 1.55; }
+  .ab-feats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 32px; }
+  .ab-amenities { margin-top: 48px; }
+  .ab-amenities-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px;
+  }
+  .ab-amenity {
+    font-size: 14px; color: var(--ab-ink-900);
+    display: flex; align-items: center; gap: 8px; padding: 8px 0;
+  }
+  @media (max-width: 1024px) {
+    .ab-detail-grid { grid-template-columns: 1fr; gap: 32px; }
+    .ab-feats { grid-template-columns: repeat(2, 1fr); }
+    .ab-amenities-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

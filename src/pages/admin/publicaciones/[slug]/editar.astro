@@ -1,0 +1,172 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import TopBar from '../../../../components/admin/TopBar.astro';
+import Field from '../../../../components/admin/Field.astro';
+import Toggle from '../../../../components/admin/Toggle.astro';
+import { parseAmenities, STATUS_LABEL } from '../../../../lib/db';
+import type { Listing } from '../../../../lib/db';
+
+const { slug } = Astro.params;
+const env = Astro.locals.runtime?.env;
+const session = Astro.locals.session;
+
+let listing: Listing | null = null;
+if (env?.DB && slug) {
+  listing = await env.DB.prepare('SELECT * FROM listings WHERE slug = ?').bind(slug).first() as Listing | null;
+}
+if (!listing) return Astro.redirect('/admin/publicaciones');
+
+const amenities = parseAmenities(listing.amenities).join('\n');
+const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
+---
+
+<AdminLayout title={`Editar · ${listing.name}`} active="listings" brokerName={session?.name}>
+  <TopBar
+    title={listing.name}
+    subtitle={`AB-${1000 + listing.id} · Editando publicación`}
+    secondaryAction={{ label: '← Volver', href: '/admin/publicaciones' }}
+    primaryAction={{ label: 'Ver en público', href: `/departamentos/${listing.slug}` }}
+  />
+
+  <form method="post" action={`/api/listings/${listing.id}`} class="ab-edit">
+    <input type="hidden" name="_action" value="update" />
+
+    <div class="ab-edit-grid">
+      <section class="ab-edit-section">
+        <h2 class="ab-h3">Datos básicos</h2>
+        <div class="ab-form-cols">
+          <Field label="Nombre"><input name="name" required value={listing.name} /></Field>
+          <Field label="Slug (URL)"><input name="slug" required pattern="[a-z0-9\-]+" value={listing.slug} /></Field>
+          <Field label="Colonia">
+            <select name="colonia" required>
+              {colonias.map((c) => <option value={c} selected={listing!.colonia === c}>{c}</option>)}
+            </select>
+          </Field>
+          <Field label="Calle y número"><input name="street" value={listing.street ?? ''} /></Field>
+          <Field label="Piso"><input name="floor" type="number" min="0" value={listing.floor ?? ''} /></Field>
+          <Field label="Disponible desde"><input name="available_at" type="date" value={listing.available_at ?? ''} /></Field>
+        </div>
+      </section>
+
+      <section class="ab-edit-section">
+        <h2 class="ab-h3">Características</h2>
+        <div class="ab-form-cols">
+          <Field label="Recámaras"><input name="beds" type="number" min="0" required value={listing.beds} /></Field>
+          <Field label="Baños"><input name="baths" type="number" min="0" required value={listing.baths} /></Field>
+          <Field label="Superficie (m²)"><input name="area_m2" type="number" min="1" required value={listing.area_m2} /></Field>
+          <Field label="Renta mensual (MXN)"><input name="price_mxn" type="number" min="1" required value={listing.price_mxn} /></Field>
+        </div>
+        <Field label="Descripción">
+          <textarea name="description" rows="5">{listing.description ?? ''}</textarea>
+        </Field>
+        <Field label="Amenidades (una por línea)">
+          <textarea name="amenities" rows="6" placeholder="Lavadora · secadora&#10;Wi-Fi 1 Gbps&#10;Calentador instantáneo">{amenities}</textarea>
+        </Field>
+      </section>
+
+      <section class="ab-edit-section">
+        <h2 class="ab-h3">Ubicación</h2>
+        <p class="ab-edit-help">Las coordenadas reales solo se usan internamente. El sitio público muestra un punto difuso a 150m.</p>
+        <div class="ab-form-cols">
+          <Field label="Latitud real"><input name="lat_real" type="number" step="any" value={listing.lat_real ?? ''} placeholder="19.4148" /></Field>
+          <Field label="Longitud real"><input name="lng_real" type="number" step="any" value={listing.lng_real ?? ''} placeholder="-99.1675" /></Field>
+        </div>
+      </section>
+
+      <section class="ab-edit-section">
+        <h2 class="ab-h3">Media</h2>
+        <Field label="Foto de portada (URL o /assets/...)">
+          <input name="cover_image" value={listing.cover_image ?? ''} placeholder="/assets/placeholder-apt-1.svg" />
+        </Field>
+        <Field label="Modelo 3D — URL del .glb">
+          <input name="model_glb_url" value={listing.model_glb_url ?? ''} placeholder="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb" />
+        </Field>
+        <p class="ab-edit-help">
+          Para el mock se acepta una URL pública. En producción se sube a R2 desde el wizard y la URL se genera automáticamente.
+        </p>
+      </section>
+
+      <aside class="ab-edit-side">
+        <section class="ab-edit-section">
+          <h2 class="ab-h3">Estado</h2>
+          <Field label="Visibilidad">
+            <select name="status">
+              {(['borrador', 'publicada', 'reservada', 'retirada'] as const).map((s) => (
+                <option value={s} selected={listing!.status === s}>{STATUS_LABEL[s]}</option>
+              ))}
+            </select>
+          </Field>
+          <p class="ab-edit-help">
+            <strong>Publicada</strong> es visible al público.<br/>
+            <strong>Borrador</strong> y <strong>retirada</strong> se ocultan del catálogo.<br/>
+            <strong>Reservada</strong> sigue visible pero marcada como ocupada.
+          </p>
+        </section>
+
+        <section class="ab-edit-section">
+          <h2 class="ab-h3">Tours inmersivos</h2>
+          <Toggle label="Tour 3D activo" name="has_3d" defaultChecked={!!listing.has_3d} />
+          <Toggle label="Vistas 360° activas" name="has_360" defaultChecked={!!listing.has_360} />
+        </section>
+
+        <section class="ab-edit-section">
+          <h2 class="ab-h3">Reglas</h2>
+          <Toggle label="Acepta mascotas" name="pet_friendly" defaultChecked={!!listing.pet_friendly} />
+          <Toggle label="Tiene estacionamiento" name="parking" defaultChecked={!!listing.parking} />
+        </section>
+      </aside>
+    </div>
+
+    <div class="ab-edit-bar">
+      <a href="/admin/publicaciones" class="ab-edit-btn ab-edit-btn--ghost">Cancelar</a>
+      <button type="submit" class="ab-edit-btn ab-edit-btn--primary">Guardar cambios</button>
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  .ab-edit { padding: 24px 32px 48px; max-width: 1280px; margin: 0 auto; }
+  .ab-edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+  .ab-edit-grid > section { grid-column: 1; }
+  .ab-edit-side {
+    grid-column: 2; grid-row: 1 / span 4;
+    display: flex; flex-direction: column; gap: 16px;
+    position: sticky; top: 24px;
+  }
+  .ab-edit-section {
+    background: #fff; border: 1px solid var(--ab-border);
+    border-radius: 14px; padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .ab-edit-section h2 { margin: 0; }
+  .ab-edit-help { font-size: 13px; color: var(--ab-stone-600); margin: 0; line-height: 1.5; }
+  .ab-form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .ab-edit-bar {
+    margin-top: 24px;
+    display: flex; justify-content: flex-end; gap: 12px;
+    position: sticky; bottom: 0;
+    padding: 16px 0;
+    background: linear-gradient(to top, var(--ab-bg) 70%, transparent);
+  }
+  .ab-edit-btn {
+    padding: 12px 22px; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center;
+  }
+  .ab-edit-btn--ghost { background: #fff; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
+  .ab-edit-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
+  .ab-edit-btn--primary:hover { background: var(--ab-terracotta-600); }
+
+  @media (max-width: 1024px) {
+    .ab-edit-grid { grid-template-columns: 1fr; }
+    .ab-edit-side { grid-column: 1; grid-row: auto; position: static; }
+    .ab-form-cols { grid-template-columns: 1fr; }
+  }
+</style>

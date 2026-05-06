@@ -1,0 +1,79 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import ListingCard from '../../components/public/ListingCard.astro';
+import ListingsMap from '../../components/public/ListingsMap.astro';
+import type { Listing } from '../../lib/db';
+
+const url = new URL(Astro.request.url);
+const colonia = url.searchParams.get('colonia') || '';
+const beds = url.searchParams.get('beds') || '';
+const maxPrice = Number(url.searchParams.get('max_price') || 0);
+
+const env = Astro.locals.runtime?.env;
+let results: Listing[] = [];
+if (env?.DB) {
+  const conds = ["status = 'publicada'"];
+  const binds: (string | number)[] = [];
+  if (colonia) { conds.push('colonia = ?'); binds.push(colonia); }
+  if (beds) {
+    const minBeds = parseInt(beds.replace(/\D/g, ''), 10) || 0;
+    if (minBeds > 0) { conds.push('beds >= ?'); binds.push(minBeds); }
+  }
+  if (maxPrice > 0) { conds.push('price_mxn <= ?'); binds.push(maxPrice); }
+  const sql = `SELECT * FROM listings WHERE ${conds.join(' AND ')} ORDER BY price_mxn ASC`;
+  const rs = await env.DB.prepare(sql).bind(...binds).all<Listing>();
+  results = rs.results || [];
+}
+---
+
+<PublicLayout active="listings" title="Departamentos · ApartmentBroker">
+  <main class="ab-listings">
+    <div class="ab-listings-head">
+      <div>
+        <span class="ab-eyebrow">{results.length} departamentos</span>
+        <h1 class="ab-h1">{colonia || 'CDMX completa'}</h1>
+      </div>
+    </div>
+    <div class="ab-listings-grid">
+      <div class="ab-listings-list">
+        {results.map((l) => <ListingCard listing={l} />)}
+        {results.length === 0 && (
+          <div class="ab-empty">No hay depas con esos filtros. Cambia algún criterio.</div>
+        )}
+      </div>
+      <div class="ab-listings-map-wrap">
+        <ListingsMap listings={results} />
+      </div>
+    </div>
+  </main>
+</PublicLayout>
+
+<style>
+  .ab-listings { max-width: 1280px; margin: 0 auto; padding: 32px 32px 64px; }
+  .ab-listings-head { margin-bottom: 24px; }
+  .ab-listings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .ab-listings-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .ab-listings-map-wrap {
+    position: sticky; top: 96px;
+    height: calc(100vh - 120px);
+  }
+  .ab-empty {
+    grid-column: 1 / -1; padding: 40px; text-align: center;
+    color: var(--ab-stone-600);
+    background: #fff; border: 1px dashed var(--ab-border-strong);
+    border-radius: 14px;
+  }
+  @media (max-width: 1024px) {
+    .ab-listings-grid { grid-template-columns: 1fr; }
+    .ab-listings-map-wrap { position: static; height: 480px; order: -1; }
+  }
+</style>

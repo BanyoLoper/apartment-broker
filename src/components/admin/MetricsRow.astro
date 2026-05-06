@@ -1,0 +1,37 @@
+---
+interface Metric {
+  k: string;
+  v: string;
+  delta: string;
+  tone: 'jade' | 'neutral';
+}
+interface Props { metrics: Metric[]; }
+const { metrics } = Astro.props;
+---
+<div class="ab-metrics">
+  {metrics.map((m) => (
+    <div class="ab-metric">
+      <div class="ab-eyebrow">{m.k}</div>
+      <div class="ab-metric-v">{m.v}</div>
+      <div class={`ab-metric-d ab-metric-d--${m.tone}`}>{m.delta}</div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .ab-metrics {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; padding: 24px 32px 0;
+  }
+  .ab-metric {
+    background: #fff; border: 1px solid var(--ab-border);
+    border-radius: 14px; padding: 20px;
+  }
+  .ab-metric-v {
+    font-family: var(--ab-font-display); font-size: 28px; font-weight: 500;
+    color: var(--ab-ink-900); margin-top: 6px; letter-spacing: -0.01em; white-space: nowrap;
+  }
+  .ab-metric-d { font: var(--ab-text-caption); margin-top: 4px; }
+  .ab-metric-d--jade { color: var(--ab-jade-600); }
+  .ab-metric-d--neutral { color: var(--ab-stone-600); }
+</style>

@@ -1,0 +1,28 @@
+name = "apartmentbroker"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+# ----- D1: base de datos relacional para inmuebles, brokers, leads -----
+[[d1_databases]]
+binding = "DB"
+database_name = "apartmentbroker"
+database_id = "a9a4579e-72fa-4b21-b183-8ff62a442268"
+
+# ----- R2: almacenamiento de fotos, modelos GLB, panoramas 360 -----
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "apartmentbroker-media"
+
+# ----- Variables de entorno (no secretos). Secretos: wrangler secret put -----
+[vars]
+SITE_URL = "https://apartmentbroker.pages.dev"
+WHATSAPP_NUMBER = "525555555555"
+LEAD_NOTIFY_EMAIL = "broker@example.com"
+PUBLIC_MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+PUBLIC_FUZZY_RADIUS_M = "150"
+
+# Secretos a configurar con `wrangler secret put`:
+#   ADMIN_PASSWORD       — contraseña inicial del primer broker (mock)
+#   SESSION_SECRET       — clave HMAC para firmar cookies de sesión
+#   RESEND_API_KEY       — opcional, para enviar correos de leads

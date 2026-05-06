@@ -1,0 +1,43 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import TopBar from '../../../components/admin/TopBar.astro';
+import MetricsRow from '../../../components/admin/MetricsRow.astro';
+import ListingsTable from '../../../components/admin/ListingsTable.astro';
+import type { Listing } from '../../../lib/db';
+
+const env = Astro.locals.runtime?.env;
+const session = Astro.locals.session;
+
+let rows: Listing[] = [];
+let counts = { activas: 0, borradores: 0, reservadas: 0, retiradas: 0 };
+if (env?.DB) {
+  const rs = await env.DB.prepare('SELECT * FROM listings ORDER BY updated_at DESC').all<Listing>();
+  rows = rs.results || [];
+  counts = {
+    activas: rows.filter((l) => l.status === 'publicada').length,
+    borradores: rows.filter((l) => l.status === 'borrador').length,
+    reservadas: rows.filter((l) => l.status === 'reservada').length,
+    retiradas: rows.filter((l) => l.status === 'retirada').length,
+  };
+}
+
+const leadCount = await env?.DB?.prepare("SELECT COUNT(*) as n FROM leads WHERE status = 'nuevo'").first<{ n: number }>().catch(() => null);
+
+const metrics = [
+  { k: 'Activas', v: String(counts.activas), delta: `${counts.borradores} borradores`, tone: 'jade' as const },
+  { k: 'Leads sin contactar', v: String(leadCount?.n ?? 0), delta: 'Revisar pendientes', tone: 'neutral' as const },
+  { k: 'Reservadas', v: String(counts.reservadas), delta: 'En proceso de contrato', tone: 'jade' as const },
+  { k: 'Renta media', v: rows.length ? `MXN $${Math.round(rows.reduce((a, l) => a + l.price_mxn, 0) / rows.length).toLocaleString('es-MX')}` : '—', delta: 'Mediana del portfolio', tone: 'neutral' as const },
+];
+---
+
+<AdminLayout title="Publicaciones" active="listings" brokerName={session?.name}>
+  <TopBar
+    title="Publicaciones"
+    subtitle="ApartmentBroker · Console"
+    primaryAction={{ label: 'Nueva publicación', href: '/admin/publicaciones/nueva' }}
+    secondaryAction={{ label: 'Exportar CSV', href: '#' }}
+  />
+  <MetricsRow metrics={metrics} />
+  <ListingsTable rows={rows} />
+</AdminLayout>

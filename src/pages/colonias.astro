@@ -1,0 +1,158 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import LeadForm from '../components/public/LeadForm.astro';
+
+const env = Astro.locals.runtime?.env;
+
+interface Row { colonia: string; n: number; min_price: number; max_price: number; }
+let counts: Row[] = [];
+if (env?.DB) {
+  const rs = await env.DB.prepare(`
+    SELECT colonia, COUNT(*) as n, MIN(price_mxn) as min_price, MAX(price_mxn) as max_price
+    FROM listings
+    WHERE status = 'publicada'
+    GROUP BY colonia
+    ORDER BY n DESC
+  `).all<Row>();
+  counts = rs.results || [];
+}
+
+// Descripciones editoriales cortas por colonia (overrideable cuando salga
+// contenido real). Voz: chilanga, sin hipérbole.
+const descriptions: Record<string, { tag: string; body: string; image: string }> = {
+  'Roma Norte': {
+    tag: 'Cafés, art déco, plazas',
+    body: 'La Roma Norte es la colonia con más densidad de cafés de especialidad y librerías independientes en CDMX. Edificios art déco restaurados, calles arboladas y la mayoría de las amenidades caminables.',
+    image: '/assets/placeholder-apt-1.svg',
+  },
+  Condesa: {
+    tag: 'Parques, terrazas, vida noche',
+    body: 'Parque México en el centro, calles ovaladas que invitan a caminar, terrazas en azoteas y una vida nocturna que no se apaga. Bici-amigable y bien comunicada por Metrobús.',
+    image: '/assets/placeholder-apt-2.svg',
+  },
+  'Juárez': {
+    tag: 'Reforma, sushi, cocteles',
+    body: 'Entre Reforma y la Cuauhtémoc. Edificios remodelados con plantas altas y vista a la avenida. Comida coreana y japonesa de barrio, escena de cocteles seria, oficinas a 10 minutos.',
+    image: '/assets/placeholder-apt-4.svg',
+  },
+  Polanco: {
+    tag: 'Tranquilo, parques, embajadas',
+    body: 'Calles arboladas con nombres de poetas, restaurantes establecidos, museos, y proximidad a Parque Lincoln y Chapultepec. Perfecto si buscas residencial bien conectado.',
+    image: '/assets/placeholder-apt-5.svg',
+  },
+  Cuauhtémoc: {
+    tag: 'Bohemio, mercados, central',
+    body: 'A un paso de Reforma y del centro histórico. Departamentos de altura clásica, mercados sobre ruedas, y una mezcla de oficina-residencia que se siente real.',
+    image: '/assets/placeholder-apt-3.svg',
+  },
+};
+
+const known = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
+const cards = known.map((name) => ({
+  name,
+  ...descriptions[name],
+  count: counts.find((c) => c.colonia === name)?.n ?? 0,
+  min: counts.find((c) => c.colonia === name)?.min_price ?? null,
+}));
+
+const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+---
+
+<PublicLayout active="colonias" title="Colonias · ApartmentBroker">
+  <main class="ab-colonias">
+    <header class="ab-colonias-head">
+      <span class="ab-eyebrow">Dónde estamos</span>
+      <h1 class="ab-display-2 ab-colonias-title">5 colonias del centro de CDMX</h1>
+      <p class="ab-colonias-lede">
+        Operamos solo donde podemos garantizar tiempos de mantenimiento, seguridad y conectividad. Cada inmueble lo administramos directo — no subcontratamos.
+      </p>
+    </header>
+
+    <div class="ab-colonias-grid">
+      {cards.map((c) => (
+        <a class="ab-col-card" href={`/departamentos?colonia=${encodeURIComponent(c.name)}`}>
+          <div class="ab-col-card-img" style={`background-image: url(${c.image})`}>
+            <div class="ab-col-card-scrim"></div>
+            {c.count > 0 && (
+              <div class="ab-col-card-count">{c.count} {c.count === 1 ? 'depa' : 'depas'}</div>
+            )}
+          </div>
+          <div class="ab-col-card-body">
+            <span class="ab-eyebrow">{c.tag}</span>
+            <h3 class="ab-col-card-name">{c.name}</h3>
+            <p class="ab-col-card-body-text">{c.body}</p>
+            {c.min != null && (
+              <div class="ab-col-card-from">
+                desde <span class="ab-mono-tag">MXN ${c.min.toLocaleString('es-MX')}</span> / mes
+              </div>
+            )}
+            <span class="ab-col-card-cta">
+              Ver disponibles →
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <section class="ab-colonias-cta">
+      <span class="ab-eyebrow">¿Buscas otra zona?</span>
+      <h2 class="ab-h2 ab-colonias-cta-title">Nos avisas y vemos qué se puede.</h2>
+      <p>
+        Solo expandimos a colonias donde podemos operar bien. Si vives ahí o quieres que abramos, dinos qué buscas.
+      </p>
+    </section>
+
+    <LeadForm whatsappNumber={whatsapp} />
+  </main>
+</PublicLayout>
+
+<style>
+  .ab-colonias { max-width: 1280px; margin: 0 auto; padding: 64px 32px 0; }
+  .ab-colonias-head { max-width: 720px; margin-bottom: 64px; }
+  .ab-colonias-title { margin: 12px 0 16px; }
+  .ab-colonias-lede { font-size: 18px; color: var(--ab-stone-600); line-height: 1.55; }
+
+  .ab-colonias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+  }
+  .ab-col-card {
+    background: #fff; border: 1px solid var(--ab-border);
+    border-radius: 22px; overflow: hidden; text-decoration: none; color: inherit;
+    box-shadow: var(--ab-shadow-1);
+    transition: box-shadow 220ms var(--ab-ease-standard), transform 220ms var(--ab-ease-standard);
+    display: flex; flex-direction: column;
+  }
+  .ab-col-card:hover { box-shadow: var(--ab-shadow-2); transform: translateY(-2px); }
+  .ab-col-card-img {
+    position: relative; aspect-ratio: 16/10;
+    background-size: cover; background-position: center;
+  }
+  .ab-col-card-scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(22,20,15,0.32), transparent 50%);
+  }
+  .ab-col-card-count {
+    position: absolute; bottom: 14px; left: 16px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    font-size: 12px; font-weight: 600; color: var(--ab-ink-900);
+  }
+  .ab-col-card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .ab-col-card-name { font: var(--ab-text-h2); margin: 4px 0 6px; color: var(--ab-ink-900); letter-spacing: -0.005em; }
+  .ab-col-card-body-text { color: var(--ab-stone-600); margin: 0; line-height: 1.5; flex: 1; }
+  .ab-col-card-from { margin-top: 8px; font-size: 14px; color: var(--ab-stone-600); }
+  .ab-mono-tag { font-family: var(--ab-font-mono); color: var(--ab-ink-900); font-weight: 500; }
+  .ab-col-card-cta {
+    margin-top: 16px; color: var(--ab-terracotta-500);
+    font-weight: 600; font-size: 14px;
+  }
+
+  .ab-colonias-cta {
+    margin-top: 96px; max-width: 720px;
+  }
+  .ab-colonias-cta-title { margin: 8px 0 12px; }
+  .ab-colonias-cta p { color: var(--ab-stone-600); font-size: 17px; line-height: 1.55; }
+</style>

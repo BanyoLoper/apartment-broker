@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  primaryAction?: { label: string; href: string };
+  secondaryAction?: { label: string; href: string };
+}
+const { title, subtitle, primaryAction, secondaryAction } = Astro.props;
+---
+
+<header class="ab-topbar">
+  <div>
+    {subtitle && <span class="ab-eyebrow">{subtitle}</span>}
+    <h1 class="ab-h1 ab-topbar-title">{title}</h1>
+  </div>
+  <div class="ab-topbar-actions">
+    {secondaryAction && (
+      <a class="ab-topbar-btn ab-topbar-btn--ghost" href={secondaryAction.href}>{secondaryAction.label}</a>
+    )}
+    {primaryAction && (
+      <a class="ab-topbar-btn ab-topbar-btn--primary" href={primaryAction.href}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14 M5 12h14"/></svg>
+        {primaryAction.label}
+      </a>
+    )}
+  </div>
+</header>
+
+<style>
+  .ab-topbar {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 24px 32px; border-bottom: 1px solid var(--ab-border);
+    background: var(--ab-bg);
+  }
+  .ab-topbar-title { margin: 6px 0 0; }
+  .ab-topbar-actions { display: flex; gap: 8px; }
+  .ab-topbar-btn {
+    padding: 10px 16px; border-radius: 8px;
+    text-decoration: none; font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer;
+  }
+  .ab-topbar-btn--ghost { background: #fff; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
+  .ab-topbar-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
+  .ab-topbar-btn--primary:hover { background: var(--ab-terracotta-600); }
+</style>

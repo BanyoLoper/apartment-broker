@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Pattern</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); padding: 16px; font-family: var(--ab-font-body); }
+  .row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; height: 110px; }
+  .b { border-radius: var(--ab-radius-lg); border: 1px solid var(--ab-border); position: relative; overflow: hidden; display:flex; align-items:flex-end; padding: 10px; }
+  .lbl { font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; color: var(--ab-fg-soft); position: relative; z-index: 1; }
+  .pat { background: var(--ab-bone-50); }
+  .pat::before { content:""; position:absolute; inset:0; background-image: url(../assets/pattern-talavera.svg); background-size: 90px; opacity: 0.08; }
+  .pat-strong::before { opacity: 0.18; }
+  .pat-strong { background: var(--ab-bone-100); }
+  .solid { background: var(--ab-terracotta-500); color: #FAF7F2; }
+  .solid .lbl { color: rgba(250,247,242,0.7); }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="b pat"><span class="lbl">Talavera · 8% on bone</span></div>
+  <div class="b pat-strong"><span class="lbl">Talavera · 18% on bone-100</span></div>
+  <div class="b solid"><span class="lbl">Solid terracotta · feature</span></div>
+</div>
+</body></html>

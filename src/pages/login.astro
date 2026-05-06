@@ -1,0 +1,96 @@
+---
+import '../styles/tokens.css';
+
+const url = new URL(Astro.request.url);
+const error = url.searchParams.get('error');
+const redirect = url.searchParams.get('redirect') || '/admin';
+const errorMsg = error === 'credenciales' ? 'Correo o contraseña incorrectos.'
+  : error === 'campos' ? 'Completa todos los campos.'
+  : null;
+---
+
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar sesión · ApartmentBroker</title>
+</head>
+<body class="ab-login-body">
+  <main class="ab-login">
+    <a href="/" class="ab-login-back">← Volver al sitio</a>
+    <div class="ab-login-card">
+      <img src="/assets/logo-mark.svg" alt="" width="48" height="48" />
+      <span class="ab-eyebrow">Console</span>
+      <h1 class="ab-h1">Inicia sesión</h1>
+      <p class="ab-login-sub">Acceso para brokers de ApartmentBroker.</p>
+
+      {errorMsg && <div class="ab-login-err">{errorMsg}</div>}
+
+      <form method="post" action="/api/auth/login" class="ab-login-form">
+        <input type="hidden" name="redirect" value={redirect} />
+        <label>
+          <span class="ab-eyebrow">Correo</span>
+          <input type="email" name="email" required autofocus value="broker@example.com" />
+        </label>
+        <label>
+          <span class="ab-eyebrow">Contraseña</span>
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit">Entrar</button>
+      </form>
+
+      <p class="ab-login-help">
+        ¿Demo? Usa <code>broker@example.com</code> y la contraseña que configuraste en <code>.dev.vars</code> (<code>ADMIN_PASSWORD</code>).
+      </p>
+    </div>
+  </main>
+
+  <style>
+    .ab-login-body { min-height: 100vh; background: var(--ab-bg); margin: 0; }
+    .ab-login {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 24px;
+      background-image: url(/assets/pattern-talavera.svg);
+      background-size: 320px;
+    }
+    .ab-login-back {
+      align-self: flex-start; padding: 8px 12px; color: var(--ab-stone-600);
+      text-decoration: none; font-size: 14px; margin-bottom: 16px;
+    }
+    .ab-login-card {
+      width: 100%; max-width: 420px;
+      background: #fff; border-radius: 22px; padding: 40px;
+      box-shadow: var(--ab-shadow-3);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ab-login-card img { margin-bottom: 16px; }
+    .ab-login-sub { color: var(--ab-stone-600); margin: 4px 0 24px; }
+    .ab-login-form { display: flex; flex-direction: column; gap: 16px; }
+    .ab-login-form label { display: flex; flex-direction: column; gap: 6px; }
+    .ab-login-form input {
+      padding: 12px 14px; border: 1px solid var(--ab-border-strong);
+      border-radius: 10px; background: var(--ab-bone-50); font-size: 15px;
+    }
+    .ab-login-form button {
+      margin-top: 8px; padding: 14px;
+      background: var(--ab-terracotta-500); color: #fff;
+      border: none; border-radius: 10px; cursor: pointer;
+      font-size: 15px; font-weight: 600;
+    }
+    .ab-login-form button:hover { background: var(--ab-terracotta-600); }
+    .ab-login-err {
+      padding: 10px 12px; border-radius: 8px;
+      background: var(--ab-rosa-100); color: var(--ab-danger);
+      font-size: 14px; margin: 8px 0;
+    }
+    .ab-login-help {
+      margin-top: 16px; font-size: 13px; color: var(--ab-stone-600); line-height: 1.5;
+    }
+    .ab-login-help code {
+      font-family: var(--ab-font-mono); font-size: 12px;
+      background: var(--ab-bone-100); padding: 2px 5px; border-radius: 4px;
+    }
+  </style>
+</body>
+</html>

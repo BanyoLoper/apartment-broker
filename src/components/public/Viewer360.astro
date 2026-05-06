@@ -1,0 +1,99 @@
+---
+// Visor 360° con Pannellum (CDN). Lightweight (~30KB), MIT.
+// Acepta panoramas equirectangulares. Para el mock usamos un panorama
+// público de Wikimedia Commons como placeholder.
+interface Props {
+  panoramaUrl?: string;
+  title?: string;
+}
+const {
+  panoramaUrl = 'https://pannellum.org/images/cerro-toco-0.jpg',
+  title = 'Sala · arrastra para mirar alrededor',
+} = Astro.props;
+---
+
+<div id="ab-pano-overlay" class="ab-pano-overlay" hidden>
+  <div class="ab-pano-bar">
+    <div class="ab-pano-bar-info">
+      <img src="/assets/icon-360.svg" alt="" width="22" height="22" style="filter: brightness(0) invert(1);" />
+      <div>
+        <div class="ab-eyebrow ab-pano-eyebrow">Vista 360°</div>
+        <div class="ab-pano-title">{title}</div>
+      </div>
+    </div>
+    <button type="button" class="ab-pano-close" aria-label="Cerrar" data-close-360>×</button>
+  </div>
+  <div id="ab-pano-stage" data-pano-url={panoramaUrl}></div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+
+<script is:inline>
+  // Solo cargamos Pannellum cuando el usuario abre el visor (lazy load)
+  let pannellumPromise = null;
+  function loadPannellum() {
+    if (pannellumPromise) return pannellumPromise;
+    pannellumPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+      s.onload = () => resolve(window.pannellum);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return pannellumPromise;
+  }
+
+  document.addEventListener('click', async (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    const opener = target.closest('[data-open-360]');
+    if (opener) {
+      const overlay = document.getElementById('ab-pano-overlay');
+      const stage = document.getElementById('ab-pano-stage');
+      if (!overlay || !stage) return;
+      overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+      const pannellum = await loadPannellum();
+      stage.innerHTML = '';
+      pannellum.viewer('ab-pano-stage', {
+        type: 'equirectangular',
+        panorama: stage.dataset.panoUrl,
+        autoLoad: true,
+        autoRotate: -2,
+        compass: false,
+      });
+      return;
+    }
+
+    if (target.closest('[data-close-360]')) {
+      const overlay = document.getElementById('ab-pano-overlay');
+      if (overlay) overlay.hidden = true;
+      document.body.style.overflow = '';
+    }
+  });
+</script>
+
+<style>
+  .ab-pano-overlay {
+    position: fixed; inset: 0; background: #000; z-index: 100;
+    display: flex; flex-direction: column;
+  }
+  .ab-pano-overlay[hidden] { display: none !important; }
+  .ab-pano-bar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; color: var(--ab-bone-50);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+  }
+  .ab-pano-bar-info { display: flex; align-items: center; gap: 12px; }
+  .ab-pano-eyebrow { color: rgba(250,247,242,0.6) !important; }
+  .ab-pano-title { font: var(--ab-text-h4); }
+  .ab-pano-close {
+    width: 36px; height: 36px; border-radius: 999px;
+    border: 1px solid rgba(250,247,242,0.2);
+    background: transparent; color: var(--ab-bone-50);
+    cursor: pointer; font-size: 20px;
+  }
+  #ab-pano-stage { flex: 1; width: 100%; height: 100%; }
+</style>

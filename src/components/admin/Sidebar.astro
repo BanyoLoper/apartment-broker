@@ -1,0 +1,81 @@
+---
+interface Props {
+  active: 'listings' | 'visits' | 'tenants' | 'contracts' | 'metrics' | 'leads';
+  brokerName?: string;
+}
+const { active, brokerName = 'Broker' } = Astro.props;
+const items = [
+  { k: 'listings', label: 'Publicaciones', href: '/admin/publicaciones', icon: 'M3 21 V8 L12 3 L21 8 V21 Z M9 21 V14 H15 V21' },
+  { k: 'leads', label: 'Leads', href: '/admin/leads', icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
+  { k: 'visits', label: 'Visitas', href: '/admin/visitas', icon: 'M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0Z' },
+  { k: 'tenants', label: 'Inquilinos', href: '/admin/inquilinos', icon: 'M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z M5 21v-1a7 7 0 0 1 14 0v1' },
+  { k: 'metrics', label: 'Métricas', href: '/admin/metricas', icon: 'M3 3v18h18 M7 14l4-4 4 4 5-5' },
+] as const;
+const initials = brokerName.split(' ').map((s) => s[0]).slice(0, 2).join('');
+---
+
+<nav class="ab-sidebar">
+  <div class="ab-sidebar-brand">
+    <img src="/assets/logo-mark.svg" alt="" width="32" height="32" />
+    <div>
+      <div class="ab-sidebar-brand-title">Admin</div>
+      <div class="ab-eyebrow ab-sidebar-brand-tag">Console</div>
+    </div>
+  </div>
+  <div class="ab-sidebar-items">
+    {items.map((it) => (
+      <a class={`ab-sidebar-item ${active === it.k ? 'is-active' : ''}`} href={it.href}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d={it.icon}/>
+        </svg>
+        {it.label}
+      </a>
+    ))}
+  </div>
+  <form class="ab-sidebar-footer" method="post" action="/api/auth/logout">
+    <div class="ab-sidebar-avatar">{initials}</div>
+    <div class="ab-sidebar-user">
+      <div class="ab-sidebar-user-name">{brokerName}</div>
+      <button type="submit" class="ab-sidebar-logout">Cerrar sesión</button>
+    </div>
+  </form>
+</nav>
+
+<style>
+  .ab-sidebar {
+    width: 240px; min-height: 100vh; position: sticky; top: 0;
+    background: var(--ab-ink-900); color: var(--ab-bone-50); padding: 24px;
+    display: flex; flex-direction: column;
+  }
+  .ab-sidebar-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+  .ab-sidebar-brand-title { font: var(--ab-text-h4); color: var(--ab-bone-50); }
+  .ab-sidebar-brand-tag { color: rgba(250,247,242,0.4) !important; }
+  .ab-sidebar-items { display: flex; flex-direction: column; gap: 2px; }
+  .ab-sidebar-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px;
+    color: rgba(250,247,242,0.7); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+  }
+  .ab-sidebar-item:hover { color: #fff; background: rgba(250,247,242,0.05); }
+  .ab-sidebar-item.is-active {
+    background: rgba(200,85,61,0.2); color: #fff; font-weight: 600;
+  }
+  .ab-sidebar-footer {
+    margin-top: auto; padding-top: 24px;
+    border-top: 1px solid rgba(250,247,242,0.1);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ab-sidebar-avatar {
+    width: 32px; height: 32px; border-radius: 999px;
+    background: var(--ab-ochre-500); color: var(--ab-ink-900);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+  }
+  .ab-sidebar-user-name { font-size: 13px; font-weight: 600; }
+  .ab-sidebar-logout {
+    background: none; border: none; color: rgba(250,247,242,0.5);
+    padding: 0; font-size: 11px; cursor: pointer; text-align: left;
+  }
+  .ab-sidebar-logout:hover { color: #fff; }
+</style>

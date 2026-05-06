@@ -1,0 +1,254 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import TopBar from '../../components/admin/TopBar.astro';
+import MetricsRow from '../../components/admin/MetricsRow.astro';
+import FunnelStep from '../../components/admin/FunnelStep.astro';
+
+const env = Astro.locals.runtime?.env;
+const session = Astro.locals.session;
+
+interface ListingRow { colonia: string; status: string; price_mxn: number; }
+let listings: ListingRow[] = [];
+let leadCount = 0;
+let bookingCount = 0;
+if (env?.DB) {
+  const rs = await env.DB.prepare('SELECT colonia, status, price_mxn FROM listings').all();
+  listings = (rs.results as ListingRow[]) || [];
+  const lc = await env.DB.prepare('SELECT COUNT(*) as n FROM leads').first() as { n: number } | null;
+  leadCount = lc?.n ?? 0;
+  const bc = await env.DB.prepare('SELECT COUNT(*) as n FROM bookings').first() as { n: number } | null;
+  bookingCount = bc?.n ?? 0;
+}
+
+const activas = listings.filter((l) => l.status === 'publicada').length;
+const reservadas = listings.filter((l) => l.status === 'reservada').length;
+const total = listings.length || 1;
+const ocupacion = Math.round(((reservadas + listings.filter((l) => l.status === 'retirada').length) / total) * 100);
+const rentaMedia = listings.length
+  ? Math.round(listings.reduce((a, l) => a + l.price_mxn, 0) / listings.length)
+  : 0;
+
+const metrics = [
+  { k: 'Activas', v: String(activas), delta: `${listings.length} en total`, tone: 'jade' as const },
+  { k: 'Leads', v: String(leadCount), delta: 'desde el sitio público', tone: 'neutral' as const },
+  { k: 'Visitas', v: String(bookingCount), delta: 'agendadas', tone: 'jade' as const },
+  { k: 'Renta media', v: rentaMedia ? `MXN $${rentaMedia.toLocaleString('es-MX')}` : '—', delta: 'Mediana del portfolio', tone: 'neutral' as const },
+];
+
+const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
+const byColonia = colonias.map((c) => {
+  const inCol = listings.filter((l) => l.colonia === c);
+  return {
+    name: c,
+    n: inCol.length,
+    avg: inCol.length ? Math.round(inCol.reduce((a, l) => a + l.price_mxn, 0) / inCol.length) : 0,
+  };
+}).filter((c) => c.n > 0);
+const maxAvg = Math.max(1, ...byColonia.map((c) => c.avg));
+
+// Demo: tendencia de visitas últimos 14 días (datos sintéticos, sustituir con
+// query agregada `bookings` en producción).
+const trend = [4, 6, 5, 8, 7, 9, 11, 8, 10, 14, 12, 9, 13, 16];
+const maxTrend = Math.max(...trend);
+---
+
+<AdminLayout title="Métricas" active="metrics" brokerName={session?.name}>
+  <TopBar title="Métricas" subtitle="Resumen del portfolio" />
+  <MetricsRow metrics={metrics} />
+
+  <section class="ab-metrics-section">
+    <div class="ab-metrics-row">
+      <div class="ab-metrics-card">
+        <span class="ab-eyebrow">Visitas agendadas · 14 días</span>
+        <h2 class="ab-h3 ab-metrics-card-title">Tendencia</h2>
+        <div class="ab-trend">
+          {trend.map((v, i) => (
+            <div class="ab-trend-bar" style={`height: ${(v / maxTrend) * 100}%`} title={`Día ${i + 1}: ${v} visitas`}>
+              <span class="ab-trend-val">{v}</span>
+            </div>
+          ))}
+        </div>
+        <div class="ab-trend-legend">
+          <span>hace 14d</span>
+          <span>hoy</span>
+        </div>
+      </div>
+
+      <div class="ab-metrics-card">
+        <span class="ab-eyebrow">Renta media por colonia</span>
+        <h2 class="ab-h3 ab-metrics-card-title">Distribución</h2>
+        <div class="ab-bars">
+          {byColonia.map((c) => (
+            <div class="ab-bar-row">
+              <div class="ab-bar-label">{c.name}<span class="ab-bar-count"> · {c.n}</span></div>
+              <div class="ab-bar-track">
+                <div class="ab-bar-fill" style={`width: ${(c.avg / maxAvg) * 100}%`}></div>
+              </div>
+              <div class="ab-bar-val ab-mono">${c.avg.toLocaleString('es-MX')}</div>
+            </div>
+          ))}
+          {byColonia.length === 0 && (
+            <div class="ab-empty-soft">Sin datos. Carga inmuebles desde Publicaciones.</div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="ab-metrics-row">
+      <div class="ab-metrics-card ab-metrics-card--full">
+        <div class="ab-card-head">
+          <div>
+            <span class="ab-eyebrow">Funnel de conversión · últimos 30 días</span>
+            <h2 class="ab-h3 ab-metrics-card-title">De visita a contrato</h2>
+          </div>
+          <span class="ab-eyebrow ab-card-stub-tag">Demo</span>
+        </div>
+        <div class="ab-funnel">
+          <FunnelStep label="Vistas a fichas" v={2840} pct={100} />
+          <FunnelStep label="Leads capturados" v={142} pct={5} />
+          <FunnelStep label="Visitas agendadas" v={47} pct={1.7} />
+          <FunnelStep label="Visitas completadas" v={31} pct={1.1} />
+          <FunnelStep label="Contratos firmados" v={12} pct={0.4} />
+        </div>
+      </div>
+    </div>
+
+    <div class="ab-metrics-row">
+      <div class="ab-metrics-card">
+        <span class="ab-eyebrow">Ocupación</span>
+        <h2 class="ab-h3 ab-metrics-card-title">{ocupacion}% del portfolio</h2>
+        <div class="ab-occ">
+          <div class="ab-occ-track">
+            <div class="ab-occ-fill" style={`width: ${ocupacion}%`}></div>
+          </div>
+          <div class="ab-occ-legend">
+            <span><span class="ab-dot" style="background: var(--ab-terracotta-500)"></span> Ocupados ({reservadas + listings.filter((l) => l.status === 'retirada').length})</span>
+            <span><span class="ab-dot" style="background: var(--ab-bone-200)"></span> Disponibles ({activas})</span>
+          </div>
+        </div>
+      </div>
+      <div class="ab-metrics-card">
+        <span class="ab-eyebrow">Tiempo promedio en mercado</span>
+        <h2 class="ab-h3 ab-metrics-card-title">18 días <span class="ab-card-stub-tag">demo</span></h2>
+        <p class="ab-card-note">
+          Mediana: 14 días. P90: 32 días. Roma Norte renta más rápido (12 días) que Polanco (24 días) — probablemente por rango de precio.
+        </p>
+      </div>
+    </div>
+  </section>
+</AdminLayout>
+
+<script>
+  // Pintamos el funnel inline como componente Astro local
+</script>
+
+<style>
+  .ab-metrics-section { padding: 24px 32px 64px; display: flex; flex-direction: column; gap: 24px; }
+  .ab-metrics-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .ab-metrics-card {
+    background: #fff; border: 1px solid var(--ab-border);
+    border-radius: 14px; padding: 24px;
+  }
+  .ab-metrics-card--full { grid-column: 1 / -1; }
+  .ab-metrics-card-title { margin: 8px 0 16px; }
+  .ab-card-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .ab-card-stub-tag {
+    padding: 2px 8px; border-radius: 4px;
+    background: var(--ab-ochre-100); color: #6B5119;
+    font-size: 10px; letter-spacing: 0.12em;
+  }
+  .ab-card-note { color: var(--ab-stone-600); font-size: 14px; line-height: 1.55; margin: 8px 0 0; }
+
+  /* Trend bars */
+  .ab-trend {
+    display: flex; gap: 6px; align-items: flex-end;
+    height: 160px; margin-top: 12px;
+  }
+  .ab-trend-bar {
+    flex: 1; min-height: 12px; border-radius: 6px 6px 0 0;
+    background: linear-gradient(to top, var(--ab-terracotta-500), var(--ab-rosa-500));
+    position: relative; cursor: pointer;
+  }
+  .ab-trend-bar:hover .ab-trend-val { opacity: 1; }
+  .ab-trend-val {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    font: var(--ab-text-mono); color: var(--ab-ink-900);
+    background: #fff; padding: 2px 6px; border-radius: 4px;
+    box-shadow: var(--ab-shadow-1);
+    opacity: 0; transition: opacity 140ms;
+    white-space: nowrap;
+  }
+  .ab-trend-legend {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+    font: var(--ab-text-caption); color: var(--ab-stone-400);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  /* Horizontal bars */
+  .ab-bars { display: flex; flex-direction: column; gap: 14px; }
+  .ab-bar-row {
+    display: grid; grid-template-columns: 140px 1fr 100px;
+    gap: 12px; align-items: center;
+  }
+  .ab-bar-label { font-size: 14px; }
+  .ab-bar-count { color: var(--ab-stone-400); font-family: var(--ab-font-mono); font-size: 12px; }
+  .ab-bar-track {
+    height: 8px; border-radius: 999px;
+    background: var(--ab-bone-100);
+    overflow: hidden;
+  }
+  .ab-bar-fill {
+    height: 100%; border-radius: 999px;
+    background: var(--ab-terracotta-500);
+    transition: width 380ms var(--ab-ease-emph);
+  }
+  .ab-bar-val { font-size: 13px; color: var(--ab-ink-900); text-align: right; }
+  .ab-empty-soft { padding: 16px; color: var(--ab-stone-600); font-size: 14px; text-align: center; }
+
+  /* Funnel */
+  .ab-funnel { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+  /* Occupancy */
+  .ab-occ-track {
+    height: 14px; border-radius: 999px; background: var(--ab-bone-200);
+    overflow: hidden; margin-top: 16px;
+  }
+  .ab-occ-fill {
+    height: 100%; background: var(--ab-terracotta-500);
+    transition: width 380ms var(--ab-ease-emph);
+  }
+  .ab-occ-legend {
+    display: flex; gap: 24px; margin-top: 12px;
+    font-size: 13px; color: var(--ab-stone-600);
+  }
+  .ab-dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 999px;
+    margin-right: 6px; vertical-align: middle;
+  }
+
+  @media (max-width: 1024px) {
+    .ab-metrics-row { grid-template-columns: 1fr; }
+    .ab-bar-row { grid-template-columns: 100px 1fr 80px; }
+  }
+</style>
+
+<style is:global>
+  .ab-funnel-step {
+    display: grid; grid-template-columns: 220px 1fr auto;
+    gap: 16px; align-items: center;
+  }
+  .ab-funnel-bar {
+    height: 32px; border-radius: 8px;
+    background: linear-gradient(to right, var(--ab-terracotta-500), var(--ab-rosa-500));
+    display: flex; align-items: center; padding: 0 14px;
+    color: #fff; font-family: var(--ab-font-mono); font-weight: 600; font-size: 13px;
+    box-shadow: var(--ab-shadow-inset);
+  }
+  .ab-funnel-pct {
+    font-family: var(--ab-font-mono); color: var(--ab-stone-600); font-size: 13px;
+    min-width: 56px; text-align: right;
+  }
+</style>

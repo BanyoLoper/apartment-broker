@@ -1,0 +1,14 @@
+---
+interface Props { label: string; v: number; pct: number; }
+const { label, v, pct } = Astro.props;
+const widthPct = Math.max(8, pct);
+---
+<div class="ab-funnel-step">
+  <div class="ab-funnel-label">{label}</div>
+  <div class="ab-funnel-bar" style={`width: ${widthPct}%`}>{v.toLocaleString('es-MX')}</div>
+  <div class="ab-funnel-pct">{pct}%</div>
+</div>
+
+<style>
+  .ab-funnel-label { font-size: 14px; color: var(--ab-ink-900); }
+</style>

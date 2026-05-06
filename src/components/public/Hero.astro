@@ -1,0 +1,133 @@
+---
+interface Props {
+  activeListings?: number;
+  colonias?: number;
+}
+const { activeListings = 84, colonias = 11 } = Astro.props;
+---
+
+<section class="ab-hero">
+  <div class="ab-hero-inner">
+    <div>
+      <span class="ab-eyebrow">Renta directa con el dueño · CDMX</span>
+      <h1 class="ab-display-1 ab-hero-title">
+        Vive en una colonia que ya conoces.
+      </h1>
+      <p class="ab-hero-lede">
+        Curamos cada departamento que rentamos. Recórrelos en 3D antes de venir, mira el barrio en mapa, agenda una visita en dos toques.
+      </p>
+      <form class="ab-hero-search" action="/departamentos" method="get">
+        <label class="ab-hero-field">
+          <span class="ab-eyebrow">Colonia</span>
+          <select name="colonia">
+            <option value="">Cualquiera</option>
+            <option>Roma Norte</option>
+            <option>Condesa</option>
+            <option>Juárez</option>
+            <option>Polanco</option>
+          </select>
+        </label>
+        <label class="ab-hero-field">
+          <span class="ab-eyebrow">Recámaras</span>
+          <select name="beds">
+            <option value="">Todas</option>
+            <option>1+</option>
+            <option>2+</option>
+            <option>3+</option>
+          </select>
+        </label>
+        <label class="ab-hero-field">
+          <span class="ab-eyebrow">Renta máx</span>
+          <select name="max_price">
+            <option value="">Sin límite</option>
+            <option value="20000">$20,000</option>
+            <option value="30000">$30,000</option>
+            <option value="40000">$40,000</option>
+          </select>
+        </label>
+        <button class="ab-hero-search-btn" type="submit">Buscar</button>
+      </form>
+      <div class="ab-hero-stats">
+        <div><div class="ab-hero-stat-n">{activeListings}</div><div class="ab-hero-stat-l">depas activos</div></div>
+        <div><div class="ab-hero-stat-n">{colonias}</div><div class="ab-hero-stat-l">colonias</div></div>
+        <div><div class="ab-hero-stat-n">100%</div><div class="ab-hero-stat-l">renta directa</div></div>
+      </div>
+    </div>
+    <div class="ab-hero-card">
+      <div class="ab-hero-card-info">
+        <div class="ab-eyebrow">Roof Álvaro Obregón</div>
+        <div class="ab-h4">Condesa · terraza privada</div>
+        <div class="ab-mono-price">MXN $32,000 / mes</div>
+      </div>
+      <div class="ab-hero-card-badges">
+        <span class="ab-badge ab-badge--accent">3D</span>
+        <span class="ab-badge ab-badge--ghost">360°</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ab-hero { position: relative; overflow: hidden; }
+  .ab-hero-inner {
+    max-width: 1280px; margin: 0 auto; padding: 96px 32px 64px;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center;
+  }
+  .ab-hero-title { margin-top: 16px; margin-bottom: 24px; max-width: 560px; }
+  .ab-hero-lede {
+    font-size: 18px; color: var(--ab-stone-600);
+    max-width: 520px; margin-bottom: 32px; line-height: 1.55;
+  }
+  .ab-hero-search {
+    display: flex; gap: 0; padding: 6px; background: #fff;
+    border: 1px solid var(--ab-border-strong); border-radius: 14px;
+    box-shadow: var(--ab-shadow-2); max-width: 560px;
+  }
+  .ab-hero-field {
+    flex: 1; padding: 8px 14px;
+    border-right: 1px solid var(--ab-border);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .ab-hero-field:last-of-type { border-right: none; }
+  .ab-hero-field select {
+    border: none; background: transparent; font-size: 15px;
+    color: var(--ab-ink-900); outline: none; padding: 0;
+  }
+  .ab-hero-search-btn {
+    font-weight: 600; font-size: 14px;
+    background: var(--ab-terracotta-500); color: #fff;
+    border: none; border-radius: 10px; padding: 0 22px; cursor: pointer;
+  }
+  .ab-hero-search-btn:hover { background: var(--ab-terracotta-600); }
+  .ab-hero-stats { display: flex; gap: 24px; margin-top: 32px; }
+  .ab-hero-stat-n {
+    font-family: var(--ab-font-display); font-size: 28px; font-weight: 500;
+    color: var(--ab-ink-900); letter-spacing: -0.01em;
+  }
+  .ab-hero-stat-l { font: var(--ab-text-caption); color: var(--ab-stone-600); }
+  .ab-hero-card {
+    position: relative; aspect-ratio: 4/5; border-radius: 22px; overflow: hidden;
+    background-image: url(/assets/placeholder-apt-2.svg);
+    background-size: cover; background-position: center;
+    box-shadow: var(--ab-shadow-3);
+  }
+  .ab-hero-card-info {
+    position: absolute; left: 20px; bottom: 20px; padding: 14px 18px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border-radius: 14px; max-width: 280px;
+  }
+  .ab-mono-price { font-family: var(--ab-font-mono); font-size: 13px; color: var(--ab-ink-900); margin-top: 6px; }
+  .ab-hero-card-badges { position: absolute; right: 20px; top: 20px; display: flex; gap: 8px; }
+  .ab-badge {
+    padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    backdrop-filter: blur(10px);
+  }
+  .ab-badge--accent { background: var(--ab-terracotta-500); color: #fff; }
+  .ab-badge--ghost { background: rgba(255,255,255,0.85); color: var(--ab-ink-900); }
+  @media (max-width: 960px) {
+    .ab-hero-inner { grid-template-columns: 1fr; padding: 48px 24px; gap: 32px; }
+    .ab-hero-card { aspect-ratio: 16/10; }
+  }
+</style>

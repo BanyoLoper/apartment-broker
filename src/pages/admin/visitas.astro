@@ -1,0 +1,168 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import TopBar from '../../components/admin/TopBar.astro';
+
+const env = Astro.locals.runtime?.env;
+const session = Astro.locals.session;
+
+interface BookingRow {
+  id: number;
+  scheduled_at: string;
+  status: string;
+  listing_name: string | null;
+  colonia: string | null;
+  lead_name: string | null;
+  lead_phone: string | null;
+  lead_email: string | null;
+}
+
+let rows: BookingRow[] = [];
+if (env?.DB) {
+  const rs = await env.DB.prepare(`
+    SELECT
+      b.id, b.scheduled_at, b.status,
+      li.name as listing_name, li.colonia,
+      l.name as lead_name, l.phone as lead_phone, l.email as lead_email
+    FROM bookings b
+    LEFT JOIN listings li ON li.id = b.listing_id
+    LEFT JOIN leads l ON l.id = b.lead_id
+    ORDER BY b.scheduled_at DESC
+    LIMIT 100
+  `).all<BookingRow>();
+  rows = rs.results || [];
+}
+
+// Dummies — solo se muestran si no hay visitas reales
+const dummy: BookingRow[] = rows.length > 0 ? [] : [
+  { id: 901, scheduled_at: '2026-05-09T11:00', status: 'solicitada', listing_name: 'Casa Sonora', colonia: 'Roma Norte', lead_name: 'Daniela Estrada', lead_phone: '5512345678', lead_email: 'd.estrada@example.com' },
+  { id: 902, scheduled_at: '2026-05-09T13:00', status: 'confirmada', listing_name: 'Roof Álvaro Obregón', colonia: 'Condesa', lead_name: 'Iván Saldaña', lead_phone: '5598765432', lead_email: null },
+  { id: 903, scheduled_at: '2026-05-10T10:00', status: 'completada', listing_name: 'Colima 184', colonia: 'Roma Norte', lead_name: 'Sofía Romero', lead_phone: null, lead_email: 'sofia.r@example.com' },
+  { id: 904, scheduled_at: '2026-05-08T18:30', status: 'no-show', listing_name: 'Casa Durango', colonia: 'Juárez', lead_name: 'Ramón Cortés', lead_phone: '5544332211', lead_email: null },
+];
+const display = rows.length > 0 ? rows : dummy;
+
+const statusClass: Record<string, string> = {
+  solicitada: 'is-solicitada', confirmada: 'is-confirmada',
+  completada: 'is-completada', 'no-show': 'is-noshow', cancelada: 'is-cancelada',
+};
+const statusLabel: Record<string, string> = {
+  solicitada: 'Solicitada', confirmada: 'Confirmada',
+  completada: 'Completada', 'no-show': 'No-show', cancelada: 'Cancelada',
+};
+
+function fmt(iso: string): { day: string; time: string } {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) {
+    const [date, time] = iso.split('T');
+    return { day: date || iso, time: time || '' };
+  }
+  return {
+    day: d.toLocaleDateString('es-MX', { weekday: 'short', day: '2-digit', month: 'short' }),
+    time: d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+  };
+}
+---
+
+<AdminLayout title="Visitas" active="visits" brokerName={session?.name}>
+  <TopBar title="Visitas" subtitle={`${display.length} agendadas`} />
+
+  {rows.length === 0 && (
+    <div class="ab-stub-banner">
+      <strong>Datos de muestra.</strong> Cuando capturen visitas desde el sitio público, aparecen aquí en tiempo real.
+    </div>
+  )}
+
+  <section class="ab-visits">
+    <div class="ab-visits-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Inmueble</th>
+            <th>Inquilino</th>
+            <th>Contacto</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {display.map((r) => {
+            const f = fmt(r.scheduled_at);
+            return (
+              <tr>
+                <td>
+                  <div class="ab-visits-day">{f.day}</div>
+                  <div class="ab-visits-time">{f.time}</div>
+                </td>
+                <td>
+                  <div class="ab-visits-listing"><strong>{r.listing_name || '—'}</strong></div>
+                  <div class="ab-visits-colonia">{r.colonia || ''}</div>
+                </td>
+                <td>{r.lead_name || '—'}</td>
+                <td>
+                  {r.lead_phone && <div class="ab-mono ab-visits-mono">{r.lead_phone}</div>}
+                  {r.lead_email && <div class="ab-visits-email">{r.lead_email}</div>}
+                </td>
+                <td>
+                  <span class={`ab-status ${statusClass[r.status] || 'is-solicitada'}`}>
+                    {statusLabel[r.status] || r.status}
+                  </span>
+                </td>
+                <td>
+                  {r.lead_phone && (
+                    <a class="ab-visits-wa" href={`https://wa.me/${r.lead_phone}`} target="_blank" rel="noopener">
+                      WhatsApp →
+                    </a>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .ab-stub-banner {
+    margin: 16px 32px 0; padding: 12px 16px;
+    background: var(--ab-ochre-100); border: 1px solid var(--ab-ochre-500);
+    border-radius: 10px; font-size: 13px; color: #6B5119;
+  }
+  .ab-visits { padding: 24px 32px 64px; }
+  .ab-visits-card {
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--ab-border); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ab-fg-soft); text-align: left;
+    padding: 12px 16px; border-bottom: 1px solid var(--ab-border);
+    background: var(--ab-bone-100);
+  }
+  td {
+    padding: 14px 16px; border-bottom: 1px solid var(--ab-border);
+    font-size: 14px; color: var(--ab-ink-900); vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: var(--ab-bone-50); }
+  .ab-visits-day { font-weight: 600; text-transform: capitalize; }
+  .ab-visits-time { font-family: var(--ab-font-mono); font-size: 12px; color: var(--ab-stone-600); }
+  .ab-visits-colonia { font-size: 12px; color: var(--ab-stone-600); }
+  .ab-mono { font-family: var(--ab-font-mono); font-size: 12px; }
+  .ab-visits-mono, .ab-visits-email { color: var(--ab-stone-600); }
+  .ab-visits-email { font-size: 12px; }
+  .ab-status {
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .is-solicitada { background: var(--ab-ochre-100); color: #8B6A1F; }
+  .is-confirmada { background: var(--ab-jade-100); color: var(--ab-jade-600); }
+  .is-completada { background: var(--ab-bone-200); color: var(--ab-stone-600); }
+  .is-noshow { background: var(--ab-rosa-100); color: var(--ab-danger); }
+  .is-cancelada { background: var(--ab-bone-200); color: var(--ab-stone-400); }
+  .ab-visits-wa {
+    color: var(--ab-jade-600); font-weight: 600; text-decoration: none; font-size: 12px;
+  }
+</style>

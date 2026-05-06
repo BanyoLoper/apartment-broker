@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Shadows</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); padding: 28px 22px; font-family: var(--ab-font-body); }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .b { background: #FFFFFF; border-radius: var(--ab-radius-lg); height: 90px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 4px; }
+  .lbl { font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; color: var(--ab-fg-soft); }
+  .desc { font: var(--ab-text-caption); color: var(--ab-stone-600); }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="b" style="box-shadow: var(--ab-shadow-1)"><span class="lbl">Shadow 1</span><span class="desc">resting card</span></div>
+  <div class="b" style="box-shadow: var(--ab-shadow-2)"><span class="lbl">Shadow 2</span><span class="desc">card hover</span></div>
+  <div class="b" style="box-shadow: var(--ab-shadow-3)"><span class="lbl">Shadow 3</span><span class="desc">modal · floating</span></div>
+  <div class="b" style="box-shadow: var(--ab-shadow-inset)"><span class="lbl">Inset</span><span class="desc">image frame</span></div>
+</div>
+</body></html>

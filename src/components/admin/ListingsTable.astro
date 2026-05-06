@@ -1,0 +1,216 @@
+---
+import type { Listing } from '../../lib/db';
+import { STATUS_LABEL } from '../../lib/db';
+
+interface Props { rows: Listing[]; }
+const { rows } = Astro.props;
+---
+
+<section class="ab-table-wrap">
+  <div class="ab-table-card">
+    <table>
+      <thead>
+        <tr>
+          <th class="ab-th">Departamento</th>
+          <th class="ab-th">Colonia</th>
+          <th class="ab-th">Renta</th>
+          <th class="ab-th">Estado</th>
+          <th class="ab-th">Tour</th>
+          <th class="ab-th ab-th-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr data-row-id={r.id}>
+            <td class="ab-td">
+              <div class="ab-td-listing">
+                <div class="ab-td-thumb" style={`background-image: url(${r.cover_image || '/assets/placeholder-apt-1.svg'})`}></div>
+                <div>
+                  <div class="ab-td-name">{r.name}</div>
+                  <div class="ab-td-id">AB-{1000 + r.id}</div>
+                </div>
+              </div>
+            </td>
+            <td class="ab-td">{r.colonia}</td>
+            <td class="ab-td ab-mono">MXN ${r.price_mxn.toLocaleString('es-MX')}</td>
+            <td class="ab-td">
+              <select
+                class={`ab-status-select is-${r.status}`}
+                data-listing-id={r.id}
+                aria-label="Cambiar estado"
+              >
+                {(['borrador', 'publicada', 'reservada', 'retirada'] as const).map((s) => (
+                  <option value={s} selected={r.status === s}>{STATUS_LABEL[s]}</option>
+                ))}
+              </select>
+            </td>
+            <td class="ab-td">
+              <div class="ab-td-tours">
+                {r.has_3d ? <span class="ab-tour-chip">3D</span> : null}
+                {r.has_360 ? <span class="ab-tour-chip">360°</span> : null}
+                {!r.has_3d && !r.has_360 && <span class="ab-tour-empty">—</span>}
+              </div>
+            </td>
+            <td class="ab-td">
+              <div class="ab-td-actions">
+                <a href={`/departamentos/${r.slug}`} class="ab-td-link" target="_blank" rel="noopener" title="Ver en sitio público">Ver</a>
+                <a href={`/admin/publicaciones/${r.slug}/editar`} class="ab-td-link ab-td-link--primary">Editar</a>
+                <button
+                  type="button"
+                  class="ab-td-archive"
+                  data-archive-id={r.id}
+                  data-archive-name={r.name}
+                  title="Retirar publicación"
+                  aria-label="Retirar"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+        {rows.length === 0 && (
+          <tr><td class="ab-td" colspan="6" style="text-align:center; padding: 40px; color: var(--ab-stone-600);">Aún no tienes publicaciones.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  <div id="ab-table-toast" class="ab-toast" hidden></div>
+</section>
+
+<script>
+  const toast = document.getElementById('ab-table-toast');
+  function showToast(msg: string, ok = true) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.toggle('is-err', !ok);
+    toast.hidden = false;
+    setTimeout(() => { if (toast) toast.hidden = true; }, 2400);
+  }
+
+  // Cambio de estado vía select
+  document.querySelectorAll<HTMLSelectElement>('.ab-status-select').forEach((sel) => {
+    const original = sel.value;
+    sel.addEventListener('change', async () => {
+      const id = sel.dataset.listingId;
+      const newStatus = sel.value;
+      sel.disabled = true;
+      try {
+        const fd = new FormData();
+        fd.set('_action', 'status');
+        fd.set('status', newStatus);
+        const res = await fetch(`/api/listings/${id}`, {
+          method: 'POST',
+          body: fd,
+          headers: { accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error();
+        // Repinta la clase del select para que tome el color del estado
+        sel.className = `ab-status-select is-${newStatus}`;
+        showToast('Estado actualizado');
+      } catch {
+        sel.value = original;
+        showToast('No se pudo guardar', false);
+      } finally {
+        sel.disabled = false;
+      }
+    });
+  });
+
+  // Retirar (soft delete)
+  document.querySelectorAll<HTMLButtonElement>('[data-archive-id]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.archiveId;
+      const name = btn.dataset.archiveName;
+      if (!confirm(`¿Retirar "${name}" del sitio público? Podrás reactivarla después cambiando su estado.`)) return;
+      btn.disabled = true;
+      try {
+        const fd = new FormData();
+        fd.set('_action', 'delete');
+        const res = await fetch(`/api/listings/${id}`, { method: 'POST', body: fd });
+        if (!res.ok && res.status !== 302) throw new Error();
+        location.reload();
+      } catch {
+        btn.disabled = false;
+        showToast('No se pudo retirar', false);
+      }
+    });
+  });
+</script>
+
+<style>
+  .ab-table-wrap { padding: 24px 32px 64px; position: relative; }
+  .ab-table-card {
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--ab-border); overflow: visible;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  .ab-th {
+    font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ab-fg-soft); text-align: left;
+    padding: 12px 16px; border-bottom: 1px solid var(--ab-border);
+    background: var(--ab-bone-100);
+  }
+  .ab-th-actions { width: 220px; text-align: right; }
+  .ab-td {
+    padding: 14px 16px; border-bottom: 1px solid var(--ab-border);
+    font-size: 14px; color: var(--ab-ink-900); vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: var(--ab-bone-50); }
+  .ab-td-listing { display: flex; align-items: center; gap: 12px; }
+  .ab-td-thumb { width: 44px; height: 44px; border-radius: 8px; background-size: cover; background-position: center; flex-shrink: 0; }
+  .ab-td-name { font-weight: 600; }
+  .ab-td-id { font-size: 11px; color: var(--ab-stone-600); font-family: var(--ab-font-mono); }
+  .ab-mono { font-family: var(--ab-font-mono); }
+
+  .ab-status-select {
+    appearance: none; -webkit-appearance: none;
+    padding: 5px 26px 5px 10px;
+    border-radius: 999px; border: 1px solid transparent;
+    font-size: 11px; font-weight: 600;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+  }
+  .ab-status-select:disabled { opacity: 0.5; cursor: progress; }
+  .ab-status-select.is-publicada { background-color: var(--ab-jade-100); color: var(--ab-jade-600); }
+  .ab-status-select.is-borrador { background-color: var(--ab-bone-200); color: var(--ab-stone-600); }
+  .ab-status-select.is-reservada { background-color: var(--ab-ochre-100); color: #8B6A1F; }
+  .ab-status-select.is-retirada { background-color: var(--ab-rosa-100); color: var(--ab-danger); }
+
+  .ab-td-tours { display: flex; gap: 4px; }
+  .ab-tour-chip {
+    padding: 2px 8px; border-radius: 4px;
+    background: var(--ab-bone-100); font-size: 10px; font-weight: 600;
+    color: var(--ab-ink-900);
+  }
+  .ab-tour-empty { color: var(--ab-stone-400); }
+
+  .ab-td-actions {
+    display: flex; gap: 12px; align-items: center; justify-content: flex-end;
+  }
+  .ab-td-link {
+    color: var(--ab-stone-600); font-weight: 600;
+    text-decoration: none; font-size: 13px;
+  }
+  .ab-td-link:hover { color: var(--ab-ink-900); }
+  .ab-td-link--primary { color: var(--ab-terracotta-500); }
+  .ab-td-link--primary:hover { color: var(--ab-terracotta-600); }
+  .ab-td-archive {
+    background: transparent; border: none; cursor: pointer;
+    padding: 4px; color: var(--ab-stone-400);
+    display: inline-flex; align-items: center;
+  }
+  .ab-td-archive:hover { color: var(--ab-danger); }
+  .ab-td-archive:disabled { opacity: 0.5; cursor: progress; }
+
+  .ab-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    padding: 12px 18px; border-radius: 10px;
+    background: var(--ab-jade-600); color: #fff;
+    font-size: 14px; font-weight: 600;
+    box-shadow: var(--ab-shadow-3); z-index: 200;
+  }
+  .ab-toast.is-err { background: var(--ab-danger); }
+</style>

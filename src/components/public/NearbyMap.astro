@@ -1,0 +1,172 @@
+---
+// Mapa con Leaflet + OpenStreetMap (sin API key).
+// Muestra el punto difuso del inmueble + amenidades cercanas vía Overpass API.
+interface Props {
+  fuzzyLat: number;
+  fuzzyLng: number;
+  fuzzyRadiusM?: number;
+  listingName: string;
+}
+const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
+---
+
+<section class="ab-nearby">
+  <div class="ab-nearby-head">
+    <div>
+      <span class="ab-eyebrow">Comodidades cercanas</span>
+      <h2 class="ab-h2 ab-nearby-title">El barrio, a pie</h2>
+    </div>
+    <div class="ab-nearby-cats" role="group" aria-label="Categorías">
+      <button data-cat="transit" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#3B5B8A"></span>Transporte</button>
+      <button data-cat="parks" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#2F6B5E"></span>Parques</button>
+      <button data-cat="stores" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#D9A441"></span>Súper · OXXO</button>
+      <button data-cat="cafes" class="ab-cat is-on" type="button"><span class="ab-cat-dot" style="background:#C8553D"></span>Cafés</button>
+      <button data-cat="gyms" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#E8A6A0"></span>Gimnasios</button>
+      <button data-cat="schools" class="ab-cat" type="button"><span class="ab-cat-dot" style="background:#5C564C"></span>Escuelas</button>
+    </div>
+  </div>
+
+  <div
+    id="ab-nearby-map"
+    class="ab-nearby-map"
+    data-lat={fuzzyLat}
+    data-lng={fuzzyLng}
+    data-radius={fuzzyRadiusM}
+    data-name={listingName}
+  ></div>
+
+  <p class="ab-nearby-note">
+    El círculo punteado es la zona aproximada del inmueble (radio ~{fuzzyRadiusM}m). La ubicación exacta se comparte tras agendar una visita.
+    Datos de POIs: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contribuyentes</a>.
+  </p>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script is:inline>
+  (function () {
+    function init() {
+      if (typeof L === 'undefined') { setTimeout(init, 100); return; }
+      const el = document.getElementById('ab-nearby-map');
+      if (!el) return;
+      const lat = Number(el.dataset.lat);
+      const lng = Number(el.dataset.lng);
+      const radius = Number(el.dataset.radius || 150);
+      const name = el.dataset.name || 'Inmueble';
+
+      const map = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19,
+      }).addTo(map);
+
+      L.circle([lat, lng], {
+        radius,
+        color: '#C8553D',
+        weight: 1.5,
+        dashArray: '6 6',
+        fillColor: '#C8553D',
+        fillOpacity: 0.06,
+      }).addTo(map);
+
+      // Pin difuso del inmueble (centro del círculo)
+      const listingIcon = L.divIcon({
+        className: 'ab-listing-pin',
+        html: `<div class="ab-listing-pin-inner">${name}</div>`,
+        iconSize: [120, 32],
+        iconAnchor: [60, 32],
+      });
+      L.marker([lat, lng], { icon: listingIcon, interactive: false }).addTo(map);
+
+      const colors = {
+        transit: '#3B5B8A', parks: '#2F6B5E', stores: '#D9A441',
+        cafes: '#C8553D', gyms: '#E8A6A0', schools: '#5C564C',
+      };
+      const layers = {};
+      const cache = {};
+
+      async function loadCategory(cat) {
+        if (cache[cat]) return cache[cat];
+        const res = await fetch(`/api/overpass?lat=${lat}&lng=${lng}&radius=1000&category=${cat}`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        // El endpoint devuelve un array si tuvo éxito, o {error, results: []} en fallo
+        const list = Array.isArray(data) ? data : (data.results || []);
+        cache[cat] = list;
+        return list;
+      }
+
+      async function setCategory(cat, on) {
+        if (on) {
+          if (layers[cat]) { layers[cat].addTo(map); return; }
+          const pois = await loadCategory(cat);
+          const group = L.layerGroup();
+          pois.forEach((p) => {
+            const icon = L.divIcon({
+              className: 'ab-poi-pin',
+              html: `<div class="ab-poi-dot" style="background:${colors[cat]}"></div>`,
+              iconSize: [14, 14],
+              iconAnchor: [7, 7],
+            });
+            const m = L.marker([p.lat, p.lng], { icon });
+            m.bindPopup(`<strong>${p.name}</strong>${p.detail ? `<br><small>${p.detail}</small>` : ''}`);
+            m.addTo(group);
+          });
+          layers[cat] = group;
+          group.addTo(map);
+        } else if (layers[cat]) {
+          map.removeLayer(layers[cat]);
+        }
+      }
+
+      document.querySelectorAll('[data-cat]').forEach((btn) => {
+        const cat = btn.getAttribute('data-cat');
+        if (btn.classList.contains('is-on')) setCategory(cat, true);
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('is-on');
+          setCategory(cat, btn.classList.contains('is-on'));
+        });
+      });
+    }
+    if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+
+<style is:global>
+  .ab-listing-pin .ab-listing-pin-inner {
+    padding: 8px 14px; border-radius: 999px;
+    background: var(--ab-terracotta-500); color: #fff;
+    font-family: var(--ab-font-mono); font-size: 13px; font-weight: 600;
+    box-shadow: var(--ab-shadow-3); white-space: nowrap;
+    text-align: center;
+  }
+  .ab-poi-pin .ab-poi-dot {
+    width: 14px; height: 14px; border-radius: 999px;
+    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+</style>
+
+<style>
+  .ab-nearby { margin-top: 64px; }
+  .ab-nearby-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .ab-nearby-title { margin: 8px 0 0; }
+  .ab-nearby-cats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ab-cat {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--ab-border-strong);
+    color: var(--ab-ink-900); cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  .ab-cat.is-on { background: var(--ab-ink-900); color: var(--ab-bone-50); border-color: var(--ab-ink-900); }
+  .ab-cat-dot { width: 8px; height: 8px; border-radius: 999px; }
+  .ab-nearby-map {
+    margin-top: 24px; height: 480px; border-radius: 22px; overflow: hidden;
+    box-shadow: var(--ab-shadow-2); background: var(--ab-bone-100);
+  }
+  .ab-nearby-note { font: var(--ab-text-caption); color: var(--ab-stone-600); margin-top: 12px; }
+  .ab-nearby-note a { color: var(--ab-stone-600); }
+</style>

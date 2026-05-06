@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  
+  <rect width="800" height="600" fill="#E8D9C4"></rect>
+  
+  <rect y="430" width="800" height="170" fill="#B89878"></rect>
+  
+  <polygon points="500,0 800,0 800,500 600,500" fill="#F6E8D2" opacity="0.6"></polygon>
+  
+  <path d="M520 100 V340 a80 80 0 0 1 160 0 V340 H520 Z" fill="#FAF7F2" stroke="#16140F" stroke-width="2"></path>
+  <line x1="600" y1="100" x2="600" y2="340" stroke="#16140F" stroke-width="1.5"></line>
+  <line x1="520" y1="220" x2="680" y2="220" stroke="#16140F" stroke-width="1.5"></line>
+  
+  <rect x="80" y="340" width="320" height="120" rx="14" fill="#C8553D"></rect>
+  <rect x="80" y="320" width="320" height="40" rx="10" fill="#A8432F"></rect>
+  
+  <rect x="430" y="380" width="60" height="80" rx="6" fill="#5C564C"></rect>
+  <path d="M460 380 Q440 320 420 290 M460 380 Q480 320 500 290 M460 380 Q460 310 460 270" stroke="#2F6B5E" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  <ellipse cx="430" cy="295" rx="20" ry="14" fill="#2F6B5E"></ellipse>
+  <ellipse cx="490" cy="295" rx="20" ry="14" fill="#2F6B5E"></ellipse>
+  <ellipse cx="460" cy="270" rx="22" ry="16" fill="#2F6B5E"></ellipse>
+  
+  <rect x="140" y="120" width="120" height="160" fill="#FAF7F2" stroke="#16140F" stroke-width="2"></rect>
+  <circle cx="200" cy="180" r="30" fill="#D9A441"></circle>
+  <rect x="155" y="220" width="90" height="40" fill="#E8A6A0"></rect>
+  
+  <rect width="800" height="600" fill="#16140F" opacity="0.02"></rect>
+</svg>

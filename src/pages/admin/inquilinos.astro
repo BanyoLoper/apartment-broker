@@ -1,0 +1,123 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import TopBar from '../../components/admin/TopBar.astro';
+
+const session = Astro.locals.session;
+
+// Pendiente de implementar — schema de inquilinos / contratos no existe aún.
+// Mostramos data demo para que el módulo se vea completo en el pitch.
+const tenants = [
+  { id: 'INQ-1042', name: 'Daniela Estrada', listing: 'Casa Sonora · Roma Norte', start: '2026-04-01', months: 12, rent: 24500, status: 'al-corriente', avatar: 'DE' },
+  { id: 'INQ-1041', name: 'Iván Saldaña', listing: 'Roof Álvaro Obregón · Condesa', start: '2025-11-15', months: 12, rent: 32000, status: 'al-corriente', avatar: 'IS' },
+  { id: 'INQ-1039', name: 'Sofía Romero', listing: 'Colima 184 · Roma Norte', start: '2026-01-10', months: 12, rent: 18200, status: 'pendiente', avatar: 'SR' },
+  { id: 'INQ-1037', name: 'Ramón Cortés', listing: 'Casa Durango · Juárez', start: '2025-08-01', months: 24, rent: 28900, status: 'al-corriente', avatar: 'RC' },
+  { id: 'INQ-1035', name: 'Mariana Lugo', listing: 'Amsterdam 76 · Condesa', start: '2025-06-15', months: 12, rent: 22300, status: 'al-corriente', avatar: 'ML' },
+  { id: 'INQ-1028', name: 'Andrés Pacheco', listing: 'Oaxaca 230 · Roma Norte', start: '2024-12-01', months: 12, rent: 26800, status: 'renovacion', avatar: 'AP' },
+];
+
+const statusLabel: Record<string, string> = {
+  'al-corriente': 'Al corriente',
+  'pendiente': 'Pago pendiente',
+  'renovacion': 'Por renovar',
+  'mora': 'En mora',
+};
+const statusClass: Record<string, string> = {
+  'al-corriente': 'is-ok',
+  'pendiente': 'is-pendiente',
+  'renovacion': 'is-renovacion',
+  'mora': 'is-mora',
+};
+---
+
+<AdminLayout title="Inquilinos" active="tenants" brokerName={session?.name}>
+  <TopBar title="Inquilinos" subtitle={`${tenants.length} contratos activos`} />
+
+  <div class="ab-stub-banner">
+    <strong>Módulo en preparación.</strong> Estos son datos demo. El schema de inquilinos y contratos se activa en el tier de producción — incluye firma electrónica y conciliación de pagos.
+  </div>
+
+  <section class="ab-tenants">
+    <div class="ab-tenants-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Inquilino</th>
+            <th>Inmueble</th>
+            <th>Inicio</th>
+            <th>Plazo</th>
+            <th>Renta</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tenants.map((t) => (
+            <tr>
+              <td>
+                <div class="ab-tenant-row">
+                  <div class="ab-tenant-avatar">{t.avatar}</div>
+                  <div>
+                    <div class="ab-tenant-name">{t.name}</div>
+                    <div class="ab-tenant-id">{t.id}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{t.listing}</td>
+              <td class="ab-mono">{t.start}</td>
+              <td>{t.months} meses</td>
+              <td class="ab-mono">MXN ${t.rent.toLocaleString('es-MX')}</td>
+              <td><span class={`ab-status ${statusClass[t.status]}`}>{statusLabel[t.status]}</span></td>
+              <td><span class="ab-link-soft">Ver →</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .ab-stub-banner {
+    margin: 16px 32px 0; padding: 12px 16px;
+    background: var(--ab-ochre-100); border: 1px solid var(--ab-ochre-500);
+    border-radius: 10px; font-size: 13px; color: #6B5119;
+  }
+  .ab-tenants { padding: 24px 32px 64px; }
+  .ab-tenants-card {
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--ab-border); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ab-fg-soft); text-align: left;
+    padding: 12px 16px; border-bottom: 1px solid var(--ab-border);
+    background: var(--ab-bone-100);
+  }
+  td {
+    padding: 14px 16px; border-bottom: 1px solid var(--ab-border);
+    font-size: 14px; color: var(--ab-ink-900); vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: var(--ab-bone-50); }
+  .ab-tenant-row { display: flex; align-items: center; gap: 12px; }
+  .ab-tenant-avatar {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: var(--ab-terracotta-500); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+  .ab-tenant-name { font-weight: 600; }
+  .ab-tenant-id { font-family: var(--ab-font-mono); font-size: 11px; color: var(--ab-stone-600); }
+  .ab-mono { font-family: var(--ab-font-mono); }
+  .ab-status {
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .is-ok { background: var(--ab-jade-100); color: var(--ab-jade-600); }
+  .is-pendiente { background: var(--ab-ochre-100); color: #8B6A1F; }
+  .is-renovacion { background: var(--ab-rosa-100); color: var(--ab-terracotta-600); }
+  .is-mora { background: var(--ab-rosa-100); color: var(--ab-danger); }
+  .ab-link-soft {
+    color: var(--ab-terracotta-500); font-weight: 600; cursor: pointer; font-size: 13px;
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import Hero from '../components/public/Hero.astro';
+import ListingCard from '../components/public/ListingCard.astro';
+import LeadForm from '../components/public/LeadForm.astro';
+import type { Listing } from '../lib/db';
+
+const env = Astro.locals.runtime?.env;
+let featured: Listing[] = [];
+let totalActive = 0;
+if (env?.DB) {
+  const active = await env.DB.prepare(
+    "SELECT * FROM listings WHERE status = 'publicada' ORDER BY created_at DESC LIMIT 6",
+  ).all<Listing>();
+  featured = active.results || [];
+  const count = await env.DB.prepare("SELECT COUNT(*) as n FROM listings WHERE status = 'publicada'").first<{ n: number }>();
+  totalActive = count?.n ?? 0;
+}
+const whatsapp = env?.WHATSAPP_NUMBER || '525555555555';
+---
+
+<PublicLayout active="home">
+  <Hero activeListings={totalActive || 6} colonias={4} />
+
+  <section class="ab-section">
+    <div class="ab-section-inner">
+      <div class="ab-section-head">
+        <span class="ab-eyebrow">Disponibles ahora</span>
+        <h2 class="ab-h2">Departamentos curados</h2>
+      </div>
+      <div class="ab-grid">
+        {featured.map((l) => <ListingCard listing={l} />)}
+        {featured.length === 0 && (
+          <div class="ab-empty">
+            Aún no hay depas publicados. Corre <code>npm run db:migrate:local && npm run db:seed:local</code>.
+          </div>
+        )}
+      </div>
+      <div class="ab-section-cta">
+        <a class="ab-link" href="/departamentos">Ver todos los departamentos →</a>
+      </div>
+    </div>
+  </section>
+
+  <LeadForm whatsappNumber={whatsapp} />
+</PublicLayout>
+
+<style>
+  .ab-section { padding: 64px 32px 0; }
+  .ab-section-inner { max-width: 1280px; margin: 0 auto; }
+  .ab-section-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 32px; }
+  .ab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+  .ab-empty {
+    grid-column: 1 / -1;
+    padding: 40px; text-align: center;
+    color: var(--ab-stone-600);
+    background: #fff; border: 1px dashed var(--ab-border-strong);
+    border-radius: 14px;
+  }
+  .ab-empty code {
+    display: inline-block; margin-top: 4px; padding: 2px 6px;
+    background: var(--ab-bone-100); border-radius: 4px;
+    font-family: var(--ab-font-mono); font-size: 12px;
+  }
+  .ab-section-cta { margin-top: 32px; text-align: center; }
+  .ab-link {
+    color: var(--ab-terracotta-500); font-weight: 600;
+    text-decoration: none;
+  }
+  .ab-link:hover { color: var(--ab-terracotta-600); }
+</style>

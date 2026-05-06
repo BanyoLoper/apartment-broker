@@ -1,0 +1,96 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import TopBar from '../../components/admin/TopBar.astro';
+import type { Lead } from '../../lib/db';
+
+const env = Astro.locals.runtime?.env;
+const session = Astro.locals.session;
+let leads: (Lead & { listing_name?: string })[] = [];
+if (env?.DB) {
+  const rs = await env.DB.prepare(`
+    SELECT l.*, li.name as listing_name
+    FROM leads l
+    LEFT JOIN listings li ON li.id = l.listing_id
+    ORDER BY l.created_at DESC
+    LIMIT 100
+  `).all<Lead & { listing_name?: string }>();
+  leads = rs.results || [];
+}
+
+const statusClass: Record<Lead['status'], string> = {
+  nuevo: 'is-nuevo', contactado: 'is-contactado',
+  visita: 'is-visita', cerrado: 'is-cerrado', descartado: 'is-descartado',
+};
+const statusLabel: Record<Lead['status'], string> = {
+  nuevo: 'Nuevo', contactado: 'Contactado',
+  visita: 'Visita', cerrado: 'Cerrado', descartado: 'Descartado',
+};
+---
+
+<AdminLayout title="Leads" active="leads" brokerName={session?.name}>
+  <TopBar title="Leads" subtitle={`${leads.length} en total`} />
+
+  <section class="ab-leads">
+    <div class="ab-leads-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Cuándo</th><th>Nombre</th><th>Contacto</th>
+            <th>Inmueble</th><th>Mensaje</th><th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {leads.map((l) => (
+            <tr>
+              <td class="ab-mono ab-leads-date">{l.created_at}</td>
+              <td><strong>{l.name}</strong></td>
+              <td>
+                {l.email && <div>{l.email}</div>}
+                {l.phone && <div class="ab-mono ab-leads-phone">{l.phone}</div>}
+              </td>
+              <td>{l.listing_name || '—'}</td>
+              <td class="ab-leads-msg">{l.message || '—'}</td>
+              <td><span class={`ab-status ${statusClass[l.status]}`}>{statusLabel[l.status]}</span></td>
+            </tr>
+          ))}
+          {leads.length === 0 && (
+            <tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--ab-stone-600);">Aún no hay leads.</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .ab-leads { padding: 24px 32px 64px; }
+  .ab-leads-card {
+    background: #fff; border-radius: 14px;
+    border: 1px solid var(--ab-border); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font: var(--ab-text-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ab-fg-soft); text-align: left;
+    padding: 12px 16px; border-bottom: 1px solid var(--ab-border);
+    background: var(--ab-bone-100);
+  }
+  td {
+    padding: 14px 16px; border-bottom: 1px solid var(--ab-border);
+    font-size: 14px; color: var(--ab-ink-900); vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--ab-bone-50); }
+  .ab-mono { font-family: var(--ab-font-mono); font-size: 12px; }
+  .ab-leads-date { color: var(--ab-stone-600); white-space: nowrap; }
+  .ab-leads-phone { color: var(--ab-stone-600); margin-top: 2px; }
+  .ab-leads-msg { max-width: 320px; }
+  .ab-status {
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .is-nuevo { background: var(--ab-terracotta-100); color: var(--ab-terracotta-600); }
+  .is-contactado { background: var(--ab-ochre-100); color: #8B6A1F; }
+  .is-visita { background: var(--ab-jade-100); color: var(--ab-jade-600); }
+  .is-cerrado { background: var(--ab-bone-200); color: var(--ab-stone-600); }
+  .is-descartado { background: var(--ab-rosa-100); color: var(--ab-danger); }
+</style>

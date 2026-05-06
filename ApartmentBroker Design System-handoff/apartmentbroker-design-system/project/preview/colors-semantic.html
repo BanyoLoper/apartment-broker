@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Semantic colors</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); font-family: var(--ab-font-body); padding: 18px; }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .sw { border-radius: var(--ab-radius-md); height: 100px; padding: 12px; display:flex; flex-direction:column; justify-content: space-between; color:#FAF7F2; }
+  .sw .name { font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; }
+  .sw .hex { font: var(--ab-text-mono); font-size: 11px; }
+  .sw .role { font: var(--ab-text-body-sm); opacity: 0.85; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="sw" style="background:#2F6B5E"><span class="name">Success</span><span class="role">Confirmed booking</span><span class="hex">#2F6B5E</span></div>
+  <div class="sw" style="background:#D9A441"><span class="name">Warning</span><span class="role">Pending review</span><span class="hex">#D9A441</span></div>
+  <div class="sw" style="background:#B43A2A"><span class="name">Danger</span><span class="role">Listing retired</span><span class="hex">#B43A2A</span></div>
+  <div class="sw" style="background:#3B5B8A"><span class="name">Info</span><span class="role">Map / metadata</span><span class="hex">#3B5B8A</span></div>
+</div>
+</body></html>

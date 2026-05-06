@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Chips & badges</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); padding: 22px; font-family: var(--ab-font-body); }
+  .row { display:flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row + .row { margin-top: 12px; }
+  .chip { display:inline-flex; align-items:center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #FFFFFF; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
+  .chip.active { background: var(--ab-ink-900); color: #FAF7F2; border-color: var(--ab-ink-900); }
+  .chip.terra { background: var(--ab-terracotta-100); color: var(--ab-terracotta-600); border-color: var(--ab-terracotta-100); }
+  .chip.jade { background: var(--ab-jade-100); color: var(--ab-jade-600); border-color: var(--ab-jade-100); }
+  .chip.ochre { background: var(--ab-ochre-100); color: #8B6A1F; border-color: var(--ab-ochre-100); }
+  .chip.rosa { background: var(--ab-rosa-100); color: #A8432F; border-color: var(--ab-rosa-100); }
+  .lbl { font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; color: var(--ab-fg-soft); width: 90px; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="row"><span class="lbl">Filtros</span>
+  <span class="chip active">Disponible</span>
+  <span class="chip">Con balcón</span>
+  <span class="chip">Permite mascotas</span>
+  <span class="chip">Amueblado</span>
+</div>
+<div class="row"><span class="lbl">Categorías</span>
+  <span class="chip terra">Estudio</span>
+  <span class="chip jade">Loft</span>
+  <span class="chip ochre">PH</span>
+  <span class="chip rosa">Roof garden</span>
+</div>
+</body></html>

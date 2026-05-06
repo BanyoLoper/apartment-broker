@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AB · Form inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--ab-bg); padding: 22px; font-family: var(--ab-font-body); }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  label { display:block; font: var(--ab-text-eyebrow); letter-spacing:0.14em; text-transform:uppercase; color: var(--ab-fg-soft); margin-bottom: 6px; }
+  input, select { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 14px; padding: 10px 12px; background: #FFFFFF; border: 1px solid var(--ab-border-strong); border-radius: 8px; color: var(--ab-ink-900); transition: border-color 140ms; }
+  input:focus, select:focus { outline: none; border-color: var(--ab-terracotta-500); box-shadow: 0 0 0 2px rgba(200,85,61,0.2); }
+  .field-search { position: relative; }
+  .field-search input { padding-left: 36px; }
+  .search-ic { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ab-stone-400); }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div>
+    <label>Colonia</label>
+    <div class="field-search">
+      <svg class="search-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input value="Roma Norte"/>
+    </div>
+  </div>
+  <div>
+    <label>Recámaras</label>
+    <select><option>Cualquiera</option><option>1</option><option>2 +</option><option>3 +</option></select>
+  </div>
+  <div>
+    <label>Renta máxima</label>
+    <input value="MXN $30,000"/>
+  </div>
+  <div>
+    <label>Mudanza</label>
+    <input value="01 jun 2026"/>
+  </div>
+</div>
+</body></html>

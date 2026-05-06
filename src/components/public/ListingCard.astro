@@ -1,0 +1,70 @@
+---
+import type { Listing } from '../../lib/db';
+import { formatMxn } from '../../lib/db';
+
+interface Props {
+  listing: Listing;
+}
+const { listing } = Astro.props;
+const badges: { label: string; tone: 'accent' | 'ghost' }[] = [];
+if (listing.has_3d) badges.push({ label: '3D', tone: 'accent' });
+if (listing.has_360) badges.push({ label: '360°', tone: 'ghost' });
+if (badges.length === 0) badges.push({ label: 'Disponible', tone: 'ghost' });
+const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
+---
+
+<a class="ab-card" href={`/departamentos/${listing.slug}`}>
+  <div class="ab-card-img" style={`background-image: url(${cover})`}>
+    <div class="ab-card-badges">
+      {badges.map((b) => (
+        <span class={`ab-badge ab-badge--${b.tone}`}>{b.label}</span>
+      ))}
+    </div>
+  </div>
+  <div class="ab-card-body">
+    <div class="ab-card-row">
+      <h3 class="ab-h4 ab-card-name">{listing.name}</h3>
+      {listing.floor != null && <span class="ab-card-floor">piso {listing.floor}</span>}
+    </div>
+    <div class="ab-card-colonia">{listing.colonia}</div>
+    <div class="ab-card-meta">
+      <span class="ab-mono">{formatMxn(listing.price_mxn)} <span class="ab-card-per">/ mes</span></span>
+      <span class="ab-mono ab-card-stats">{listing.beds} rec · {listing.baths} baño · {listing.area_m2} m²</span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .ab-card {
+    display: block; text-decoration: none; color: inherit;
+    background: #fff; border: 1px solid var(--ab-border);
+    border-radius: 14px; overflow: hidden;
+    box-shadow: var(--ab-shadow-1);
+    transition: box-shadow 180ms var(--ab-ease-standard), transform 180ms var(--ab-ease-standard);
+  }
+  .ab-card:hover { box-shadow: var(--ab-shadow-2); transform: translateY(-1px); }
+  .ab-card-img {
+    aspect-ratio: 4 / 3;
+    background-size: cover; background-position: center;
+    position: relative;
+  }
+  .ab-card-badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
+  .ab-badge {
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    backdrop-filter: blur(10px);
+  }
+  .ab-badge--accent { background: var(--ab-terracotta-500); color: #fff; }
+  .ab-badge--ghost  { background: rgba(255,255,255,0.88); color: var(--ab-ink-900); }
+  .ab-card-body { padding: 14px 16px 16px; }
+  .ab-card-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .ab-card-name { margin: 0; }
+  .ab-card-floor { font: var(--ab-text-caption); color: var(--ab-stone-600); }
+  .ab-card-colonia { font: var(--ab-text-caption); color: var(--ab-stone-600); margin-top: 2px; }
+  .ab-card-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 12px; font-family: var(--ab-font-mono); font-size: 14px;
+  }
+  .ab-card-per { color: var(--ab-stone-400); font-weight: 400; }
+  .ab-card-stats { color: var(--ab-stone-600); font-size: 12px; }
+</style>

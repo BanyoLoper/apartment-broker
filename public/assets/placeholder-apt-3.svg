@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  
+  <rect width="800" height="600" fill="#F4EFE6"></rect>
+  
+  <rect x="80" y="120" width="640" height="180" fill="#FAF7F2"></rect>
+  <g opacity="0.6" stroke="#C9C0AE" stroke-width="1">
+    <line x1="80" y1="180" x2="720" y2="180"></line>
+    <line x1="80" y1="240" x2="720" y2="240"></line>
+    <line x1="200" y1="120" x2="200" y2="300"></line>
+    <line x1="320" y1="120" x2="320" y2="300"></line>
+    <line x1="440" y1="120" x2="440" y2="300"></line>
+    <line x1="560" y1="120" x2="560" y2="300"></line>
+  </g>
+  
+  <rect x="40" y="300" width="720" height="40" fill="#16140F"></rect>
+  
+  <rect x="40" y="340" width="720" height="200" fill="#5C564C"></rect>
+  <line x1="220" y1="340" x2="220" y2="540" stroke="#16140F" stroke-width="2"></line>
+  <line x1="400" y1="340" x2="400" y2="540" stroke="#16140F" stroke-width="2"></line>
+  <line x1="580" y1="340" x2="580" y2="540" stroke="#16140F" stroke-width="2"></line>
+  <circle cx="130" cy="440" r="3" fill="#D9A441"></circle>
+  <circle cx="310" cy="440" r="3" fill="#D9A441"></circle>
+  <circle cx="490" cy="440" r="3" fill="#D9A441"></circle>
+  <circle cx="670" cy="440" r="3" fill="#D9A441"></circle>
+  
+  <rect y="540" width="800" height="60" fill="#B89878"></rect>
+  
+  <line x1="200" y1="0" x2="200" y2="100" stroke="#16140F" stroke-width="1"></line>
+  <ellipse cx="200" cy="115" rx="22" ry="18" fill="#D9A441"></ellipse>
+  <line x1="400" y1="0" x2="400" y2="80" stroke="#16140F" stroke-width="1"></line>
+  <ellipse cx="400" cy="95" rx="22" ry="18" fill="#D9A441"></ellipse>
+  <line x1="600" y1="0" x2="600" y2="100" stroke="#16140F" stroke-width="1"></line>
+  <ellipse cx="600" cy="115" rx="22" ry="18" fill="#D9A441"></ellipse>
+  
+  <ellipse cx="500" cy="295" rx="36" ry="8" fill="#C8553D"></ellipse>
+  <circle cx="490" cy="280" r="10" fill="#D9A441"></circle>
+  <circle cx="510" cy="280" r="10" fill="#E8A6A0"></circle>
+</svg>

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  
+  <rect width="800" height="600" fill="#FBEAE7"></rect>
+  
+  <rect width="800" height="280" fill="#F6DDD4"></rect>
+  <rect y="280" width="800" height="40" fill="#E8A6A0"></rect>
+  
+  <rect x="0" y="200" width="120" height="200" fill="#8B8377"></rect>
+  <rect x="120" y="170" width="80" height="230" fill="#5C564C"></rect>
+  <rect x="200" y="220" width="100" height="180" fill="#8B8377"></rect>
+  <rect x="640" y="180" width="160" height="220" fill="#5C564C"></rect>
+  
+  <rect y="400" width="800" height="200" fill="#C8553D"></rect>
+  
+  <g opacity="0.3">
+    <line x1="0" y1="440" x2="800" y2="440" stroke="#16140F" stroke-width="1"></line>
+    <line x1="0" y1="490" x2="800" y2="490" stroke="#16140F" stroke-width="1"></line>
+    <line x1="0" y1="540" x2="800" y2="540" stroke="#16140F" stroke-width="1"></line>
+    <line x1="100" y1="400" x2="100" y2="600" stroke="#16140F" stroke-width="1"></line>
+    <line x1="250" y1="400" x2="250" y2="600" stroke="#16140F" stroke-width="1"></line>
+    <line x1="400" y1="400" x2="400" y2="600" stroke="#16140F" stroke-width="1"></line>
+    <line x1="550" y1="400" x2="550" y2="600" stroke="#16140F" stroke-width="1"></line>
+    <line x1="700" y1="400" x2="700" y2="600" stroke="#16140F" stroke-width="1"></line>
+  </g>
+  
+  <rect x="320" y="350" width="60" height="60" fill="#D9A441"></rect>
+  <ellipse cx="350" cy="340" rx="50" ry="20" fill="#2F6B5E"></ellipse>
+  <rect x="500" y="370" width="50" height="40" fill="#D9A441"></rect>
+  <ellipse cx="525" cy="360" rx="35" ry="14" fill="#2F6B5E"></ellipse>
+  
+  <rect x="430" y="380" width="50" height="20" fill="#16140F"></rect>
+  <rect x="430" y="340" width="8" height="60" fill="#16140F"></rect>
+  <rect x="472" y="340" width="8" height="60" fill="#16140F"></rect>
+</svg>

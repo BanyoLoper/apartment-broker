@@ -1,0 +1,84 @@
+---
+// Visor 3D con <model-viewer> de Google (web component sobre Three.js).
+// Acepta GLB/GLTF. Soporta AR en móvil out-of-the-box.
+interface Props {
+  modelUrl?: string;
+  posterUrl?: string;
+  title?: string;
+}
+const {
+  // Para el mock usamos el modelo público de muestra de model-viewer.
+  // En producción esto se reemplaza por una URL R2 del GLB del depa.
+  modelUrl = 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
+  posterUrl = '/assets/placeholder-apt-2.svg',
+  title = 'Tour 3D',
+} = Astro.props;
+---
+
+<div id="ab-3d-overlay" class="ab-3d-overlay" hidden>
+  <div class="ab-3d-bar">
+    <div class="ab-3d-bar-info">
+      <img src="/assets/icon-3d-room.svg" alt="" width="22" height="22" style="filter: brightness(0) invert(1);" />
+      <div>
+        <div class="ab-eyebrow ab-3d-eyebrow">Tour 3D</div>
+        <div class="ab-3d-title">{title}</div>
+      </div>
+    </div>
+    <button type="button" class="ab-3d-close" aria-label="Cerrar" data-close-3d>×</button>
+  </div>
+  <div class="ab-3d-stage">
+    <model-viewer
+      id="ab-3d-mv"
+      src={modelUrl}
+      poster={posterUrl}
+      alt={title}
+      camera-controls
+      auto-rotate
+      ar
+      shadow-intensity="1"
+      exposure="1"
+      style="width: 100%; height: 100%; background: transparent;"
+    ></model-viewer>
+  </div>
+</div>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+
+<script is:inline>
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('[data-open-3d]')) {
+      const overlay = document.getElementById('ab-3d-overlay');
+      if (overlay) overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+    if (target.closest('[data-close-3d]')) {
+      const overlay = document.getElementById('ab-3d-overlay');
+      if (overlay) overlay.hidden = true;
+      document.body.style.overflow = '';
+    }
+  });
+</script>
+
+<style>
+  .ab-3d-overlay {
+    position: fixed; inset: 0; background: rgba(22,20,15,0.94); z-index: 100;
+    display: flex; flex-direction: column;
+  }
+  .ab-3d-overlay[hidden] { display: none !important; }
+  .ab-3d-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; color: var(--ab-bone-50);
+  }
+  .ab-3d-bar-info { display: flex; align-items: center; gap: 12px; }
+  .ab-3d-eyebrow { color: rgba(250,247,242,0.5) !important; }
+  .ab-3d-title { font: var(--ab-text-h4); }
+  .ab-3d-close {
+    width: 36px; height: 36px; border-radius: 999px;
+    border: 1px solid rgba(250,247,242,0.2);
+    background: transparent; color: var(--ab-bone-50);
+    cursor: pointer; font-size: 20px;
+  }
+  .ab-3d-stage { flex: 1; padding: 24px; min-height: 0; }
+</style>

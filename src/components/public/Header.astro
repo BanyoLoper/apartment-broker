@@ -1,0 +1,64 @@
+---
+interface Props {
+  active?: 'home' | 'listings' | 'colonias' | 'how';
+}
+const { active = 'home' } = Astro.props;
+const links: { key: NonNullable<Props['active']>; href: string; label: string }[] = [
+  { key: 'listings', href: '/departamentos', label: 'Departamentos' },
+  { key: 'colonias', href: '/colonias', label: 'Colonias' },
+  { key: 'how', href: '/como-funciona', label: 'Cómo funciona' },
+];
+---
+
+<header class="ab-header">
+  <div class="ab-header-inner">
+    <a class="ab-header-logo" href="/" aria-label="ApartmentBroker — inicio">
+      <img src="/assets/logo-wordmark.svg" alt="ApartmentBroker" height="28" />
+    </a>
+    <nav class="ab-header-nav">
+      {links.map((l) => (
+        <a class={`ab-header-link ${active === l.key ? 'is-active' : ''}`} href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+    <div class="ab-header-cta">
+      <span class="ab-eyebrow">ES · EN</span>
+      <a class="ab-btn ab-btn--ghost" href="/login">Iniciar sesión</a>
+      <a class="ab-btn ab-btn--primary" href="#contacto">Reservar visita</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .ab-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 247, 242, 0.85);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border-bottom: 1px solid var(--ab-border);
+  }
+  .ab-header-inner {
+    max-width: 1280px; margin: 0 auto; padding: 14px 32px;
+    display: flex; align-items: center; gap: 32px;
+  }
+  .ab-header-logo { display: inline-flex; align-items: center; }
+  .ab-header-nav { display: flex; gap: 4px; margin-left: 24px; }
+  .ab-header-link {
+    font-size: 14px; font-weight: 500;
+    color: var(--ab-fg); padding: 8px 12px; border-radius: 8px;
+    text-decoration: none;
+  }
+  .ab-header-link.is-active { color: var(--ab-ink-900); background: var(--ab-bone-100); }
+  .ab-header-cta { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .ab-btn {
+    font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px;
+    text-decoration: none; cursor: pointer; border: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ab-btn--ghost { background: transparent; border: 1px solid var(--ab-border-strong); color: var(--ab-ink-900); }
+  .ab-btn--primary { background: var(--ab-terracotta-500); color: #fff; }
+  .ab-btn--primary:hover { background: var(--ab-terracotta-600); }
+  @media (max-width: 768px) {
+    .ab-header-nav { display: none; }
+    .ab-header-cta .ab-eyebrow { display: none; }
+  }
+</style>

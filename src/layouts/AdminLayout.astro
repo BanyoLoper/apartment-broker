@@ -1,0 +1,41 @@
+---
+import '../styles/tokens.css';
+import Sidebar from '../components/admin/Sidebar.astro';
+
+interface Props {
+  title: string;
+  active: 'listings' | 'visits' | 'tenants' | 'contracts' | 'metrics' | 'leads';
+  brokerName?: string;
+}
+const { title, active, brokerName } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title} · ApartmentBroker Admin</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg" />
+</head>
+<body>
+  <div class="ab-admin-shell">
+    <Sidebar active={active} brokerName={brokerName} />
+    <main class="ab-admin-main">
+      <slot />
+    </main>
+  </div>
+</body>
+</html>
+
+<style>
+  .ab-admin-shell {
+    display: flex;
+    min-height: 100vh;
+    background: var(--ab-bg);
+  }
+  .ab-admin-main {
+    flex: 1;
+    min-width: 0;
+  }
+</style>
