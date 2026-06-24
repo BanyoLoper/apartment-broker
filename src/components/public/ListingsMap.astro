@@ -1,13 +1,50 @@
 ---
-import type { Listing } from '../../lib/db';
-interface Props { listings: Listing[]; }
-const { listings } = Astro.props;
-const points = listings
-  .filter((l) => l.lat_fuzzy != null && l.lng_fuzzy != null)
-  .map((l) => ({ id: l.id, slug: l.slug, name: l.name, lat: l.lat_fuzzy!, lng: l.lng_fuzzy!, price: l.price_mxn }));
+// Mapa de /departamentos con pines de precio. Al hacer clic en un pin (o en una
+// tarjeta de la izquierda vía window.ezraMapSelect) se centra el mapa y se abre
+// un desglose debajo con carrusel de fotos, características y botón "Ver".
+export interface MapItem {
+  id: number;
+  slug: string;
+  name: string;
+  colonia: string;
+  lat: number;
+  lng: number;
+  price: number;
+  specs: string;
+  images: string[];
+}
+interface Props { items: MapItem[]; }
+const { items } = Astro.props;
 ---
 
-<div id="ezra-listings-map" class="ezra-listings-map" data-points={JSON.stringify(points)}></div>
+<div class="ezra-mapcol">
+  <div id="ezra-listings-map" class="ezra-listings-map" data-items={JSON.stringify(items)}></div>
+
+  <div id="emd-backdrop" class="emd-backdrop" hidden></div>
+
+  <div id="ezra-map-detail" class="ezra-map-detail" role="dialog" aria-modal="true" hidden>
+    <button type="button" class="emd-close" aria-label="Cerrar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="ezra-map-detail-carousel">
+      <img id="emd-img" class="ezra-map-detail-img" src="" alt="" />
+      <button type="button" class="emd-nav emd-prev" aria-label="Foto anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="emd-nav emd-next" aria-label="Foto siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <span id="emd-counter" class="ezra-map-detail-counter"></span>
+    </div>
+    <div class="ezra-map-detail-info">
+      <div class="ezra-map-detail-text">
+        <span id="emd-loc" class="ezra-eyebrow-wide"></span>
+        <p id="emd-specs" class="ezra-map-detail-specs"></p>
+      </div>
+      <a id="emd-ver" class="ezra-map-detail-ver" href="#">Ver</a>
+    </div>
+  </div>
+</div>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -20,14 +57,15 @@ const points = listings
       if (typeof L === 'undefined') { setTimeout(init, 100); return; }
       const el = document.getElementById('ezra-listings-map');
       if (!el) return;
-      const points = JSON.parse(el.dataset.points || '[]');
-      if (points.length === 0) {
+      const items = JSON.parse(el.dataset.items || '[]');
+      if (items.length === 0) {
         el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ezra-fg-muted);">Sin departamentos publicados.</div>';
         return;
       }
+      const byId = Object.fromEntries(items.map((i) => [i.id, i]));
       const center = [
-        points.reduce((a, p) => a + p.lat, 0) / points.length,
-        points.reduce((a, p) => a + p.lng, 0) / points.length,
+        items.reduce((a, p) => a + p.lat, 0) / items.length,
+        items.reduce((a, p) => a + p.lng, 0) / items.length,
       ];
       const map = L.map(el, { scrollWheelZoom: false }).setView(center, 14);
       const lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19 });
@@ -39,16 +77,80 @@ const points = listings
         if (next !== active) { map.removeLayer(active); active = next.addTo(map); }
       }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-      points.forEach((p) => {
+      const markers = {};
+      items.forEach((p) => {
         const priceK = (p.price / 1000).toFixed(1) + 'k';
         const icon = L.divIcon({
           className: 'ezra-price-pin',
-          html: `<a href="/departamentos/${p.slug}" class="ezra-price-pin-inner">$${priceK}</a>`,
+          html: `<div class="ezra-price-pin-inner">$${priceK}</div>`,
           iconSize: [62, 26],
           iconAnchor: [31, 26],
         });
-        L.marker([p.lat, p.lng], { icon }).addTo(map);
+        const m = L.marker([p.lat, p.lng], { icon }).addTo(map);
+        m.on('click', () => openModal(p.id));
+        markers[p.id] = m;
       });
+
+      // --- Desglose (modal sobre el mapa) ---
+      const detail = document.getElementById('ezra-map-detail');
+      const backdrop = document.getElementById('emd-backdrop');
+      const imgEl = document.getElementById('emd-img');
+      const counter = document.getElementById('emd-counter');
+      const locEl = document.getElementById('emd-loc');
+      const specsEl = document.getElementById('emd-specs');
+      const verEl = document.getElementById('emd-ver');
+      let curId = null, idx = 0;
+
+      function render() {
+        const it = byId[curId];
+        if (!it) return;
+        const imgs = (it.images && it.images.length) ? it.images : [''];
+        idx = ((idx % imgs.length) + imgs.length) % imgs.length;
+        imgEl.src = imgs[idx];
+        imgEl.alt = `${it.name} — foto ${idx + 1}`;
+        counter.textContent = `${idx + 1} / ${imgs.length}`;
+        counter.style.display = imgs.length > 1 ? '' : 'none';
+        locEl.textContent = `${it.name} · ${it.colonia}`;
+        specsEl.textContent = it.specs;
+        verEl.setAttribute('href', `/departamentos/${it.slug}`);
+      }
+
+      // Solo centra el mapa y resalta el pin (sin modal). Lo usan las tarjetas.
+      function focus(id) {
+        const it = byId[id];
+        if (!it) return;
+        map.flyTo([it.lat, it.lng], 16, { duration: 0.6 });
+        document.querySelectorAll('.ezra-price-pin-inner.is-active').forEach((e) => e.classList.remove('is-active'));
+        const m = markers[id];
+        const node = m && m.getElement() && m.getElement().querySelector('.ezra-price-pin-inner');
+        if (node) node.classList.add('is-active');
+      }
+
+      // Centra y abre el modal con el desglose. Lo usan los pines del mapa.
+      function openModal(id) {
+        const it = byId[id];
+        if (!it) return;
+        curId = id; idx = 0;
+        detail.hidden = false;
+        if (backdrop) backdrop.hidden = false;
+        render();
+        focus(id);
+      }
+
+      function close() {
+        detail.hidden = true;
+        if (backdrop) backdrop.hidden = true;
+        document.querySelectorAll('.ezra-price-pin-inner.is-active').forEach((e) => e.classList.remove('is-active'));
+      }
+
+      document.querySelector('.emd-prev')?.addEventListener('click', () => { idx--; render(); });
+      document.querySelector('.emd-next')?.addEventListener('click', () => { idx++; render(); });
+      document.querySelector('.emd-close')?.addEventListener('click', close);
+      backdrop?.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+      // Expuesto para las tarjetas de la izquierda: solo centra, sin modal.
+      window.ezraMapSelect = focus;
     }
     if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
   })();
@@ -61,18 +163,90 @@ const points = listings
     font-family: var(--ezra-font-body); font-size: 12px; font-weight: 700;
     letter-spacing: 0.04em;
     box-shadow: 0 8px 24px -10px rgba(0,0,0,0.45);
-    text-decoration: none;
-    transition: background 140ms, color 140ms;
+    cursor: pointer;
+    transition: background 140ms, color 140ms, transform 140ms;
   }
-  .ezra-price-pin .ezra-price-pin-inner:hover {
-    background: var(--ezra-copper); color: #FFF;
+  .ezra-price-pin .ezra-price-pin-inner:hover,
+  .ezra-price-pin .ezra-price-pin-inner.is-active {
+    background: var(--ezra-copper); color: #FFF; transform: scale(1.06);
   }
 </style>
 
 <style>
+  .ezra-mapcol { position: relative; }
   .ezra-listings-map {
-    width: 100%; height: 100%; min-height: 480px;
+    width: 100%; height: 60vh; min-height: 420px;
     border-radius: var(--ezra-radius-lg); overflow: hidden;
     border: 1px solid var(--ezra-border);
   }
+
+  /* Modal sobre el mapa */
+  .ezra-map-detail[hidden], .emd-backdrop[hidden] { display: none !important; }
+  .emd-backdrop {
+    position: absolute; inset: 0; z-index: 1100;
+    background: rgba(8,8,8,0.55);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    border-radius: var(--ezra-radius-lg);
+  }
+  .ezra-map-detail {
+    position: absolute; z-index: 1200;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(92%, 460px); max-height: 88%;
+    display: flex; flex-direction: column;
+    border: 1px solid var(--ezra-border-strong);
+    border-radius: var(--ezra-radius-lg);
+    background: var(--ezra-surface);
+    overflow: hidden;
+    box-shadow: var(--ezra-shadow-3);
+  }
+  .emd-close {
+    position: absolute; top: 10px; right: 10px; z-index: 3;
+    width: 32px; height: 32px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(15,15,15,0.55); color: #fff; border: none; cursor: pointer;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: background var(--ezra-dur-fast);
+  }
+  .emd-close:hover { background: rgba(15,15,15,0.85); }
+  .ezra-map-detail-carousel {
+    position: relative; aspect-ratio: 16 / 10; background: var(--ezra-ink-900);
+  }
+  .ezra-map-detail-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .emd-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(15,15,15,0.55); color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    cursor: pointer;
+  }
+  .emd-nav:hover { background: rgba(15,15,15,0.8); }
+  .emd-prev { left: 12px; }
+  .emd-next { right: 12px; }
+  .ezra-map-detail-counter {
+    position: absolute; right: 12px; bottom: 12px;
+    padding: 3px 10px; border-radius: 999px;
+    background: rgba(15,15,15,0.6); color: #fff;
+    font-size: 11px; font-family: var(--ezra-font-mono); letter-spacing: 0.04em;
+  }
+  .ezra-map-detail-info {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 18px 20px;
+  }
+  .ezra-map-detail-specs {
+    margin: 6px 0 0;
+    font-size: 13px; color: var(--ezra-fg-muted);
+    font-family: var(--ezra-font-mono); letter-spacing: 0.02em;
+  }
+  .ezra-map-detail-ver {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 11px 26px; border-radius: var(--ezra-radius-md);
+    background: var(--ezra-fg); color: var(--ezra-bg);
+    text-decoration: none;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
+    transition: opacity var(--ezra-dur-fast);
+  }
+  .ezra-map-detail-ver:hover { opacity: 0.85; }
 </style>

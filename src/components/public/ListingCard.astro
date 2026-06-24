@@ -9,8 +9,10 @@ interface Props {
   images?: string[];
   /** Cuando true, prioriza la imagen como hero (no lazy). */
   priority?: boolean;
+  /** Mostrar renta/precio y servicios. En el listado del mapa se oculta. */
+  showPrice?: boolean;
 }
-const { listing, images, priority = false } = Astro.props;
+const { listing, images, priority = false, showPrice = true } = Astro.props;
 
 const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
 const gallery = images && images.length ? images : [cover];
@@ -42,11 +44,13 @@ specs.push('amenidades');
       <h3 class="ezra-card-title">
         <strong>{subtype}</strong>
       </h3>
-      <p class="ezra-card-price">
-        <span class="ezra-card-price-label">Renta</span>
-        <span class="ezra-card-price-amount">${listing.price_mxn.toLocaleString('es-MX')}</span>
-      </p>
-      {listing.utilities_included && (
+      {showPrice && (
+        <p class="ezra-card-price">
+          <span class="ezra-card-price-label">Renta</span>
+          <span class="ezra-card-price-amount">${listing.price_mxn.toLocaleString('es-MX')}</span>
+        </p>
+      )}
+      {showPrice && listing.utilities_included && (
         <p class="ezra-card-utilities">{listing.utilities_included}</p>
       )}
     </header>
