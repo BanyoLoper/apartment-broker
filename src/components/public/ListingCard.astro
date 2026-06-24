@@ -5,35 +5,42 @@
 import type { Listing } from '../../lib/db';
 interface Props {
   listing: Listing;
+  /** Galería para transicionar en hover. Si falta, usa solo la portada. */
+  images?: string[];
   /** Cuando true, prioriza la imagen como hero (no lazy). */
   priority?: boolean;
 }
-const { listing, priority = false } = Astro.props;
+const { listing, images, priority = false } = Astro.props;
 
 const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
+const gallery = images && images.length ? images : [cover];
 const subtype = listing.furnished ? 'Depto. Amueblado' : 'Departamento';
-const tagline = listing.tagline || (listing.furnished ? 'Listo para mudarte' : 'Renta directa');
 const specs: string[] = [`${listing.area_m2} m²`, `${listing.beds} rec`, `${listing.baths} baño`];
 if (listing.parking) specs.push(`${listing.parking} estac`);
 specs.push('amenidades');
 ---
 
+<div class="ezra-card-wrap">
 <a class="ezra-card" href={`/departamentos/${listing.slug}`} aria-label={`${listing.name} en ${listing.colonia}`}>
   <article class="ezra-card-frame">
-    <img
-      src={cover}
-      alt={`${listing.name}, ${listing.colonia}`}
-      class="ezra-card-photo"
-      loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
-    />
+    <div class="ezra-card-photos">
+      {gallery.map((src, i) => (
+        <img
+          src={src}
+          alt={i === 0 ? `${listing.name}, ${listing.colonia}` : ''}
+          class={`ezra-card-photo ${i === 0 ? 'is-active' : ''}`}
+          loading={priority && i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      ))}
+    </div>
     <div class="ezra-card-scrim-top"></div>
     <div class="ezra-card-scrim-bottom"></div>
 
     <header class="ezra-card-overlay">
       <p class="ezra-card-eyebrow">{listing.name} · Col. {listing.colonia}</p>
       <h3 class="ezra-card-title">
-        <strong>{subtype}</strong> <span class="ezra-card-tagline">{tagline}</span>
+        <strong>{subtype}</strong>
       </h3>
       <p class="ezra-card-price">
         <span class="ezra-card-price-label">Renta</span>
@@ -58,19 +65,82 @@ specs.push('amenidades');
           </>
         ))}
       </p>
-      <span class="ezra-card-cta" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
-      </span>
     </footer>
   </article>
 </a>
+  {gallery.length > 1 && (
+    <>
+      <button type="button" class="ezra-card-nav ezra-card-nav--prev" aria-label="Foto anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="ezra-card-nav ezra-card-nav--next" aria-label="Foto siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </>
+  )}
+</div>
+
+<script>
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  document.querySelectorAll<HTMLElement>('.ezra-card-wrap').forEach((wrap) => {
+    const photos = Array.from(wrap.querySelectorAll<HTMLElement>('.ezra-card-photo'));
+    if (photos.length < 2) return;
+    let i = 0;
+    let timer: number | undefined;
+    const show = (n: number) => {
+      photos[i].classList.remove('is-active');
+      i = (n + photos.length) % photos.length;
+      photos[i].classList.add('is-active');
+    };
+
+    // Botones (móvil / dispositivos táctiles). Son hermanos del <a>, así que
+    // no navegan al detalle; aun así prevenimos por seguridad.
+    const stop = (e: Event) => e.preventDefault();
+    wrap.querySelector('.ezra-card-nav--prev')?.addEventListener('click', (e) => { stop(e); show(i - 1); });
+    wrap.querySelector('.ezra-card-nav--next')?.addEventListener('click', (e) => { stop(e); show(i + 1); });
+
+    // Auto-transición al hover solo en escritorio (con hover real).
+    if (canHover) {
+      const card = wrap.querySelector('.ezra-card');
+      card?.addEventListener('mouseenter', () => {
+        timer = window.setInterval(() => show(i + 1), 1100);
+      });
+      card?.addEventListener('mouseleave', () => {
+        if (timer) window.clearInterval(timer);
+        timer = undefined;
+        show(0);
+      });
+    }
+  });
+</script>
 
 <style>
+  .ezra-card-wrap { position: relative; }
   .ezra-card {
     display: block;
     text-decoration: none;
     color: #fff;
     --card-radius: var(--ezra-radius-lg);
+  }
+
+  /* Botones de navegación de fotos (solo dispositivos táctiles). */
+  .ezra-card-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 4;
+    width: 42px; height: 42px; border-radius: 999px;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(15,15,15,0.5); color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: background var(--ezra-dur-fast);
+  }
+  .ezra-card-nav:active { background: rgba(15,15,15,0.8); }
+  .ezra-card-nav--prev { left: 12px; }
+  .ezra-card-nav--next { right: 12px; }
+  @media (hover: none), (pointer: coarse) {
+    .ezra-card-nav { display: inline-flex; }
   }
   .ezra-card-frame {
     position: relative;
@@ -86,12 +156,16 @@ specs.push('amenidades');
     transform: translateY(-2px);
     box-shadow: var(--ezra-shadow-3);
   }
+  .ezra-card-photos { position: absolute; inset: 0; }
   .ezra-card-photo {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover; object-position: center;
-    transition: transform 600ms var(--ezra-ease-standard);
+    opacity: 0;
+    transition: opacity 700ms var(--ezra-ease-standard),
+                transform 600ms var(--ezra-ease-standard);
   }
+  .ezra-card-photo.is-active { opacity: 1; }
   .ezra-card:hover .ezra-card-photo { transform: scale(1.03); }
 
   .ezra-card-scrim-top {
@@ -125,11 +199,6 @@ specs.push('amenidades');
     line-height: 1.05;
     letter-spacing: -0.005em;
     color: #FFF;
-  }
-  .ezra-card-tagline {
-    display: inline;
-    font-weight: 300;
-    color: rgba(255,255,255,0.85);
   }
   .ezra-card-price {
     margin: 4px 0 0;
@@ -189,15 +258,6 @@ specs.push('amenidades');
     display: flex; flex-wrap: wrap; gap: 6px;
   }
   .ezra-card-dot { color: rgba(255,255,255,0.55); }
-  .ezra-card-cta {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 999px;
-    background: var(--ezra-copper);
-    color: #FFF;
-    flex-shrink: 0;
-    transition: transform var(--ezra-dur-fast) var(--ezra-ease-standard);
-  }
-  .ezra-card:hover .ezra-card-cta { transform: translateX(2px); }
 
   @media (max-width: 640px) {
     .ezra-card-title { font-size: 22px; }

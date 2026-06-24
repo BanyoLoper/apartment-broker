@@ -22,7 +22,7 @@ if (env?.DB && slug) {
     const rs = await env.DB.prepare(
       "SELECT * FROM listing_media WHERE listing_id = ? AND kind = 'photo' ORDER BY position",
     ).bind(listing.id).all();
-    media = (rs.results as ListingMedia[]) || [];
+    media = (rs.results as unknown as ListingMedia[]) || [];
   }
 }
 if (!listing) return Astro.redirect('/departamentos');

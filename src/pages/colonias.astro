@@ -12,7 +12,7 @@ if (env?.DB) {
     FROM listings WHERE status = 'publicada'
     GROUP BY colonia ORDER BY n DESC
   `).all();
-  counts = (rs.results as Row[]) || [];
+  counts = (rs.results as unknown as Row[]) || [];
 }
 
 const descriptions: Record<string, { tag: string; body: string; image: string }> = {

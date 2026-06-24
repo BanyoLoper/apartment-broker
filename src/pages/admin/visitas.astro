@@ -29,7 +29,7 @@ if (env?.DB) {
     ORDER BY b.scheduled_at DESC
     LIMIT 100
   `).all();
-  rows = (rs.results as BookingRow[]) || [];
+  rows = (rs.results as unknown as BookingRow[]) || [];
 }
 
 // Dummies — solo se muestran si no hay visitas reales

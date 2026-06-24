@@ -22,7 +22,7 @@ if (env?.DB) {
   if (maxPrice > 0) { conds.push('price_mxn <= ?'); binds.push(maxPrice); }
   const sql = `SELECT * FROM listings WHERE ${conds.join(' AND ')} ORDER BY price_mxn ASC`;
   const rs = await env.DB.prepare(sql).bind(...binds).all();
-  results = (rs.results as Listing[]) || [];
+  results = (rs.results as unknown as Listing[]) || [];
 }
 ---
 
