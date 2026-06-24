@@ -1,9 +1,17 @@
 ---
 import SocialLinks from './SocialLinks.astro';
 const cols = [
-  { heading: 'Producto', links: [{ l: 'Departamentos', h: '/departamentos' }, { l: 'Colonias', h: '/colonias' }, { l: 'Cómo funciona', h: '/como-funciona' }] },
-  { heading: 'Empresa', links: [{ l: 'Sobre nosotros', h: '/nosotros' }, { l: 'Contacto', h: '/#contacto' }] },
-  { heading: 'Legal', links: [{ l: 'Términos', h: '#' }, { l: 'Privacidad', h: '#' }, { l: 'Cookies', h: '#' }] },
+  { heading: 'Producto', links: [
+    { l: 'Servicios', h: '/#servicios' },
+    { l: 'Propiedades Destacadas', h: '/#propiedades' },
+    { l: 'Nosotros', h: '/nosotros' },
+    { l: 'Contacto', h: '/#contacto' },
+  ] },
+  { heading: 'Legal', links: [
+    { l: 'Términos', h: '/terminos' },
+    { l: 'Privacidad', h: '/privacidad' },
+    { l: 'Cookies', h: '/cookies' },
+  ] },
 ];
 const year = new Date().getFullYear();
 ---

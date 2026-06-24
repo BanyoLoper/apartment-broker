@@ -9,8 +9,8 @@ interface Props {
 }
 const { fuzzyLat, fuzzyLng, fuzzyRadiusM = 150, listingName } = Astro.props;
 
-// Estado inicial: transit, parks, cafes encendidos
-const initialOn = new Set(['transit', 'parks', 'cafes']);
+// Estado inicial: parques y cafés encendidos
+const initialOn = new Set(['parks', 'cafes']);
 
 // Pasamos el catálogo al cliente como JSON (svg incluido)
 const catalogJson = JSON.stringify(NEARBY_CATEGORIES);

@@ -7,8 +7,12 @@ interface Props {
   whatsappNumber: string;
 }
 const { listing, whatsappNumber } = Astro.props;
-const waMessage = encodeURIComponent(`Hola, me interesa ${listing.name} (${listing.colonia}). ¿Cuándo puedo agendar una visita?`);
-const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
+
+const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const times = [
+  '8:00 am', '9:00 am', '10:00 am', '11:00 am', '12:00 pm', '1:00 pm',
+  '2:00 pm', '3:00 pm', '4:00 pm', '5:00 pm', '6:00 pm', '7:00 pm', '8:00 pm',
+];
 ---
 
 <aside class="ezra-booking">
@@ -22,38 +26,34 @@ const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
   )}
   <p class="ezra-booking-sub">Renta directa con el dueño · sin comisión a inquilino</p>
 
-  <form class="ezra-booking-form" id="booking-form" data-listing-id={listing.id}>
+  <div class="ezra-booking-visit">
+    <span class="ezra-eyebrow-wide">Reservar visita</span>
+    <p class="ezra-booking-hours">Lunes a domingo · 8:00 am – 8:00 pm</p>
+
     <div class="ezra-booking-field">
-      <span class="ezra-eyebrow-wide">Reservar visita</span>
-      <select name="scheduled_at" required>
-        <option value="2026-05-09T11:00">Sáb 9 mayo · 11:00</option>
-        <option value="2026-05-09T13:00">Sáb 9 mayo · 13:00</option>
-        <option value="2026-05-10T10:00">Dom 10 mayo · 10:00</option>
-        <option value="2026-05-11T18:00">Lun 11 mayo · 18:00</option>
+      <label class="ezra-booking-flabel" for="visit-day">Día</label>
+      <select id="visit-day">
+        {days.map((d) => <option value={d}>{d}</option>)}
       </select>
     </div>
     <div class="ezra-booking-field">
-      <input type="text" name="name" placeholder="Tu nombre" required minlength="2" />
+      <label class="ezra-booking-flabel" for="visit-time">Hora</label>
+      <select id="visit-time">
+        {times.map((t) => <option value={t}>{t}</option>)}
+      </select>
     </div>
-    <div class="ezra-booking-field">
-      <input type="email" name="email" placeholder="Correo" required />
-    </div>
-    <div class="ezra-booking-field">
-      <input type="tel" name="phone" placeholder="WhatsApp (10 dígitos)" required pattern="[0-9 +\\-]{10,15}" />
-    </div>
-    <button type="submit" class="ezra-booking-cta">Reservar visita</button>
-    <a href={waLink} class="ezra-booking-secondary" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0 0 12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6A12 12 0 0 0 12 24c6.6 0 12-5.4 12-12 0-3.2-1.2-6.2-3.5-8.5zM12 22c-1.9 0-3.7-.5-5.3-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A10 10 0 1 1 22 12c0 5.5-4.5 10-10 10z"/></svg>
-      Hablar por WhatsApp
-    </a>
-  </form>
 
-  <div class="ezra-booking-confirmed" hidden>
-    <div class="ezra-booking-confirmed-head">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 L9 17 L4 12"/></svg>
-      <span>Visita solicitada</span>
-    </div>
-    <p>Recibimos tu solicitud. Te contactaremos por WhatsApp en menos de 30 minutos.</p>
+    <button
+      type="button"
+      id="visit-wa"
+      class="ezra-booking-wa"
+      data-wa={whatsappNumber}
+      data-name={listing.name}
+      data-colonia={listing.colonia}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.48 0 .13 5.36.13 11.94c0 2.11.55 4.18 1.59 6.01L0 24l6.24-1.63a11.92 11.92 0 005.82 1.49h.01c6.58 0 11.94-5.36 11.94-11.94 0-3.19-1.24-6.19-3.49-8.44zM12.07 21.5h-.01a9.53 9.53 0 01-4.86-1.33l-.35-.21-3.7.97.99-3.61-.23-.37a9.52 9.52 0 01-1.46-5.04c0-5.27 4.29-9.56 9.57-9.56a9.5 9.5 0 016.76 2.8 9.49 9.49 0 012.8 6.76c0 5.27-4.29 9.57-9.56 9.57z"/></svg>
+      Reservar por WhatsApp
+    </button>
   </div>
 
   <div class="ezra-booking-rows">
@@ -66,36 +66,16 @@ const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
 </aside>
 
 <script>
-  const form = document.getElementById('booking-form') as HTMLFormElement | null;
-  if (form) {
-    const confirmed = form.parentElement?.querySelector<HTMLElement>('.ezra-booking-confirmed');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const listingId = form.dataset.listingId;
-      const payload = {
-        listing_id: Number(listingId),
-        name: fd.get('name'),
-        email: fd.get('email'),
-        phone: fd.get('phone'),
-        scheduled_at: fd.get('scheduled_at'),
-        message: `Reserva de visita: ${fd.get('scheduled_at')}`,
-      };
-      const btn = form.querySelector<HTMLButtonElement>('.ezra-booking-cta');
-      if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
-      try {
-        const res = await fetch('/api/leads', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error('fail');
-        form.style.display = 'none';
-        if (confirmed) confirmed.hidden = false;
-      } catch {
-        if (btn) { btn.disabled = false; btn.textContent = 'Reintentar'; }
-        alert('No pudimos enviar tu solicitud. Intenta por WhatsApp.');
-      }
+  const btn = document.getElementById('visit-wa');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const day = (document.getElementById('visit-day') as HTMLSelectElement | null)?.value || '';
+      const time = (document.getElementById('visit-time') as HTMLSelectElement | null)?.value || '';
+      const name = btn.dataset.name || 'el departamento';
+      const colonia = btn.dataset.colonia || '';
+      const num = btn.dataset.wa || '';
+      const msg = `Hola, me interesa agendar una visita a ${name} (${colonia}).\nDía: ${day}\nHora: ${time}`;
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
     });
   }
 </script>
@@ -130,46 +110,45 @@ const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
     margin-top: 8px;
     font-size: 12px; color: var(--ezra-fg-soft);
   }
-  .ezra-booking-form {
-    margin-top: 24px; display: flex; flex-direction: column; gap: 8px;
+
+  .ezra-booking-visit {
+    margin-top: 24px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .ezra-booking-hours {
+    margin: -2px 0 6px;
+    font-size: 13px; color: var(--ezra-fg);
+    font-family: var(--ezra-font-mono); letter-spacing: 0.02em;
   }
   .ezra-booking-field {
-    padding: 10px 14px; border: 1px solid var(--ezra-border);
+    padding: 8px 14px; border: 1px solid var(--ezra-border);
     border-radius: var(--ezra-radius-md);
     background: var(--ezra-input-bg);
-    display: flex; flex-direction: column; gap: 4px;
+    display: flex; flex-direction: column; gap: 2px;
   }
-  .ezra-booking-field select, .ezra-booking-field input {
+  .ezra-booking-flabel {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ezra-fg-soft);
+  }
+  .ezra-booking-field select {
     width: 100%; border: none; background: transparent;
     font-size: 14px; color: var(--ezra-fg);
-    outline: none; padding: 0;
+    outline: none; padding: 0; cursor: pointer;
   }
   .ezra-booking-field select option { background: var(--ezra-bg); color: var(--ezra-fg); }
-  .ezra-booking-cta {
-    margin-top: 4px; padding: 14px;
-    background: var(--ezra-fg); color: var(--ezra-bg);
+
+  .ezra-booking-wa {
+    margin-top: 6px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px; width: 100%;
+    background: #25D366; color: #fff;
     border: none; border-radius: var(--ezra-radius-md);
-    cursor: pointer;
-    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    cursor: pointer; text-decoration: none;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.02em;
+    font-family: inherit;
     transition: opacity var(--ezra-dur-fast);
   }
-  .ezra-booking-cta:hover:not(:disabled) { opacity: 0.85; }
-  .ezra-booking-cta:disabled { opacity: 0.6; cursor: not-allowed; }
-  .ezra-booking-secondary {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px; background: #25D366; color: #fff;
-    border-radius: var(--ezra-radius-md); text-decoration: none;
-    font-size: 13px; font-weight: 600;
-  }
-  .ezra-booking-confirmed {
-    margin-top: 20px; padding: 16px; border-radius: var(--ezra-radius-md);
-    background: rgba(92,122,110,0.18); border: 1px solid var(--ezra-success);
-  }
-  .ezra-booking-confirmed-head {
-    display: flex; align-items: center; gap: 8px;
-    color: var(--ezra-success); font-weight: 600; font-size: 14px;
-  }
-  .ezra-booking-confirmed p { font-size: 13px; color: var(--ezra-fg-muted); margin: 8px 0 0; }
+  .ezra-booking-wa:hover { opacity: 0.9; }
+
   .ezra-booking-rows {
     margin-top: 24px; padding-top: 16px;
     border-top: 1px solid var(--ezra-border);
