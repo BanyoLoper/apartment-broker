@@ -1,0 +1,55 @@
+---
+// Íconos de contacto y redes de EZRA. Reutilizable (footer, contacto, etc.).
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`ezra-social ${className}`}>
+  <a class="ezra-social-link" href="https://wa.me/5215527846773" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.48 0 .13 5.36.13 11.94c0 2.11.55 4.18 1.59 6.01L0 24l6.24-1.63a11.92 11.92 0 005.82 1.49h.01c6.58 0 11.94-5.36 11.94-11.94 0-3.19-1.24-6.19-3.49-8.44zM12.07 21.5h-.01a9.53 9.53 0 01-4.86-1.33l-.35-.21-3.7.97.99-3.61-.23-.37a9.52 9.52 0 01-1.46-5.04c0-5.27 4.29-9.56 9.57-9.56a9.5 9.5 0 016.76 2.8 9.49 9.49 0 012.8 6.76c0 5.27-4.29 9.57-9.56 9.57zm5.24-7.13c-.29-.15-1.7-.84-1.96-.93-.26-.1-.45-.15-.64.15-.19.29-.74.93-.9 1.12-.17.19-.33.21-.62.07-.29-.15-1.23-.45-2.35-1.44-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.33.44-.49.15-.17.2-.29.29-.49.1-.19.05-.37-.02-.52-.07-.15-.64-1.55-.88-2.13-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.49.07-.74.33-.26.29-.99.97-.99 2.37 0 1.4 1.02 2.75 1.16 2.94.15.19 2.01 3.07 4.87 4.3.68.29 1.2.46 1.61.59.68.21 1.29.18 1.78.11.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33z"></path></svg>
+  </a>
+
+  <a class="ezra-social-link" href="tel:+525527846773" aria-label="Llamar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.054 15.054 0 006.59 6.59l2.2-2.2a1 1 0 011-.24c1.12.37 2.33.57 3.59.57a1 1 0 011 1V21a1 1 0 01-1 1C10.85 22 2 13.15 2 2a1 1 0 011-1h3.5a1 1 0 011 1c0 1.26.2 2.47.57 3.59a1 1 0 01-.25 1l-2.2 2.2z"></path></svg>
+  </a>
+
+  <a class="ezra-social-link" href="mailto:contacto@ezrarealestate.com.mx" aria-label="Correo">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 13.5L0 6.75V18h24V6.75L12 13.5zM12 10.5L24 3H0l12 7.5z"></path></svg>
+  </a>
+
+  <a class="ezra-social-link" href="https://instagram.com/ezra.realestate" target="_blank" rel="noopener" aria-label="Instagram">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm5 4.75A5.25 5.25 0 1112 17.25 5.25 5.25 0 0112 6.75zm6.5-.88a1.13 1.13 0 110 2.25 1.13 1.13 0 010-2.25z"></path></svg>
+  </a>
+
+  <a class="ezra-social-link" href="https://facebook.com/ezra.realestate" target="_blank" rel="noopener" aria-label="Facebook">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 10-11.5 9.87v-6.99H8.08V12h2.42V9.8c0-2.4 1.43-3.72 3.62-3.72 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.2 0-1.57.74-1.57 1.5V12h2.67l-.43 2.88h-2.24v6.99A10 10 0 0022 12z"></path></svg>
+  </a>
+
+  <a class="ezra-social-link" href="https://tiktok.com/@ezra.realestate" target="_blank" rel="noopener" aria-label="TikTok">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 3c.9 1.6 2.4 2.6 4.2 2.8v3.1c-1.4-.1-2.7-.5-3.9-1.2v6.3c0 3.2-2.6 5.8-5.8 5.8S5.2 17.2 5.2 14s2.6-5.8 5.8-5.8c.3 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.4 0-2.6 1.2-2.6 2.6s1.2 2.6 2.6 2.6 2.6-1.2 2.6-2.6V3h3z"></path></svg>
+  </a>
+</div>
+
+<style>
+  .ezra-social { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ezra-social-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 999px;
+    color: var(--ezra-fg-muted);
+    border: 1px solid var(--ezra-border-strong);
+    text-decoration: none;
+    transition: color var(--ezra-dur-fast) var(--ezra-ease-standard),
+                border-color var(--ezra-dur-fast),
+                background var(--ezra-dur-fast),
+                transform var(--ezra-dur-fast);
+  }
+  .ezra-social-link:hover {
+    color: var(--ezra-bg);
+    background: var(--ezra-fg);
+    border-color: var(--ezra-fg);
+    transform: translateY(-1px);
+  }
+  .ezra-social-link svg { display: block; }
+</style>

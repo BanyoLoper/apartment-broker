@@ -1,7 +1,8 @@
 ---
+import SocialLinks from './SocialLinks.astro';
 const cols = [
   { heading: 'Producto', links: [{ l: 'Departamentos', h: '/departamentos' }, { l: 'Colonias', h: '/colonias' }, { l: 'Cómo funciona', h: '/como-funciona' }] },
-  { heading: 'Empresa', links: [{ l: 'Sobre nosotros', h: '#' }, { l: 'Contacto', h: '#contacto' }] },
+  { heading: 'Empresa', links: [{ l: 'Sobre nosotros', h: '/nosotros' }, { l: 'Contacto', h: '/#contacto' }] },
   { heading: 'Legal', links: [{ l: 'Términos', h: '#' }, { l: 'Privacidad', h: '#' }, { l: 'Cookies', h: '#' }] },
 ];
 const year = new Date().getFullYear();
@@ -10,21 +11,28 @@ const year = new Date().getFullYear();
 <footer class="ezra-footer">
   <div class="ezra-footer-inner">
     <div class="ezra-footer-brand">
-      <div class="ezra-footer-mark">
-        <span class="ezra-footer-name">EZRA</span>
-        <span class="ezra-footer-sub">Real Estate</span>
-      </div>
+      <a class="ezra-footer-logo" href="/" aria-label="EZRA Real Estate — inicio">
+        <img class="ezra-footer-logo-img" src="/assets/ezra-logo-mark.png" alt="EZRA Real Estate" width="103" height="41" />
+      </a>
       <p class="ezra-footer-tagline">
         Departamentos amueblados curados en Progreso Tizapán y Tabacalera. Renta directa con el dueño — sin intermediarios.
       </p>
     </div>
-    {cols.map((c) => (
-      <div class="ezra-footer-col">
-        <span class="ezra-footer-heading">{c.heading}</span>
-        {c.links.map((l) => <a href={l.h}>{l.l}</a>)}
-      </div>
-    ))}
+
+    <div class="ezra-footer-cols">
+      {cols.map((c) => (
+        <div class="ezra-footer-col">
+          <span class="ezra-footer-heading">{c.heading}</span>
+          {c.links.map((l) => <a href={l.h}>{l.l}</a>)}
+        </div>
+      ))}
+    </div>
   </div>
+
+  <div class="ezra-footer-social-row">
+    <SocialLinks />
+  </div>
+
   <div class="ezra-footer-bar">
     <span>© {year} EZRA Real Estate · Ciudad de México</span>
     <span class="ezra-footer-mono">Av. Popocatépetl 116, Benito Juárez · 55 2784 6773</span>
@@ -41,24 +49,21 @@ const year = new Date().getFullYear();
   }
   .ezra-footer-inner {
     max-width: 1280px; margin: 0 auto;
-    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+    display: flex; justify-content: space-between; gap: 64px;
   }
-  .ezra-footer-brand { max-width: 360px; }
-  .ezra-footer-mark { display: flex; flex-direction: column; gap: 2px; line-height: 1; }
-  .ezra-footer-name {
-    font-family: var(--ezra-font-display);
-    font-size: 36px; font-weight: 500;
-    letter-spacing: 0.32em; color: var(--ezra-fg);
-    padding-left: 0.32em;
-  }
-  .ezra-footer-sub {
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.42em; text-transform: uppercase;
-    color: var(--ezra-fg-muted);
-  }
+  .ezra-footer-brand { flex: 1 1 auto; max-width: 520px; }
+  .ezra-footer-logo { display: inline-flex; line-height: 0; }
+  .ezra-footer-logo-img { height: 36px; width: auto; display: block; }
+  :root[data-theme='light'] .ezra-footer-logo-img { filter: invert(1) brightness(0.35); }
   .ezra-footer-tagline {
-    margin-top: 24px; max-width: 320px;
+    margin-top: 22px; max-width: 360px;
     color: var(--ezra-fg-muted); line-height: 1.55;
+  }
+
+  /* Las tres columnas agrupadas y juntas a la derecha. */
+  .ezra-footer-cols {
+    flex: 0 0 auto;
+    display: flex; gap: 56px;
   }
   .ezra-footer-col { display: flex; flex-direction: column; gap: 12px; }
   .ezra-footer-heading {
@@ -73,8 +78,15 @@ const year = new Date().getFullYear();
     transition: color var(--ezra-dur-fast) var(--ezra-ease-standard);
   }
   .ezra-footer-col a:hover { color: var(--ezra-fg); }
+
+  /* Íconos sociales centrados, en su propia fila. */
+  .ezra-footer-social-row {
+    max-width: 1280px; margin: 56px auto 0;
+    display: flex; justify-content: center;
+  }
+
   .ezra-footer-bar {
-    max-width: 1280px; margin: 64px auto 0; padding-top: 24px;
+    max-width: 1280px; margin: 40px auto 0; padding-top: 24px;
     border-top: 1px solid var(--ezra-border);
     display: flex; justify-content: space-between;
     font-size: 11px; letter-spacing: 0.18em;
@@ -82,8 +94,12 @@ const year = new Date().getFullYear();
     color: var(--ezra-fg-soft);
   }
   .ezra-footer-mono { font-family: var(--ezra-font-mono); letter-spacing: 0.12em; }
-  @media (max-width: 768px) {
-    .ezra-footer-inner { grid-template-columns: 1fr 1fr; }
+
+  @media (max-width: 860px) {
+    .ezra-footer-inner { flex-direction: column; gap: 48px; }
+    .ezra-footer-cols { gap: 40px; flex-wrap: wrap; }
+  }
+  @media (max-width: 640px) {
     .ezra-footer-bar { flex-direction: column; gap: 8px; align-items: flex-start; }
   }
 </style>
