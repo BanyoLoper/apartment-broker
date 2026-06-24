@@ -7,28 +7,32 @@ import Viewer360 from '../../components/public/Viewer360.astro';
 import Showroom3D from '../../components/public/Showroom3D.astro';
 import Feat from '../../components/public/Feat.astro';
 import AmenityIcon from '../../components/public/AmenityIcon.astro';
-import type { Listing } from '../../lib/db';
+import type { Listing, ListingMedia } from '../../lib/db';
 import { parseAmenities } from '../../lib/db';
 import { googleMapsLink } from '../../lib/geo';
 
 const { slug } = Astro.params;
 const env = Astro.locals.runtime?.env;
 let listing: Listing | null = null;
+let media: ListingMedia[] = [];
 if (env?.DB && slug) {
   listing = await env.DB.prepare('SELECT * FROM listings WHERE slug = ? AND status != ?')
     .bind(slug, 'borrador').first() as Listing | null;
+  if (listing) {
+    const rs = await env.DB.prepare(
+      "SELECT * FROM listing_media WHERE listing_id = ? AND kind = 'photo' ORDER BY position",
+    ).bind(listing.id).all();
+    media = (rs.results as ListingMedia[]) || [];
+  }
 }
 if (!listing) return Astro.redirect('/departamentos');
 
 const amenities = parseAmenities(listing.amenities);
-const cover = listing.cover_image || '/photos/hamburgo-sala.jpg';
-const images = [
-  cover,
-  '/photos/hamburgo-sala-2.jpg',
-  '/photos/hamburgo-comedor.jpg',
-  cover,
-  '/photos/hamburgo-sala-2.jpg',
-];
+const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
+// Galería real desde listing_media; si no hay, usa la portada.
+const photos = media.length > 0 ? media : [{ url: cover, caption: null }];
+const images = photos.map((p) => p.url);
+const captions = photos.map((p) => p.caption);
 const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 const fuzzyLat = listing.lat_fuzzy ?? 19.4326;
 const fuzzyLng = listing.lng_fuzzy ?? -99.1332;
@@ -63,7 +67,7 @@ const subtype = listing.furnished ? 'Depto. Amueblado' : 'Departamento';
       </div>
     </header>
 
-    <ImageJourney images={images} has3d={!!listing.has_3d} has360={!!listing.has_360} />
+    <ImageJourney images={images} captions={captions} has3d={!!listing.has_3d} has360={!!listing.has_360} />
 
     <div class="ezra-detail-grid">
       <section>

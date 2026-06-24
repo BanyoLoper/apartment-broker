@@ -7,20 +7,17 @@ import type { Listing } from '../lib/db';
 
 const env = Astro.locals.runtime?.env;
 let featured: Listing[] = [];
-let totalActive = 0;
 if (env?.DB) {
   const active = await env.DB.prepare(
     "SELECT * FROM listings WHERE status = 'publicada' ORDER BY created_at DESC LIMIT 6",
   ).all();
   featured = (active.results as Listing[]) || [];
-  const count = await env.DB.prepare("SELECT COUNT(*) as n FROM listings WHERE status = 'publicada'").first() as { n: number } | null;
-  totalActive = count?.n ?? 0;
 }
 const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 ---
 
 <PublicLayout active="home">
-  <Hero activeListings={totalActive || 6} colonias={4} />
+  <Hero />
 
   <section class="ezra-section">
     <div class="ezra-section-inner">

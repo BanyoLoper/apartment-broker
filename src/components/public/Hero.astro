@@ -1,66 +1,35 @@
 ---
-interface Props {
-  activeListings?: number;
-  colonias?: number;
-}
-const { activeListings = 6, colonias = 4 } = Astro.props;
+// Hero replicando el de ezrarealestate.com.mx: logo EZRA sobre render oscuro,
+// claim, tres diferenciadores y dos llamadas a la acción.
+const points = ['Clientes calificados', 'Promoción estratégica', 'Operaciones seguras'];
 ---
 
 <section class="ezra-hero">
-  <div class="ezra-hero-bg" style="background-image: url(/photos/hamburgo-sala.jpg);"></div>
+  <div class="ezra-hero-bg" style="background-image: url(/assets/ezra-hero-bg.png);"></div>
   <div class="ezra-hero-scrim"></div>
 
   <div class="ezra-hero-inner">
-    <div class="ezra-hero-content">
-      <span class="ezra-eyebrow-wide ezra-hero-tag">Renta directa con el dueño · CDMX</span>
-      <h1 class="ezra-hero-title">
-        <span class="ezra-hero-title-thin">Vive amueblado</span><br/>
-        <span class="ezra-hero-title-bold">estilo hotel boutique.</span>
-      </h1>
-      <p class="ezra-hero-lede">
-        Curamos cada departamento que rentamos. Listo para mudarte: mantenimiento y servicios incluidos, recórrelos en 3D, agenda visita en dos toques.
-      </p>
+    <img
+      class="ezra-hero-logo"
+      src="/assets/ezra-hero-logo.png"
+      alt="EZRA Real Estate"
+      width="464"
+      height="216"
+    />
+    <p class="ezra-hero-lede">Venta y Renta de propiedades en CDMX</p>
 
-      <form class="ezra-hero-search" action="/departamentos" method="get">
-        <label class="ezra-hero-field">
-          <span class="ezra-eyebrow-wide">Colonia</span>
-          <select name="colonia">
-            <option value="">Cualquiera</option>
-            <option>Roma Norte</option>
-            <option>Condesa</option>
-            <option>Juárez</option>
-            <option>Polanco</option>
-          </select>
-        </label>
-        <label class="ezra-hero-field">
-          <span class="ezra-eyebrow-wide">Recámaras</span>
-          <select name="beds">
-            <option value="">Todas</option>
-            <option>1+</option>
-            <option>2+</option>
-            <option>3+</option>
-          </select>
-        </label>
-        <label class="ezra-hero-field">
-          <span class="ezra-eyebrow-wide">Renta máx</span>
-          <select name="max_price">
-            <option value="">Sin límite</option>
-            <option value="30000">$30,000</option>
-            <option value="40000">$40,000</option>
-            <option value="50000">$50,000</option>
-          </select>
-        </label>
-        <button class="ezra-hero-search-btn" type="submit">
-          <span>Buscar</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
-        </button>
-      </form>
+    <ul class="ezra-hero-points">
+      {points.map((p) => (
+        <li class="ezra-hero-point">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>{p}</span>
+        </li>
+      ))}
+    </ul>
 
-      <div class="ezra-hero-stats">
-        <div class="ezra-hero-stat"><span class="ezra-hero-stat-n">{activeListings}</span><span class="ezra-hero-stat-l">Departamentos activos</span></div>
-        <div class="ezra-hero-stat"><span class="ezra-hero-stat-n">{colonias}</span><span class="ezra-hero-stat-l">Colonias premium</span></div>
-        <div class="ezra-hero-stat"><span class="ezra-hero-stat-n">100%</span><span class="ezra-hero-stat-l">Renta directa</span></div>
-      </div>
+    <div class="ezra-hero-actions">
+      <a class="ezra-hero-btn ezra-hero-btn--primary" href="/departamentos">Ver propiedades</a>
+      <a class="ezra-hero-btn ezra-hero-btn--ghost" href="#contacto">Publicar mi propiedad</a>
     </div>
   </div>
 </section>
@@ -69,114 +38,81 @@ const { activeListings = 6, colonias = 4 } = Astro.props;
   .ezra-hero {
     position: relative; overflow: hidden;
     min-height: 92vh;
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: center;
   }
   .ezra-hero-bg {
     position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    filter: saturate(0.85) brightness(0.9);
+    background-size: cover; background-position: bottom center;
+    filter: saturate(0.9) brightness(0.85);
   }
   .ezra-hero-scrim {
     position: absolute; inset: 0;
     background:
-      linear-gradient(to right, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.55) 40%, rgba(10,10,10,0.20) 70%, rgba(10,10,10,0) 100%),
-      linear-gradient(to bottom, rgba(10,10,10,0.30) 0%, rgba(10,10,10,0) 30%, rgba(10,10,10,0.50) 100%);
-  }
-  :root[data-theme='light'] .ezra-hero-scrim {
-    background:
-      linear-gradient(to right, rgba(20,20,20,0.78) 0%, rgba(20,20,20,0.40) 50%, rgba(20,20,20,0.15) 80%);
+      linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.25) 40%, rgba(10,10,10,0.65) 100%);
   }
 
   .ezra-hero-inner {
     position: relative; z-index: 1;
-    max-width: 1280px; margin: 0 auto; padding: 80px 32px;
+    max-width: 760px; margin: 0 auto; padding: 96px 32px;
     width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
   }
-  .ezra-hero-content { max-width: 640px; }
 
-  .ezra-hero-tag { color: rgba(255,255,255,0.78); }
-  .ezra-hero-title {
-    margin: 24px 0 24px;
-    font-family: var(--ezra-font-display);
-    font-weight: 500;
-    font-size: clamp(48px, 7.2vw, 88px);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    color: #FFF;
+  .ezra-hero-logo {
+    width: clamp(300px, 50vw, 560px);
+    height: auto;
+    margin-bottom: 12px;
+    /* Logo recortado y transparente: se ve limpio sobre cualquier fondo. */
+    filter: drop-shadow(0 2px 16px rgba(0,0,0,0.35));
   }
-  .ezra-hero-title-thin { font-weight: 300; font-style: italic; color: rgba(255,255,255,0.92); }
-  .ezra-hero-title-bold { font-weight: 600; color: #FFF; }
+
   .ezra-hero-lede {
-    color: rgba(255,255,255,0.85);
-    font-size: 18px; line-height: 1.55; font-weight: 300;
-    max-width: 540px; margin-bottom: 40px;
+    color: rgba(255,255,255,0.9);
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    margin: 0 0 40px;
   }
 
-  .ezra-hero-search {
-    display: flex; align-items: stretch; gap: 0;
-    background: rgba(20,20,20,0.55);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: var(--ezra-radius-md);
-    overflow: hidden; max-width: 640px;
+  .ezra-hero-points {
+    list-style: none; margin: 0 0 44px; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 14px 36px;
+    justify-content: center;
   }
-  .ezra-hero-field {
-    flex: 1; padding: 12px 16px;
-    display: flex; flex-direction: column; gap: 4px;
-    border-right: 1px solid rgba(255,255,255,0.12);
+  .ezra-hero-point {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: rgba(255,255,255,0.92);
+    font-size: 15px; font-weight: 400; letter-spacing: 0.02em;
   }
-  .ezra-hero-field:last-of-type { border-right: 0; }
-  .ezra-hero-field span {
-    color: rgba(255,255,255,0.55);
-    font-size: 9px;
+  .ezra-hero-point svg { color: var(--ezra-copper); flex-shrink: 0; }
+
+  .ezra-hero-actions {
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
   }
-  .ezra-hero-field select {
-    background: transparent;
-    border: none;
+  .ezra-hero-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 14px 28px; border-radius: var(--ezra-radius-md);
+    font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
+    text-decoration: none; cursor: pointer;
+    border: 1px solid transparent;
+    transition: background var(--ezra-dur-fast) var(--ezra-ease-standard),
+                color var(--ezra-dur-fast), border-color var(--ezra-dur-fast);
+  }
+  .ezra-hero-btn--primary { background: #FFF; color: var(--ezra-ink-900, #141414); }
+  .ezra-hero-btn--primary:hover { background: rgba(255,255,255,0.85); }
+  .ezra-hero-btn--ghost {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.45);
     color: #FFF;
-    font-size: 14px;
-    padding: 0;
-    outline: none;
-    appearance: none;
-    cursor: pointer;
+    backdrop-filter: blur(8px);
   }
-  .ezra-hero-field select option { background: #141414; color: #FFF; }
-  .ezra-hero-search-btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 0 24px; min-width: 132px;
-    background: var(--ezra-copper); color: #FFF;
-    border: none; cursor: pointer;
-    font-weight: 600; font-size: 13px; letter-spacing: 0.06em;
-    transition: background var(--ezra-dur-fast) var(--ezra-ease-standard);
-  }
-  .ezra-hero-search-btn:hover { background: #A45929; }
-
-  .ezra-hero-stats {
-    display: flex; gap: 48px;
-    margin-top: 56px;
-    padding-top: 32px;
-    border-top: 1px solid rgba(255,255,255,0.18);
-  }
-  .ezra-hero-stat { display: flex; flex-direction: column; gap: 4px; }
-  .ezra-hero-stat-n {
-    font-family: var(--ezra-font-display);
-    font-size: 32px; font-weight: 500;
-    color: #FFF; letter-spacing: -0.01em;
-  }
-  .ezra-hero-stat-l {
-    font-size: 11px; font-weight: 500;
-    letter-spacing: var(--ezra-track-mid);
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.62);
-  }
+  .ezra-hero-btn--ghost:hover { background: rgba(255,255,255,0.18); border-color: #FFF; }
 
   @media (max-width: 768px) {
     .ezra-hero { min-height: 80vh; }
-    .ezra-hero-inner { padding: 48px 24px; }
-    .ezra-hero-search { flex-wrap: wrap; }
-    .ezra-hero-field { min-width: 50%; }
-    .ezra-hero-search-btn { width: 100%; padding: 14px; }
-    .ezra-hero-stats { gap: 24px; }
-    .ezra-hero-stat-n { font-size: 24px; }
+    .ezra-hero-inner { padding: 64px 24px; }
+    .ezra-hero-actions { flex-direction: column; width: 100%; max-width: 320px; }
+    .ezra-hero-btn { width: 100%; }
   }
 </style>

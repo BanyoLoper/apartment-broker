@@ -10,7 +10,7 @@ interface Props {
 }
 const { listing, priority = false } = Astro.props;
 
-const cover = listing.cover_image || '/photos/hamburgo-sala.jpg';
+const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
 const subtype = listing.furnished ? 'Depto. Amueblado' : 'Departamento';
 const tagline = listing.tagline || (listing.furnished ? 'Listo para mudarte' : 'Renta directa');
 const specs: string[] = [`${listing.area_m2} m²`, `${listing.beds} rec`, `${listing.baths} baño`];
