@@ -1,12 +1,17 @@
 ---
 interface Props {
   images: string[];
+  captions?: (string | null)[];
   has3d?: boolean;
   has360?: boolean;
 }
-const { images, has3d, has360 } = Astro.props;
+const { images, captions = [], has3d, has360 } = Astro.props;
+const fallback = images[0] || '/assets/placeholder-apt-1.svg';
 const imgs = [...images];
-while (imgs.length < 5) imgs.push(images[0] || '/photos/hamburgo-sala.jpg');
+while (imgs.length < 5) imgs.push(fallback);
+const defaultTags = ['Sala', 'Cocina', 'Recámara', 'Detalle', 'Más'];
+const tag = (i: number) =>
+  `${String(i + 1).padStart(2, '0')} — ${captions[i] || defaultTags[i] || 'Foto'}`;
 ---
 
 <section class="ezra-journey">
@@ -27,28 +32,28 @@ while (imgs.length < 5) imgs.push(images[0] || '/photos/hamburgo-sala.jpg');
         </button>
       )}
     </div>
-    <div class="ezra-journey-tag">01 — Sala</div>
+    <div class="ezra-journey-tag">{tag(0)}</div>
   </div>
 
   <div class="ezra-journey-pair ezra-journey-pair--a">
     <div class="ezra-journey-frame">
-      <img src={imgs[1]} alt="" loading="lazy" />
-      <div class="ezra-journey-tag">02 — Cocina</div>
+      <img src={imgs[1]} alt={captions[1] || ''} loading="lazy" />
+      <div class="ezra-journey-tag">{tag(1)}</div>
     </div>
     <div class="ezra-journey-frame">
-      <img src={imgs[2]} alt="" loading="lazy" />
-      <div class="ezra-journey-tag">03 — Recámara</div>
+      <img src={imgs[2]} alt={captions[2] || ''} loading="lazy" />
+      <div class="ezra-journey-tag">{tag(2)}</div>
     </div>
   </div>
 
   <div class="ezra-journey-pair ezra-journey-pair--b">
     <div class="ezra-journey-frame">
-      <img src={imgs[3]} alt="" loading="lazy" />
-      <div class="ezra-journey-tag">04 — Roof</div>
+      <img src={imgs[3]} alt={captions[3] || ''} loading="lazy" />
+      <div class="ezra-journey-tag">{tag(3)}</div>
     </div>
     <div class="ezra-journey-frame">
-      <img src={imgs[4]} alt="" loading="lazy" />
-      <div class="ezra-journey-tag">05 — Fachada</div>
+      <img src={imgs[4]} alt={captions[4] || ''} loading="lazy" />
+      <div class="ezra-journey-tag">{tag(4)}</div>
     </div>
   </div>
 </section>

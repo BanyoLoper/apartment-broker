@@ -1,0 +1,96 @@
+---
+// Documento legal compartido (Términos, Privacidad, Cookies).
+// Contenido placeholder (Lorem ipsum) hasta que EZRA proporcione los textos reales.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+
+const sections = [
+  {
+    h: '1. Información general',
+    p: [
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    ],
+  },
+  {
+    h: '2. Uso de la información',
+    p: [
+      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+      'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.',
+    ],
+  },
+  {
+    h: '3. Responsabilidades',
+    p: [
+      'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+    ],
+  },
+  {
+    h: '4. Contacto',
+    p: [
+      'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam. Para cualquier duda, escríbenos a contacto@ezrarealestate.com.mx.',
+    ],
+  },
+];
+---
+
+<main class="ezra-legal">
+  <header class="ezra-legal-head">
+    <span class="ezra-eyebrow-wide">Legal</span>
+    <h1 class="ezra-legal-title">{title}</h1>
+    <p class="ezra-legal-updated">Última actualización: por definir</p>
+  </header>
+
+  <div class="ezra-legal-body">
+    <p class="ezra-legal-placeholder">
+      Contenido de ejemplo (placeholder). El documento definitivo será proporcionado por EZRA Real Estate.
+    </p>
+    {sections.map((s) => (
+      <section class="ezra-legal-section">
+        <h2 class="ezra-legal-h2">{s.h}</h2>
+        {s.p.map((para) => <p>{para}</p>)}
+      </section>
+    ))}
+  </div>
+</main>
+
+<style>
+  .ezra-legal { max-width: 760px; margin: 0 auto; padding: 80px 32px 0; }
+  .ezra-legal-head { margin-bottom: 48px; }
+  .ezra-legal-title {
+    margin: 16px 0 10px;
+    font-family: var(--ezra-font-display);
+    font-size: clamp(34px, 5vw, 52px); font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em; line-height: 1.08;
+    text-wrap: balance;
+  }
+  .ezra-legal-updated {
+    margin: 0;
+    font-family: var(--ezra-font-mono);
+    font-size: 12px; letter-spacing: 0.06em;
+    color: var(--ezra-fg-soft);
+  }
+
+  .ezra-legal-placeholder {
+    margin: 0 0 40px;
+    padding: 14px 16px;
+    border: 1px dashed var(--ezra-border-strong);
+    border-radius: var(--ezra-radius-md);
+    font-size: 13px; color: var(--ezra-fg-muted);
+  }
+  .ezra-legal-section { margin-bottom: 40px; }
+  .ezra-legal-h2 {
+    margin: 0 0 14px;
+    font-family: var(--ezra-font-body);
+    font-size: 18px; font-weight: 600; color: var(--ezra-fg);
+    letter-spacing: -0.005em;
+  }
+  .ezra-legal-section p {
+    margin: 0 0 14px;
+    color: var(--ezra-fg-muted);
+    font-size: 15.5px; line-height: 1.75; font-weight: 300;
+    text-wrap: pretty;
+  }
+</style>

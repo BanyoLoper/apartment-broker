@@ -1,73 +1,35 @@
 ---
-import { COMMON_AMENITIES, ICONS } from '../../lib/amenity-icons';
-
 interface Props {
   whatsappNumber: string;
 }
 const { whatsappNumber } = Astro.props;
-const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, me interesa rentar un departamento amueblado.')}`;
-const colonias = ['Roma Norte', 'Condesa', 'Juárez', 'Polanco', 'Cuauhtémoc'];
-const beds = ['1', '2', '3+'];
-const budgets = [
-  { value: '25000', label: 'Hasta $25,000' },
-  { value: '35000', label: 'Hasta $35,000' },
-  { value: '50000', label: 'Hasta $50,000' },
-  { value: '999999', label: 'Sin límite' },
-];
+const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, me interesa vender / rentar / comprar una propiedad con EZRA.')}`;
 ---
 
 <section id="contacto" class="ezra-lead">
   <div class="ezra-lead-inner">
     <div class="ezra-lead-intro">
-      <span class="ezra-eyebrow-wide">Contacto directo</span>
-      <h2 class="ezra-lead-title">¿No encuentras lo que buscas?</h2>
+      <span class="ezra-eyebrow-wide">Contacto</span>
+      <h2 class="ezra-lead-title">¿Quieres vender, rentar o comprar?</h2>
       <p class="ezra-lead-lede">
-        Cuéntanos qué necesitas. Te avisamos cuando salga algo en tus colonias y presupuesto. Solo curamos depas amueblados — no portales abiertos.
+        Cuéntanos qué necesitas y un asesor de EZRA te contacta. Atención directa,
+        personalizada y sin intermediarios.
       </p>
       <a href={waLink} class="ezra-lead-wa" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.7 11.7 0 0 0 12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6A12 12 0 0 0 12 24c6.6 0 12-5.4 12-12 0-3.2-1.2-6.2-3.5-8.5zM12 22c-1.9 0-3.7-.5-5.3-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A10 10 0 1 1 22 12c0 5.5-4.5 10-10 10z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.48 0 .13 5.36.13 11.94c0 2.11.55 4.18 1.59 6.01L0 24l6.24-1.63a11.92 11.92 0 005.82 1.49h.01c6.58 0 11.94-5.36 11.94-11.94 0-3.19-1.24-6.19-3.49-8.44zM12.07 21.5h-.01a9.53 9.53 0 01-4.86-1.33l-.35-.21-3.7.97.99-3.61-.23-.37a9.52 9.52 0 01-1.46-5.04c0-5.27 4.29-9.56 9.57-9.56a9.5 9.5 0 016.76 2.8 9.49 9.49 0 012.8 6.76c0 5.27-4.29 9.57-9.56 9.57zm5.24-7.13c-.29-.15-1.7-.84-1.96-.93-.26-.1-.45-.15-.64.15-.19.29-.74.93-.9 1.12-.17.19-.33.21-.62.07-.29-.15-1.23-.45-2.35-1.44-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.33.44-.49.15-.17.2-.29.29-.49.1-.19.05-.37-.02-.52-.07-.15-.64-1.55-.88-2.13-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.49.07-.74.33-.26.29-.99.97-.99 2.37 0 1.4 1.02 2.75 1.16 2.94.15.19 2.01 3.07 4.87 4.3.68.29 1.2.46 1.61.59.68.21 1.29.18 1.78.11.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33z"/></svg>
         WhatsApp directo
       </a>
     </div>
 
     <form class="ezra-lead-form" id="ezra-lead-form">
-      <div class="ezra-lead-row">
-        <span class="ezra-eyebrow-wide">Colonias de interés</span>
-        <div class="ezra-chip-group" data-group="colonias">
-          {colonias.map((c) => (
-            <button type="button" class="ezra-chip" data-value={c}>{c}</button>
-          ))}
-        </div>
-      </div>
+      <span class="ezra-lead-form-label">Enviar mensaje</span>
 
       <div class="ezra-lead-row">
-        <span class="ezra-eyebrow-wide">Recámaras</span>
-        <div class="ezra-chip-group" data-group="beds">
-          {beds.map((b) => (
-            <button type="button" class="ezra-chip ezra-chip--mono" data-value={b}>{b}</button>
-          ))}
-        </div>
-      </div>
-
-      <div class="ezra-lead-row">
-        <span class="ezra-eyebrow-wide">Renta máxima</span>
-        <div class="ezra-chip-group" data-group="budget">
-          {budgets.map((b) => (
-            <button type="button" class="ezra-chip ezra-chip--mono" data-value={b.value}>{b.label}</button>
-          ))}
-        </div>
-      </div>
-
-      <div class="ezra-lead-row">
-        <span class="ezra-eyebrow-wide">Imprescindibles</span>
-        <div class="ezra-chip-group ezra-chip-group--icons" data-group="amenities">
-          {COMMON_AMENITIES.map((a) => (
-            <button type="button" class="ezra-chip ezra-chip--icon" data-value={a.label}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[a.key].svg}></svg>
-              {a.label}
-            </button>
-          ))}
+        <span class="ezra-eyebrow-wide">¿Qué te interesa?</span>
+        <div class="ezra-chip-group" data-group="intent">
+          <button type="button" class="ezra-chip" data-value="Vender">Quiero vender</button>
+          <button type="button" class="ezra-chip" data-value="Rentar">Quiero rentar</button>
+          <button type="button" class="ezra-chip" data-value="Comprar">Quiero comprar</button>
         </div>
       </div>
 
@@ -84,11 +46,12 @@ const budgets = [
           <span class="ezra-eyebrow-wide">WhatsApp</span>
           <input type="tel" name="phone" required pattern="[0-9 +\\-]{10,15}" placeholder="55 1234 5678" />
         </label>
-        <label>
-          <span class="ezra-eyebrow-wide">Algo más (opcional)</span>
-          <input type="text" name="extra" placeholder="Llegada en julio, mascota grande..." />
-        </label>
       </div>
+
+      <label class="ezra-lead-msg">
+        <span class="ezra-eyebrow-wide">Mensaje</span>
+        <textarea name="message" rows="3" placeholder="Cuéntanos sobre tu propiedad o lo que estás buscando…"></textarea>
+      </label>
 
       <button type="submit" class="ezra-lead-cta">Enviar mensaje</button>
       <div class="ezra-lead-status" hidden></div>
@@ -101,36 +64,26 @@ const budgets = [
   if (form) {
     const status = form.querySelector<HTMLElement>('.ezra-lead-status');
 
-    // Toggle de chips multi-select
-    form.querySelectorAll<HTMLButtonElement>('.ezra-chip').forEach((chip) => {
+    // Selector de intención: single-select.
+    form.querySelectorAll<HTMLButtonElement>('[data-group="intent"] .ezra-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
-        chip.classList.toggle('is-on');
+        const on = chip.classList.contains('is-on');
+        form.querySelectorAll<HTMLButtonElement>('[data-group="intent"] .ezra-chip')
+          .forEach((c) => c.classList.remove('is-on'));
+        if (!on) chip.classList.add('is-on');
       });
     });
-
-    function collect(group: string): string[] {
-      return Array.from(
-        form!.querySelectorAll<HTMLButtonElement>(`[data-group="${group}"] .is-on`),
-      ).map((b) => b.dataset.value || '');
-    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
-      const colonias = collect('colonias');
-      const beds = collect('beds');
-      const budget = collect('budget');
-      const amenities = collect('amenities');
-      const extra = String(fd.get('extra') || '').trim();
+      const intent = form.querySelector<HTMLButtonElement>('[data-group="intent"] .ezra-chip.is-on')?.dataset.value || '';
+      const body = String(fd.get('message') || '').trim();
 
-      // Componemos el mensaje a partir de las selecciones
       const parts: string[] = [];
-      if (colonias.length) parts.push(`Colonias: ${colonias.join(', ')}`);
-      if (beds.length) parts.push(`Recámaras: ${beds.join(' / ')}`);
-      if (budget.length) parts.push(`Renta máx: $${Number(budget[0]).toLocaleString('es-MX')}`);
-      if (amenities.length) parts.push(`Imprescindibles: ${amenities.join(', ')}`);
-      if (extra) parts.push(extra);
-      const message = parts.join(' · ') || 'Solo escribió desde el formulario.';
+      if (intent) parts.push(`Interés: ${intent}`);
+      if (body) parts.push(body);
+      const message = parts.join(' — ') || 'Contacto desde el formulario.';
 
       const payload = {
         name: fd.get('name'),
@@ -189,29 +142,37 @@ const budgets = [
     font-size: 36px; font-weight: 600;
     color: var(--ezra-fg);
     letter-spacing: -0.01em;
+    text-wrap: balance;
   }
   .ezra-lead-lede {
     font-size: 16px; line-height: 1.6;
-    color: var(--ezra-fg-muted); max-width: 380px;
+    color: var(--ezra-fg-muted); max-width: 420px;
     font-weight: 300;
   }
+  /* Botón WhatsApp: conserva el verde de marca (a propósito en otro color). */
   .ezra-lead-wa {
     display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 28px; padding: 12px 18px;
+    margin-top: 28px; padding: 13px 20px;
     border-radius: var(--ezra-radius-md);
     background: #25D366; color: #fff;
     text-decoration: none;
     font-size: 14px; font-weight: 600;
+    transition: opacity var(--ezra-dur-fast);
   }
+  .ezra-lead-wa:hover { opacity: 0.9; }
 
-  .ezra-lead-form { display: flex; flex-direction: column; gap: 24px; }
+  .ezra-lead-form { display: flex; flex-direction: column; gap: 22px; }
+  .ezra-lead-form-label {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: var(--ezra-track-wide); text-transform: uppercase;
+    color: var(--ezra-fg-soft);
+  }
   .ezra-lead-row { display: flex; flex-direction: column; gap: 10px; }
-  .ezra-chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
-  .ezra-chip-group--icons { gap: 6px 8px; }
+  .ezra-chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 
   .ezra-chip {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px;
+    padding: 9px 16px;
     border-radius: var(--ezra-radius-pill);
     background: transparent;
     border: 1px solid var(--ezra-border-strong);
@@ -222,34 +183,30 @@ const budgets = [
                 color var(--ezra-dur-fast),
                 border-color var(--ezra-dur-fast);
   }
-  .ezra-chip:hover {
-    color: var(--ezra-fg);
-    border-color: var(--ezra-fg);
-  }
+  .ezra-chip:hover { color: var(--ezra-fg); border-color: var(--ezra-fg); }
   .ezra-chip.is-on {
     background: var(--ezra-fg);
     color: var(--ezra-bg);
     border-color: var(--ezra-fg);
     font-weight: 500;
   }
-  .ezra-chip--mono { font-family: var(--ezra-font-mono); font-size: 12px; }
-  .ezra-chip--icon svg { flex-shrink: 0; }
 
   .ezra-lead-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-    margin-top: 8px;
-    padding-top: 24px;
-    border-top: 1px solid var(--ezra-border);
   }
-  .ezra-lead-grid label { display: flex; flex-direction: column; gap: 6px; }
-  .ezra-lead-grid input {
+  .ezra-lead-grid label,
+  .ezra-lead-msg { display: flex; flex-direction: column; gap: 6px; }
+  .ezra-lead-grid input,
+  .ezra-lead-msg textarea {
     padding: 12px 14px; border-radius: var(--ezra-radius-md);
     border: 1px solid var(--ezra-border-strong);
     background: var(--ezra-input-bg);
     color: var(--ezra-fg);
-    font-size: 14px;
+    font-size: 14px; font-family: inherit;
   }
-  .ezra-lead-grid input:focus {
+  .ezra-lead-msg textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
+  .ezra-lead-grid input:focus,
+  .ezra-lead-msg textarea:focus {
     outline: none;
     border-color: var(--ezra-fg);
   }
@@ -272,6 +229,7 @@ const budgets = [
     .ezra-lead-intro { position: static; }
   }
   @media (max-width: 640px) {
+    .ezra-lead { padding: 0 20px; }
     .ezra-lead-grid { grid-template-columns: 1fr; }
   }
 </style>

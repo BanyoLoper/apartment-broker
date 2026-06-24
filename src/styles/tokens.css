@@ -14,10 +14,10 @@
    en lugar de negro puro. Todos los "ink-*" llevan ese sesgo cálido. */
 :root,
 :root[data-theme='dark'] {
-  --ezra-ink-950:   #0E0C0A;   /* página deep */
-  --ezra-ink-900:   #1A1714;   /* página default — color del icon EZRA */
-  --ezra-ink-800:   #25211D;   /* surface elevada (cards admin dark, modals) */
-  --ezra-ink-700:   #322D27;   /* surface-2, divisores cálidos */
+  --ezra-ink-950:   #1E1E1E;   /* página deep */
+  --ezra-ink-900:   #292929;   /* página base — color del logo EZRA */
+  --ezra-ink-800:   #333333;   /* surface elevada (cards admin dark, modals) */
+  --ezra-ink-700:   #3D3D3D;   /* surface-2, divisores */
   --ezra-stone-700: #4A433B;
   --ezra-stone-500: #6E6660;
   --ezra-stone-400: #8E867E;
@@ -30,7 +30,7 @@
   --ezra-success:   #5C7A6E;
   --ezra-warning:   #A8896B;
   --ezra-info:      #6E7A8A;
-  --ezra-copper:    #C26A3F;       /* solo para CTAs y deltas positivos */
+  --ezra-copper:    #FFAD85;       /* solo para CTAs y deltas positivos */
 
   --ezra-bg:        var(--ezra-ink-900);
   --ezra-bg-deep:   var(--ezra-ink-950);

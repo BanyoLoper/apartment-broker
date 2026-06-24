@@ -13,7 +13,7 @@ let leadCount = 0;
 let bookingCount = 0;
 if (env?.DB) {
   const rs = await env.DB.prepare('SELECT colonia, status, price_mxn FROM listings').all();
-  listings = (rs.results as ListingRow[]) || [];
+  listings = (rs.results as unknown as ListingRow[]) || [];
   const lc = await env.DB.prepare('SELECT COUNT(*) as n FROM leads').first() as { n: number } | null;
   leadCount = lc?.n ?? 0;
   const bc = await env.DB.prepare('SELECT COUNT(*) as n FROM bookings').first() as { n: number } | null;

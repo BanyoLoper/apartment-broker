@@ -14,7 +14,7 @@ if (env?.DB) {
     ORDER BY l.created_at DESC
     LIMIT 100
   `).all();
-  leads = (rs.results as (Lead & { listing_name?: string })[]) || [];
+  leads = (rs.results as unknown as (Lead & { listing_name?: string })[]) || [];
 }
 
 const statusClass: Record<Lead['status'], string> = {

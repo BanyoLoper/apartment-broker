@@ -6,11 +6,11 @@ import Footer from '../components/public/Footer.astro';
 interface Props {
   title?: string;
   description?: string;
-  active?: 'home' | 'listings' | 'colonias' | 'how';
+  active?: string;
 }
 const {
   title = 'EZRA Real Estate — Departamentos amueblados en CDMX',
-  description = 'EZRA opera y renta departamentos amueblados estilo hotel boutique en Roma, Condesa, Juárez y Polanco. Renta directa con el dueño.',
+  description = 'EZRA opera y renta departamentos amueblados estilo hotel boutique en CDMX — Progreso Tizapán (frente a C.U.) y Tabacalera (Paseo de la Reforma). Renta directa con el dueño.',
   active = 'home',
 } = Astro.props;
 ---
@@ -22,18 +22,8 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
-  <meta name="theme-color" content="#F1ECE2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#292929" />
   <link rel="icon" type="image/jpeg" href="/assets/ezra-icon.jpg" />
-  <script is:inline>
-    // Aplica el tema antes del primer paint para evitar flash
-    (function () {
-      try {
-        const t = localStorage.getItem('ezra-theme');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
-      } catch (e) { /* SSR / no localStorage */ }
-    })();
-  </script>
 </head>
 <body>
   <Header active={active} />

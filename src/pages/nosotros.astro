@@ -1,0 +1,166 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+
+const env = Astro.locals.runtime?.env;
+const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
+const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent('Hola, me gustaría más información sobre EZRA Real Estate.')}`;
+
+const team = [
+  { name: 'Denise Rodríguez', role: 'Asesora inmobiliaria', photo: '/assets/equipo/denise.jpg' },
+  { name: 'Edgar Zamora', role: 'Asesor inmobiliario', photo: '/assets/equipo/edgar.png' },
+];
+---
+
+<PublicLayout active="nosotros" title="Nosotros · EZRA Real Estate">
+  <main class="ezra-about">
+    <div class="ezra-about-grid">
+      <div class="ezra-about-main">
+        <header class="ezra-about-head">
+          <span class="ezra-eyebrow-wide">Nosotros</span>
+          <h1 class="ezra-about-title">Comercialización estratégica de propiedades en CDMX</h1>
+        </header>
+
+        <div class="ezra-about-body">
+          <p class="ezra-about-lead">
+            EZRA Real Estate es una firma inmobiliaria enfocada en la comercialización
+            estratégica de propiedades residenciales en Ciudad de México.
+          </p>
+          <p>
+            Entendemos que vender o rentar un inmueble no es solo publicarlo; es
+            posicionarlo correctamente en el mercado.
+          </p>
+          <p>
+            Analizamos cada propiedad desde una perspectiva técnica y comercial para
+            determinar precio, narrativa y estrategia de promoción. Nuestro objetivo es
+            atraer al perfil adecuado y optimizar tiempos de operación.
+          </p>
+          <p>
+            Brindamos acompañamiento integral durante todo el proceso: asesoría,
+            negociación, gestión documental y seguimiento hasta el cierre.
+          </p>
+          <p class="ezra-about-close">
+            Operamos con transparencia, criterio profesional y atención personalizada.
+          </p>
+        </div>
+      </div>
+
+      <aside class="ezra-team">
+        <span class="ezra-eyebrow-wide">Equipo</span>
+        <div class="ezra-team-grid">
+          {team.map((m) => (
+            <article class="ezra-team-card">
+              <img class="ezra-team-avatar" src={m.photo} alt={m.name} width="120" height="120" loading="lazy" />
+              <h3 class="ezra-team-name">{m.name}</h3>
+              <p class="ezra-team-role">{m.role}</p>
+            </article>
+          ))}
+        </div>
+
+        <a href={waLink} class="ezra-about-wa" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.48 0 .13 5.36.13 11.94c0 2.11.55 4.18 1.59 6.01L0 24l6.24-1.63a11.92 11.92 0 005.82 1.49h.01c6.58 0 11.94-5.36 11.94-11.94 0-3.19-1.24-6.19-3.49-8.44zM12.07 21.5h-.01a9.53 9.53 0 01-4.86-1.33l-.35-.21-3.7.97.99-3.61-.23-.37a9.52 9.52 0 01-1.46-5.04c0-5.27 4.29-9.56 9.57-9.56a9.5 9.5 0 016.76 2.8 9.49 9.49 0 012.8 6.76c0 5.27-4.29 9.57-9.56 9.57zm5.24-7.13c-.29-.15-1.7-.84-1.96-.93-.26-.1-.45-.15-.64.15-.19.29-.74.93-.9 1.12-.17.19-.33.21-.62.07-.29-.15-1.23-.45-2.35-1.44-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.33.44-.49.15-.17.2-.29.29-.49.1-.19.05-.37-.02-.52-.07-.15-.64-1.55-.88-2.13-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.49.07-.74.33-.26.29-.99.97-.99 2.37 0 1.4 1.02 2.75 1.16 2.94.15.19 2.01 3.07 4.87 4.3.68.29 1.2.46 1.61.59.68.21 1.29.18 1.78.11.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33z"/></svg>
+          WhatsApp directo
+        </a>
+      </aside>
+    </div>
+  </main>
+</PublicLayout>
+
+<style>
+  .ezra-about { max-width: 1280px; margin: 0 auto; padding: 80px 32px 0; }
+
+  /* Texto a la izquierda, equipo a la derecha (arriba). */
+  .ezra-about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 64px; align-items: center;
+  }
+
+  .ezra-about-head { max-width: 100%; }
+  .ezra-about-title {
+    margin: 18px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: clamp(36px, 5.2vw, 64px); font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em; line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  .ezra-about-body {
+    max-width: 60ch; margin: 40px 0 0;
+    display: flex; flex-direction: column; gap: 22px;
+  }
+  .ezra-about-lead {
+    margin: 0;
+    color: var(--ezra-fg);
+    font-size: clamp(19px, 2.2vw, 24px); line-height: 1.5; font-weight: 300;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+  .ezra-about-body p {
+    margin: 0;
+    color: var(--ezra-fg-muted);
+    font-size: 16px; line-height: 1.7; font-weight: 300;
+    text-wrap: pretty;
+  }
+  .ezra-about-close { color: var(--ezra-fg) !important; font-weight: 400 !important; }
+
+  .ezra-team { align-self: center; }
+  .ezra-team-grid {
+    margin-top: 22px;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .ezra-team-card {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 28px 18px;
+    background: var(--ezra-surface);
+    border: 1px solid var(--ezra-border);
+    border-radius: var(--ezra-radius-lg);
+  }
+  .ezra-team-avatar {
+    width: 76px; height: 76px; border-radius: 999px;
+    object-fit: cover; object-position: center top;
+    background: var(--ezra-surface-2);
+    border: 1px solid var(--ezra-border-strong);
+    margin-bottom: 16px;
+  }
+  .ezra-team-name {
+    margin: 0;
+    font-size: 16px; font-weight: 600; color: var(--ezra-fg);
+    letter-spacing: -0.005em; line-height: 1.25;
+  }
+  .ezra-team-role {
+    margin: 5px 0 0;
+    font-size: 12.5px; color: var(--ezra-fg-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* Botón WhatsApp directo, debajo del equipo y a todo el ancho de la columna.
+     Estilo elegante con la paleta del sitio (ghost que se rellena en hover). */
+  .ezra-about-wa {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 16px; width: 100%;
+    padding: 14px 22px;
+    border-radius: var(--ezra-radius-md);
+    background: transparent;
+    border: 1px solid var(--ezra-border-strong);
+    color: var(--ezra-fg);
+    text-decoration: none;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    transition: background var(--ezra-dur-fast) var(--ezra-ease-standard),
+                color var(--ezra-dur-fast),
+                border-color var(--ezra-dur-fast);
+  }
+  .ezra-about-wa svg { color: var(--ezra-copper); transition: color var(--ezra-dur-fast); }
+  .ezra-about-wa:hover {
+    background: var(--ezra-fg); color: var(--ezra-bg); border-color: var(--ezra-fg);
+  }
+  .ezra-about-wa:hover svg { color: var(--ezra-bg); }
+
+  @media (max-width: 900px) {
+    .ezra-about-grid { grid-template-columns: 1fr; gap: 56px; }
+    .ezra-team { position: static; }
+  }
+  @media (max-width: 560px) {
+    .ezra-team-grid { grid-template-columns: 1fr; }
+  }
+</style>

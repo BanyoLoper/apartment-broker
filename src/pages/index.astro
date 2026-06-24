@@ -1,41 +1,53 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import Hero from '../components/public/Hero.astro';
+import Services from '../components/public/Services.astro';
 import ListingCard from '../components/public/ListingCard.astro';
 import LeadForm from '../components/public/LeadForm.astro';
 import type { Listing } from '../lib/db';
 
 const env = Astro.locals.runtime?.env;
 let featured: Listing[] = [];
-let totalActive = 0;
+const mediaByListing = new Map<number, string[]>();
 if (env?.DB) {
   const active = await env.DB.prepare(
     "SELECT * FROM listings WHERE status = 'publicada' ORDER BY created_at DESC LIMIT 6",
   ).all();
-  featured = (active.results as Listing[]) || [];
-  const count = await env.DB.prepare("SELECT COUNT(*) as n FROM listings WHERE status = 'publicada'").first() as { n: number } | null;
-  totalActive = count?.n ?? 0;
+  featured = (active.results as unknown as Listing[]) || [];
+
+  if (featured.length) {
+    const ids = featured.map((l) => l.id);
+    const ph = ids.map(() => '?').join(',');
+    const ms = await env.DB.prepare(
+      `SELECT listing_id, url FROM listing_media WHERE kind = 'photo' AND listing_id IN (${ph}) ORDER BY listing_id, position`,
+    ).bind(...ids).all();
+    for (const row of (ms.results as unknown as { listing_id: number; url: string }[])) {
+      const arr = mediaByListing.get(row.listing_id) ?? [];
+      arr.push(row.url);
+      mediaByListing.set(row.listing_id, arr);
+    }
+  }
 }
 const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 ---
 
 <PublicLayout active="home">
-  <Hero activeListings={totalActive || 6} colonias={4} />
+  <Hero />
 
-  <section class="ezra-section">
+  <Services />
+
+  <section class="ezra-section" id="propiedades">
     <div class="ezra-section-inner">
       <header class="ezra-section-head">
-        <div>
-          <span class="ezra-eyebrow-wide">Disponibles ahora</span>
-          <h2 class="ezra-section-title">Departamentos amueblados</h2>
-        </div>
+        <span class="ezra-eyebrow-wide">Propiedades destacadas</span>
+        <h2 class="ezra-section-title">Departamentos amueblados</h2>
         <p class="ezra-section-sub">
           Cada inmueble es operado por EZRA. Mantenimiento, servicios e inventario boutique incluidos.
         </p>
       </header>
 
       <div class="ezra-grid">
-        {featured.map((l, i) => <ListingCard listing={l} priority={i < 3} />)}
+        {featured.map((l, i) => <ListingCard listing={l} images={mediaByListing.get(l.id)} priority={i < 3} />)}
         {featured.length === 0 && (
           <div class="ezra-empty">
             Aún no hay depas publicados. Corre <code>npm run db:migrate:local && npm run db:seed:local</code>.
@@ -45,7 +57,7 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
 
       <div class="ezra-section-cta">
         <a class="ezra-link" href="/departamentos">
-          Ver todo el portafolio
+          Ver propiedades en el mapa
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -59,7 +71,6 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
   .ezra-section { padding: 96px 32px 0; }
   .ezra-section-inner { max-width: 1280px; margin: 0 auto; }
   .ezra-section-head {
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 32px;
     margin-bottom: 48px;
   }
   .ezra-section-title {
@@ -70,14 +81,14 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
     letter-spacing: -0.02em;
   }
   .ezra-section-sub {
-    max-width: 360px;
+    max-width: 1080px;
     color: var(--ezra-fg-muted);
     font-size: 15px; line-height: 1.55; font-weight: 300;
-    margin: 0;
+    margin: 16px 0 0;
   }
   .ezra-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
     gap: 24px;
   }
   .ezra-empty {
@@ -108,7 +119,7 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
     color: var(--ezra-bg);
   }
   @media (max-width: 768px) {
-    .ezra-section-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .ezra-section { padding: 64px 20px 0; }
     .ezra-section-title { font-size: 32px; }
   }
 </style>

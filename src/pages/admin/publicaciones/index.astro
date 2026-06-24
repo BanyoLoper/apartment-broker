@@ -12,7 +12,7 @@ let rows: Listing[] = [];
 let counts = { activas: 0, borradores: 0, reservadas: 0, retiradas: 0 };
 if (env?.DB) {
   const rs = await env.DB.prepare('SELECT * FROM listings ORDER BY updated_at DESC').all();
-  rows = (rs.results as Listing[]) || [];
+  rows = (rs.results as unknown as Listing[]) || [];
   counts = {
     activas: rows.filter((l) => l.status === 'publicada').length,
     borradores: rows.filter((l) => l.status === 'borrador').length,

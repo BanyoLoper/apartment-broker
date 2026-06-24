@@ -1,0 +1,152 @@
+---
+// Sección "Servicios" del home — contenido de ezrarealestate.com.mx.
+// Reutiliza fotos del portafolio como apoyo visual.
+const services = [
+  {
+    n: '01',
+    title: 'Captación y promoción estratégica',
+    body: 'Diseñamos la presentación del inmueble y lo promovemos en los canales adecuados para llegar al perfil correcto. Destacamos cada propiedad mostrando sus ventajas ante los competidores.',
+    image: '/assets/servicios-1.png',
+  },
+  {
+    n: '02',
+    title: 'Asesoría y gestión de la operación',
+    body: 'Atendemos y filtramos prospectos calificados, coordinamos visitas y realizamos la validación necesaria para asegurar que cada operación se lleve a cabo con clientes confiables.',
+    image: '/assets/servicios-2.png',
+  },
+  {
+    n: '03',
+    title: 'Cierre seguro y acompañamiento',
+    body: 'Acompañamos todo el proceso hasta la formalización de la operación, garantizando claridad, seguridad y tranquilidad para todas las partes involucradas.',
+    image: '/assets/servicios-3.png',
+  },
+];
+---
+
+<section class="ezra-services" id="servicios">
+  <div class="ezra-services-inner">
+    <header class="ezra-services-head">
+      <span class="ezra-eyebrow-wide">Servicios</span>
+      <h2 class="ezra-services-title">Acompañamiento profesional en cada operación</h2>
+      <p class="ezra-services-lede">
+        Servicio orientado a resultados: seguridad, transparencia
+        y eficiencia en cada operación.
+      </p>
+      <p class="ezra-services-sub">
+        Nos encargamos de todo el proceso, desde la promoción estratégica del
+        inmueble hasta la formalización de la operación, asegurando confianza y
+        tranquilidad para propietarios e inquilinos.
+      </p>
+    </header>
+
+    <ol class="ezra-services-grid">
+      {services.map((s) => (
+        <li class="ezra-service">
+          <div class="ezra-service-frame">
+            <img src={s.image} alt={s.title} class="ezra-service-img" loading="lazy" decoding="async" />
+            <span class="ezra-service-n">{s.n}</span>
+          </div>
+          <div class="ezra-service-body">
+            <h3 class="ezra-service-title">{s.title}</h3>
+            <p class="ezra-service-text">{s.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .ezra-services { padding: 96px 32px 0; }
+  .ezra-services-inner { max-width: 1280px; margin: 0 auto; }
+
+  .ezra-services-head {
+    max-width: 1480px; margin: 0 auto 80px;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .ezra-services-head .ezra-eyebrow-wide { margin-bottom: 22px; }
+  .ezra-services-title {
+    margin: 0 0 28px;
+    max-width: min(100%, 40ch);
+    font-family: var(--ezra-font-display);
+    font-size: clamp(32px, 4vw, 46px); font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em; line-height: 1.12;
+    text-wrap: balance;
+  }
+  /* Statement principal */
+  .ezra-services-lede {
+    margin: 0 auto 24px;
+    max-width: 70ch;
+    color: var(--ezra-fg);
+    font-size: clamp(18px, 2vw, 21px); line-height: 1.55; font-weight: 300;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  /* Detalle operativo, más tenue */
+  .ezra-services-sub {
+    margin: 0 auto;
+    max-width: 54ch;
+    color: var(--ezra-fg-muted);
+    font-size: 15px; line-height: 1.75; font-weight: 300;
+    text-wrap: pretty;
+  }
+
+  .ezra-services-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    counter-reset: none;
+  }
+  .ezra-service {
+    display: flex; flex-direction: column;
+  }
+  .ezra-service-frame {
+    position: relative; overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--ezra-radius-lg);
+    background: var(--ezra-surface);
+  }
+  .ezra-service-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 700ms var(--ezra-ease-standard);
+  }
+  .ezra-service:hover .ezra-service-img { transform: scale(1.04); }
+  .ezra-service-frame::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.55), transparent 55%);
+    pointer-events: none;
+  }
+  .ezra-service-n {
+    position: absolute; left: 20px; bottom: 16px; z-index: 1;
+    font-family: var(--ezra-font-display);
+    font-size: 30px; font-weight: 500;
+    color: #FFF; letter-spacing: 0.02em;
+    opacity: 0.92;
+  }
+
+  .ezra-service-body { padding: 22px 4px 0; }
+  .ezra-service-title {
+    margin: 0 0 10px;
+    font-family: var(--ezra-font-body);
+    font-size: 19px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.005em; line-height: 1.25;
+  }
+  .ezra-service-text {
+    margin: 0;
+    color: var(--ezra-fg-muted);
+    font-size: 14.5px; line-height: 1.65; font-weight: 300;
+  }
+
+  /* Filo de acento bajo el número de cada servicio */
+  .ezra-service-body .ezra-service-title::before {
+    content: '';
+    display: block; width: 28px; height: 2px;
+    background: var(--ezra-copper);
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .ezra-services-grid { grid-template-columns: 1fr; gap: 28px; max-width: 520px; margin: 0 auto; }
+  }
+</style>

@@ -25,20 +25,16 @@ npx wrangler d1 create apartmentbroker
 # (copia el database_id que imprime al wrangler.toml)
 npm run db:migrate:local
 
-# 4. Generar hash de la contraseña demo (opcional pero recomendado)
-node scripts/hash-password.mjs demo123
-# (pega los valores en migrations/0002_seed.sql)
-
-# 5. Cargar seed con 6 inmuebles de demo
+# 4. Cargar seed con el inventario real (Pedregal y Reforma 77)
 npm run db:seed:local
 
-# 6. Levantar dev server
+# 5. Levantar dev server
 npm run dev
 ```
 
-Abre `http://localhost:4321/`. El admin vive en `/admin` (redirige a `/login`).
+Abre `http://localhost:4321/`. El admin vive en `/admin` (redirige a `/login`); el enlace "Acceso brokers" está oculto en el header por ahora, pero la ruta sigue accesible por URL directa.
 
-Login demo: `broker@example.com` / contraseña en `.dev.vars` (`ADMIN_PASSWORD`, default `demo123`).
+El seed (`migrations/0007_seed_real.sql`) crea el broker `broker@example.com` con contraseña `demo123`. Para cambiarla, genera un nuevo hash con `node scripts/hash-password.mjs <password>` y actualiza los valores en el seed.
 
 ## Despliegue en Cloudflare Pages
 
