@@ -29,13 +29,28 @@ if (env?.DB) {
   }
 }
 const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
+
+const heroSlides = featured.map((l) => ({
+  slug: l.slug,
+  name: l.name,
+  colonia: l.colonia,
+  price: l.price_mxn,
+  image: (mediaByListing.get(l.id)?.[0]) || l.cover_image || '/assets/placeholder-apt-1.svg',
+}));
+
+// Franja de confianza — cifras de respaldo. PLACEHOLDER: ajustar con datos reales.
+const trustStats = [
+  { v: '+120', label: 'Operaciones concretadas en CDMX' },
+  { v: '18 días', label: 'Tiempo promedio de colocación' },
+  { v: '100%', label: 'Prospectos validados antes de la visita' },
+  { v: 'Hasta firma', label: 'Acompañamiento integral en cada operación' },
+];
 ---
 
 <PublicLayout active="home">
-  <Hero />
+  <Hero slides={heroSlides} />
 
-  <Services />
-
+  {/* 1 · Producto primero — lo que el cliente con dinero quiere ver al instante */}
   <section class="ezra-section" id="propiedades">
     <div class="ezra-section-inner">
       <header class="ezra-section-head">
@@ -64,6 +79,64 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
     </div>
   </section>
 
+  {/* 2 · Franja de confianza — prueba antes que promesa */}
+  <section class="ezra-trust" id="confianza">
+    <div class="ezra-trust-inner">
+      <header class="ezra-trust-head">
+        <span class="ezra-eyebrow-wide">Por qué confían en EZRA</span>
+        <h2 class="ezra-trust-title">Operación directa, criterio profesional y cero sorpresas.</h2>
+      </header>
+      <dl class="ezra-trust-stats">
+        {trustStats.map((s) => (
+          <div class="ezra-trust-stat">
+            <dt class="ezra-trust-stat-v">{s.v}</dt>
+            <dd class="ezra-trust-stat-label">{s.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  {/* 3 · Cómo trabajamos — el proceso, después de haber generado deseo y confianza */}
+  <Services />
+
+  {/* 4 · Dos caminos — identidad dual organizada, lista para separarse en dos landings */}
+  <section class="ezra-paths" id="caminos">
+    <div class="ezra-paths-inner">
+      <header class="ezra-paths-head">
+        <span class="ezra-eyebrow-wide">¿Cómo podemos ayudarte?</span>
+        <h2 class="ezra-paths-title">Dos formas de trabajar con nosotros</h2>
+      </header>
+      <div class="ezra-paths-grid">
+        <article class="ezra-path">
+          <span class="ezra-path-tag">Para quien busca</span>
+          <h3 class="ezra-path-title">Encuentra tu próximo departamento</h3>
+          <p class="ezra-path-body">
+            Inmuebles amueblados estilo boutique, operados directamente por EZRA.
+            Sin intermediarios: lo que ves es lo que rentas.
+          </p>
+          <a class="ezra-path-cta" href="/departamentos">
+            Ver propiedades
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
+          </a>
+        </article>
+        <article class="ezra-path">
+          <span class="ezra-path-tag">Para propietarios</span>
+          <h3 class="ezra-path-title">Comercializa tu propiedad con estrategia</h3>
+          <p class="ezra-path-body">
+            Posicionamos, promovemos y operamos tu inmueble hasta la firma.
+            Clientes calificados, gestión documental y acompañamiento integral.
+          </p>
+          <a class="ezra-path-cta" href="#contacto">
+            Publicar mi propiedad
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {/* 5 · Contacto */}
   <LeadForm whatsappNumber={whatsapp} />
 </PublicLayout>
 
@@ -118,8 +191,117 @@ const whatsapp = env?.WHATSAPP_NUMBER || '525527846773';
     background: var(--ezra-fg);
     color: var(--ezra-bg);
   }
+
+  /* ---------- Franja de confianza ---------- */
+  .ezra-trust {
+    margin-top: 96px;
+    padding: 80px 32px;
+    background: var(--ezra-bg-deep);
+    border-top: 1px solid var(--ezra-border);
+    border-bottom: 1px solid var(--ezra-border);
+  }
+  .ezra-trust-inner { max-width: 1280px; margin: 0 auto; }
+  .ezra-trust-head { max-width: 760px; margin-bottom: 56px; }
+  .ezra-trust-title {
+    margin: 16px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: clamp(28px, 3.4vw, 40px); font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em; line-height: 1.14;
+    text-wrap: balance;
+  }
+  .ezra-trust-stats {
+    margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+  }
+  .ezra-trust-stat {
+    padding-top: 24px;
+    border-top: 1px solid var(--ezra-border-strong);
+  }
+  .ezra-trust-stat-v {
+    font-family: var(--ezra-font-body);
+    font-size: clamp(34px, 4vw, 48px); font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1;
+    color: var(--ezra-copper);
+  }
+  .ezra-trust-stat-label {
+    margin: 12px 0 0;
+    color: var(--ezra-fg-muted);
+    font-size: 14px; line-height: 1.45; font-weight: 300;
+  }
+
+  /* ---------- Dos caminos (identidad dual) ---------- */
+  .ezra-paths { padding: 96px 32px 0; }
+  .ezra-paths-inner { max-width: 1280px; margin: 0 auto; }
+  .ezra-paths-head { margin-bottom: 40px; }
+  .ezra-paths-title {
+    margin: 12px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: clamp(28px, 3.4vw, 40px); font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.02em;
+  }
+  .ezra-paths-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+  }
+  .ezra-path {
+    display: flex; flex-direction: column;
+    padding: 40px;
+    background: var(--ezra-surface);
+    border: 1px solid var(--ezra-border);
+    border-radius: var(--ezra-radius-lg);
+    transition: transform var(--ezra-dur-base) var(--ezra-ease-standard),
+                border-color var(--ezra-dur-base) var(--ezra-ease-standard);
+  }
+  .ezra-path:hover {
+    transform: translateY(-2px);
+    border-color: var(--ezra-border-strong);
+  }
+  .ezra-path-tag {
+    font: var(--ezra-text-eyebrow);
+    letter-spacing: var(--ezra-track-mid);
+    text-transform: uppercase;
+    color: var(--ezra-copper); font-weight: 600;
+  }
+  .ezra-path-title {
+    margin: 16px 0 0;
+    font-family: var(--ezra-font-display);
+    font-size: 26px; font-weight: 600;
+    color: var(--ezra-fg); letter-spacing: -0.01em; line-height: 1.18;
+  }
+  .ezra-path-body {
+    margin: 14px 0 28px;
+    color: var(--ezra-fg-muted);
+    font-size: 15px; line-height: 1.6; font-weight: 300;
+    flex: 1;
+  }
+  .ezra-path-cta {
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 22px;
+    border-radius: var(--ezra-radius-md);
+    border: 1px solid var(--ezra-border-strong);
+    color: var(--ezra-fg);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background var(--ezra-dur-fast), color var(--ezra-dur-fast), border-color var(--ezra-dur-fast);
+  }
+  .ezra-path-cta svg { color: var(--ezra-copper); transition: color var(--ezra-dur-fast); }
+  .ezra-path-cta:hover {
+    background: var(--ezra-fg); color: var(--ezra-bg); border-color: var(--ezra-fg);
+  }
+  .ezra-path-cta:hover svg { color: var(--ezra-bg); }
+
+  @media (max-width: 900px) {
+    .ezra-trust-stats { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .ezra-paths-grid { grid-template-columns: 1fr; }
+  }
   @media (max-width: 768px) {
     .ezra-section { padding: 64px 20px 0; }
     .ezra-section-title { font-size: 32px; }
+    .ezra-trust { margin-top: 64px; padding: 64px 20px; }
+    .ezra-paths { padding: 64px 20px 0; }
+    .ezra-path { padding: 28px; }
+  }
+  @media (max-width: 480px) {
+    .ezra-trust-stats { grid-template-columns: 1fr; }
   }
 </style>

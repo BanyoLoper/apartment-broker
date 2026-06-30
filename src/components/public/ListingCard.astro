@@ -17,6 +17,7 @@ const { listing, images, priority = false, showPrice = true } = Astro.props;
 const cover = listing.cover_image || '/assets/placeholder-apt-1.svg';
 const gallery = images && images.length ? images : [cover];
 const subtype = listing.furnished ? 'Depto. Amueblado' : 'Departamento';
+const tagline = listing.tagline || (listing.furnished ? 'Listo para mudarte' : 'Renta directa');
 const specs: string[] = [`${listing.area_m2} m²`, `${listing.beds} rec`, `${listing.baths} baño`];
 if (listing.parking) specs.push(`${listing.parking} estac`);
 specs.push('amenidades');
@@ -42,7 +43,7 @@ specs.push('amenidades');
     <header class="ezra-card-overlay">
       <p class="ezra-card-eyebrow">{listing.name} · Col. {listing.colonia}</p>
       <h3 class="ezra-card-title">
-        <strong>{subtype}</strong>
+        <strong>{subtype}</strong> <span class="ezra-card-tagline">{tagline}</span>
       </h3>
       {showPrice && (
         <p class="ezra-card-price">
@@ -69,6 +70,9 @@ specs.push('amenidades');
           </>
         ))}
       </p>
+      <span class="ezra-card-cta" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 5l7 7-7 7"/></svg>
+      </span>
     </footer>
   </article>
 </a>
@@ -204,6 +208,11 @@ specs.push('amenidades');
     letter-spacing: -0.005em;
     color: #FFF;
   }
+  .ezra-card-tagline {
+    display: inline;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+  }
   .ezra-card-price {
     margin: 4px 0 0;
     display: flex; align-items: baseline; gap: 8px;
@@ -262,6 +271,13 @@ specs.push('amenidades');
     display: flex; flex-wrap: wrap; gap: 6px;
   }
   .ezra-card-dot { color: rgba(255,255,255,0.55); }
+  .ezra-card-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 999px;
+    background: var(--ezra-copper); color: #FFF; flex-shrink: 0;
+    transition: transform var(--ezra-dur-fast) var(--ezra-ease-standard);
+  }
+  .ezra-card:hover .ezra-card-cta { transform: translateX(2px); }
 
   @media (max-width: 640px) {
     .ezra-card-title { font-size: 22px; }

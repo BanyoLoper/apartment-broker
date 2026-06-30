@@ -10,19 +10,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
 /* ---------- Default theme = DARK ----------
-   Tonos cálidos derivados del icon EZRA: charcoal con undertone café/oliva
-   en lugar de negro puro. Todos los "ink-*" llevan ese sesgo cálido. */
+   Paleta del design system EZRA: greyscale carbón puro, el blanco ES el acento.
+   El cobre (#C26A3F) solo aparece en chevrons CTA y deltas positivos. */
 :root,
 :root[data-theme='dark'] {
-  --ezra-ink-950:   #1E1E1E;   /* página deep */
-  --ezra-ink-900:   #292929;   /* página base — color del logo EZRA */
-  --ezra-ink-800:   #333333;   /* surface elevada (cards admin dark, modals) */
-  --ezra-ink-700:   #3D3D3D;   /* surface-2, divisores */
-  --ezra-stone-700: #4A433B;
-  --ezra-stone-500: #6E6660;
-  --ezra-stone-400: #8E867E;
-  --ezra-stone-300: #B5ACA3;
-  --ezra-stone-200: #D4CCC1;
+  --ezra-ink-950:   #0A0A0A;   /* página deep */
+  --ezra-ink-900:   #141414;   /* página base — superficie del mark EZRA */
+  --ezra-ink-800:   #1F1F1F;   /* surface elevada (cards dark, modals) */
+  --ezra-ink-700:   #2A2A2A;   /* surface-2, divisores */
+  --ezra-stone-700: #3D3D3D;
+  --ezra-stone-500: #6E6E6E;
+  --ezra-stone-400: #8E8987;
+  --ezra-stone-300: #B5B0AC;
+  --ezra-stone-200: #D4CFC9;
   --ezra-paper:     #EFEBE6;
   --ezra-pure:      #FFFFFF;
 
@@ -30,7 +30,7 @@
   --ezra-success:   #5C7A6E;
   --ezra-warning:   #A8896B;
   --ezra-info:      #6E7A8A;
-  --ezra-copper:    #FFAD85;       /* solo para CTAs y deltas positivos */
+  --ezra-copper:    #C26A3F;       /* solo para CTAs y deltas positivos */
 
   --ezra-bg:        var(--ezra-ink-900);
   --ezra-bg-deep:   var(--ezra-ink-950);

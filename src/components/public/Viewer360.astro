@@ -76,24 +76,30 @@ const {
 
 <style>
   .ab-pano-overlay {
-    position: fixed; inset: 0; background: #000; z-index: 100;
+    position: fixed; inset: 0; background: var(--ezra-ink-950); z-index: 100;
     display: flex; flex-direction: column;
   }
   .ab-pano-overlay[hidden] { display: none !important; }
   .ab-pano-bar {
     position: absolute; top: 0; left: 0; right: 0; z-index: 2;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 24px; color: var(--ab-bone-50);
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+    padding: 16px 24px; color: #FFF;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.7), transparent);
   }
   .ab-pano-bar-info { display: flex; align-items: center; gap: 12px; }
-  .ab-pano-eyebrow { color: rgba(250,247,242,0.6) !important; }
-  .ab-pano-title { font: var(--ab-text-h4); }
-  .ab-pano-close {
-    width: 36px; height: 36px; border-radius: 999px;
-    border: 1px solid rgba(250,247,242,0.2);
-    background: transparent; color: var(--ab-bone-50);
-    cursor: pointer; font-size: 20px;
+  .ab-pano-eyebrow { color: rgba(255,255,255,0.6) !important; }
+  .ab-pano-title {
+    font-family: var(--ezra-font-body); font-size: 16px; font-weight: 600;
+    color: #FFF; letter-spacing: -0.005em;
   }
+  .ab-pano-close {
+    width: 38px; height: 38px; border-radius: var(--ezra-radius-pill);
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(15,15,15,0.42); color: #FFF;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    cursor: pointer; font-size: 20px; line-height: 1;
+    transition: background var(--ezra-dur-fast), border-color var(--ezra-dur-fast);
+  }
+  .ab-pano-close:hover { background: rgba(15,15,15,0.6); border-color: rgba(255,255,255,0.45); }
   #ab-pano-stage { flex: 1; width: 100%; height: 100%; }
 </style>
